@@ -1,3 +1,7 @@
+# private files
+michael.h
+
+
 # Object files
 *.o
 *.ko

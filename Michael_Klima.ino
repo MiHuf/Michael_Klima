@@ -1,8 +1,8 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2022-03-30
-   Program size:      Sketch 316421 Bytes (30%), Global Vars 31628 Bytes (38%)
+   Last modification: 2022-04-09
+   Program size:      Sketch 317109 Bytes (30%), Global Vars 32068 Bytes (39%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
@@ -16,7 +16,7 @@
    https://www.espressif.com/sites/default/files/documentation/0a-esp8266ex_datasheet_en.pdf
    https://www.espressif.com/sites/default/files/documentation/esp8266-technical_reference_en.pdf
 
-   ***** Quellen für die Libraries und uebernommene Code-Bloecke:
+   ***** Quellen fuer die Libraries und uebernommene Code-Bloecke:
    https://blog.rolandbaer.ch/2020/03/30/wemos-d1-mini-als-temperatur-und-luftfeuchtigkeits-webserver/
    Serial Code: https://github.com/Hypfer/esp8266-vindriktning-particle-sensor
    Examples: https://github.com/wemos/D1_mini_Examples
@@ -40,9 +40,9 @@
 #include <DHT.h>
 // #include "EspMQTTClient.h"   // Not needed!
 #include <PubSubClient.h>
+#include <functional>
 // ***** External definitions, constants and variables
 #include "Michael_Klima.h"
-
 
 // ***** Pin definitions
 #ifdef LED_BUILTIN                                  // true for D1 Mini
@@ -57,8 +57,12 @@
 // constexpr static const uint8_t PIN_UART_RX = D2; // =GPIO4 am Wemos D1 Mini
 // Version fuer mein Adapter-Board:
 constexpr static const uint8_t PIN_UART_RX = D5;    // =GPIO14 am Wemos D1 Mini
-constexpr static const uint8_t PIN_UART_TX = D7;    // =GPIO13, UNUNSED
+constexpr static const uint8_t PIN_UART_TX = D7;    // =GPIO13 UNUNSED
 constexpr static const uint8_t ONE_WIRE_BUS = D6;   // =GPIO12 am Wemos D1 Mini
+constexpr static const uint8_t SW0 = SCL;           // =GPIO5 / D1 / SCL
+constexpr static const uint8_t SW1 = SDA;           // =GPIO4 / D2 / SDA
+constexpr static const uint8_t SW2 = D3;            // =GPIO0
+constexpr static const uint8_t SW3 = D4;            // =GPIO2
 const uint8_t BLINK_COUNT = 3;  // Default Anzahl Lichtblitze
 const uint16_t PUNKT = 200;     // Punktlaenge (Norm = 100 ms bei 60 BpM)
 const uint16_t ABSTAND = 200;   // Punkt-Strich Abstand (Norm = 100 ms)
@@ -76,51 +80,17 @@ const char* mqtt_server = MQTT_BROKER;
 // ***** Variables
 String localIP_s, macAddress_s, externalIP_s;
 bool wlanOK = false;
-typedef struct {
-  String param;
-  String value;
-  String unit;
-  unsigned long measurement;
-  unsigned long runID;
-  String topic;
-  bool active;
-} sensor_type;
-#ifdef TEST_MODE  // Michael Hufschmidt, 2022-03-24
+#ifdef TEST_MODE
   String title = "Michaels Raumklima Monitor [Test-Mode]";
 #else
   String title = "Michaels Raumklima Monitor";
 #endif
-#ifdef ZU_HAUSE_H
-  sensor_type sensor[] = {
-    {"Feinstaub [Vindriktning]", "0", "µg/m³", 0, 0,
-     "ZuHause/Wohnzimmer/Feinstaub", true},
-    {"Temperatur [DHT 11]", "0.0", "°C", 0, 0,
-     "ZuHause/Wohnzimmer/Temperatur_int", true},
-    {"Luftfeuchte [DHT 11]", "0.0", "%", 0, 0,
-     "ZuHause/Wohnzimmer/Luftfeuchte", true},
-    {"Temperatur [DS 18x20 #0]", "0.0", "°C", 0, 0,
-     "ZuHause/Wohnzimmer/Temperatur_ext", true},
-    {"Temperatur [DS 18x20 #1]", "0.0", "°C", 0, 0, "", true},
-    {"CO₂ - Gehalt [SCD 30]", "0.0", "ppm", 0, 0, "", false}
-  };
-#endif
-#ifdef IM_INSTITUT_H
-  sensor_type sensor[] = {
-    {"Feinstaub [Vindriktning]", "0", "µg/m³", 0, 0, "", true},
-    {"Temperatur [DHT 11]", "0.0", "°C", 0, 0, "", false},
-    {"Luftfeuchte [DHT 11]", "0.0", "%", 0, 0, "", false},
-    {"Temperatur [DS 18x20 #0]", "0.0", "°C", 0, 0, "", true},
-    {"Temperatur [DS 18x20 #1]", "0.0", "°C", 0, 0, "", true},
-    {"CO₂ - Gehalt [SCD 30]", "0.0", "ppm", 0, 0, "", false}
-  };
-#endif
-// ***** TODO:
-// Als Klasse deklarierien, getSensorData() als Methode implementieren
+#include "Michael_Sensoren.h"
 int sensorCount = sizeof(sensor) / sizeof(sensor_type);
 uint8_t deviceCount = 0;            // Anzahl der OneWire - Clients
 uint8_t dallasCount = 0;            // Anzahl der DS18x10 - Sensoren
 // DallasTemperature.h, line 63: typedef uint8_t DeviceAddress[8];
-DeviceAddress tempAddr, ds1820_0, ds1820_1;     // DS 18x20 Sensoren
+DeviceAddress tempAddr, ds_0, ds_1;     // DS 18x20 Sensoren
 uint8_t serialRxBuf[80];
 uint8_t rxBufIdx = 0;
 unsigned long runID = 0;
@@ -136,10 +106,10 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 OneWire oneWire(ONE_WIRE_BUS);
 DHT dht(ONE_WIRE_BUS, DHTTYPE, 6);
-DallasTemperature ds1820(&oneWire);
+DallasTemperature ds(&oneWire);
 
 
-// ***** Functions
+// ***** General Functions
 void blink(const uint8_t count = BLINK_COUNT) {
   digitalWrite(LED_BUILTIN, AUS);
   delay(ZEICHEN);
@@ -160,7 +130,7 @@ String deviceAddressToString(DeviceAddress a) {
 } // deviceAddressToString(...)
 
 void connectWiFi() {
-  unsigned long now =  millis();
+  unsigned long now = millis();
   unsigned long until = now + 1000 * wlanTimeout;
   if (wlanOK) return;
   // connecting to  external WLAN network
@@ -204,9 +174,18 @@ String runInfo() {
   return info;
 }  // runInfo()
 
-int getIkeaData() {  // from the Make Magazin
+
+// ***** Get Sensor Data Functions
+
+String getDummy() {
+  return "???";
+}
+
+String getIkeaData() {  // from the Make Magazin
+  int data;
   uint8_t rxBufIdx = 0;
   uint8_t checksum = 0;
+  String out;
   // Sensor Serial aushorchen
   while ((sensorSerial.available() && rxBufIdx < 127) ||
          rxBufIdx < 20) {
@@ -221,103 +200,104 @@ int getIkeaData() {  // from the Make Magazin
   // Header und Pruefsumme checken
   if (serialRxBuf[0] == 0x16 && serialRxBuf[1] == 0x11 &&
       serialRxBuf[2] == 0x0B && checksum == 0) {
-    return (serialRxBuf[5] << 8 | serialRxBuf[6]);
+    data = (serialRxBuf[5] << 8 | serialRxBuf[6]);
   } else {
-    return (-1);
+    data = -1;
   }
+  #ifdef TEST_MODE  // Michael Hufschmidt, 2022-02-23
+    data = random(20, 50);
+  #endif
+  out = String(data);
+  return out;
 } // getIkeaData()
 
-float readDS1820Temperature(DeviceAddress addr) {
+String getDHT_Temperature() {
+  return String(dht.readTemperature(), 1);
+}
+String getDHT_Humidity() {
+  return String(dht.readHumidity(), 1);
+}
+
+String getDS1820_0() {
+  return readDS1820Temperature(ds_0);
+}
+String getDS1820_1() {
+  return readDS1820Temperature(ds_1);
+}
+String readDS1820Temperature(DeviceAddress addr) {
+  String out = "";
   float temperature = 0.0;
   bool ok1 = true, ok2 = true;
   if (ok1 && ok2) {
-//    ds1820.setWaitForConversion(false);  // makes it async
-    ds1820.requestTemperatures();
-//    ds1820.setWaitForConversion(true);
+//    ds.setWaitForConversion(false);  // makes it async
+    ds.requestTemperatures();
+//    ds.setWaitForConversion(true);
   }  // if (ok1 && ok2)
-  if (!ds1820.isConversionComplete()) {
+  if (!ds.isConversionComplete()) {
   delay(1000);
   }  // if not complete
-  if (addr == nullptr) { return 0.0;}
+  if (addr == nullptr) { return "0.0";}
   Serial.print("\nNew conversion for Device "
                   + deviceAddressToString(addr));
-//  ok1 = ds1820.isConnected(addr);  // will loose connection
+//  ok1 = ds.isConnected(addr);  // will loose connection
 //  if (ok1) {
-//    temperature = ds1820.getTempC(addr);
+//    temperature = ds.getTempC(addr);
 //  } else {
 //    Serial.println("Device not connected");
 //  } // ok1
-    ok2 = ds1820.requestTemperaturesByAddress(addr);
+    ok2 = ds.requestTemperaturesByAddress(addr);
     if (ok2) {
-      temperature = ds1820.getTempC(addr);
+      temperature = ds.getTempC(addr);
     } else {
-      Serial.println("Error: requestTemperaturesByAddress");
+      Serial.println("\nError: requestTemperaturesByAddress");
+      return "disconnected";
     } // ok2
-  return temperature;
+  if (temperature != DEVICE_DISCONNECTED_C) { // DallasTemperature.h line 36
+    return String(temperature, 1);
+  } else {
+    return "disconnected";
+  }
 } // readDS1820Temperature
 
+String getSwitch_0() {
+  return readSwitch(SW0);
+}
+String getSwitch_1() {
+  return readSwitch(SW1);
+}
+String getSwitch_2() {
+  return readSwitch(SW2);
+}
+String getSwitch_3() {
+  return readSwitch(SW3);
+}String readSwitch(uint8_t pin) {
+  String out;
+  if (digitalRead(pin)) {
+    out = "open (High)";
+  } else {
+    out = "closed (Low = GND)";
+  }
+  return out;
+} // readSwitch
+
 void getSensorData() {
+  String value = "";
   runID += 1;
-  float temperature;
-  int feinstaub;
-  if (sensor[0].active) {
-    #ifdef TEST_MODE  // Michael Hufschmidt, 2022-02-23
-      feinstaub = random(20, 50);
-    #else
-      feinstaub = getIkeaData();
-    #endif
-    //  delay(1000);
-    if (feinstaub > 0) {
-      sensor[0].measurement += 1;
-      sensor[0].runID = runID;
-      sensor[0].value = String(feinstaub);
-    } // feinstaub > 0
-  }  // sensor[0].active
-  if (sensor[1].active) {
-    if (!isnan(dht.readTemperature())) {
-      sensor[1].measurement += 1;
-      sensor[1].runID = runID;
-      sensor[1].value = String(dht.readTemperature(), 1);
-    }
-  }  // sensor[1].active
-  if (sensor[2].active) {
-    if (!isnan(dht.readHumidity())) {
-      sensor[2].measurement += 1;
-      sensor[2].runID = runID;
-      sensor[2].value = String(dht.readHumidity(), 1);
-    }
-  }  // sensor[2].active
-  if (sensor[3].active) {
-    temperature = readDS1820Temperature(ds1820_0);
-    if (temperature != DEVICE_DISCONNECTED_C) { // DallasTemperature.h line 36
-      // see DallasTemperature.h line 36
-      sensor[3].measurement += 1;
-      sensor[3].runID = runID;
-      sensor[3].value = String(temperature, 1);
-    } else {
-      ;
-      //    sensor[3].value = "???";
-    }  // if
-  }  // sensor[3].active
-  if (sensor[4].active) {
-    temperature = readDS1820Temperature(ds1820_1);
-    if (temperature != DEVICE_DISCONNECTED_C) { // DallasTemperature.h line 36
-      sensor[4].measurement += 1;
-      sensor[4].runID = runID;
-      sensor[4].value = String(temperature, 1);
-    } else {
-      ;
-      //    sensor[4].value = "???";
-    }  // if
-  } // sensor[4].active
-  if (sensor[5].active) {
-    ;
-  }  // sensor[5].active
+  for (uint8_t i = 0; i < sensorCount; i++) {
+    value = sensor[i].sensor_read();
+    if (value != "nan" && value != "???") {
+      sensor[i].value = value;
+      if (value != "disconnected") {
+        sensor[i].measurement += 1;
+        sensor[i].runID = runID;
+      }
+    } // if value
+  }  // for
 }  // getSensorData()
 
 void publishSensorData() {
   for (uint8_t i = 0; i < sensorCount; i++) {
-    if (sensor[i].active) {
+    if (sensor[i].topic.length() > 0) {
       ;  // **** TODO: Publish via MQTT
     }  // if
   }  // for
@@ -339,6 +319,8 @@ String formatSensorData(bool html = false) {
   } // for i
   return out;
 }  // formatSensorData()
+
+// ***** Output Functions
 
 void printSensorData() {
   Serial.print(formatSensorData());
@@ -431,11 +413,11 @@ void setup() {                                      // setup code, to run once
 //  while (oneWire.search(tempAddr, true)) {
 //    Serial.println("Located Device #" + String(deviceCount) +
 //                   ", ROM-Address = " + deviceAddressToString(tempAddr));
-//    if (ds1820.validFamily(tempAddr)) {
+//    if (ds.validFamily(tempAddr)) {
 //      if (dallasCount == 0) {
-//        std::copy(std::begin(tempAddr), std::end(tempAddr), std::begin(ds1820_0));
+//        std::copy(std::begin(tempAddr), std::end(tempAddr), std::begin(ds_0));
 //      } else {
-//        std::copy(std::begin(tempAddr), std::end(tempAddr), std::begin(ds1820_1));
+//        std::copy(std::begin(tempAddr), std::end(tempAddr), std::begin(ds_1));
 //      }
 //      dallasCount += 1;
 //    }
@@ -446,36 +428,58 @@ void setup() {                                      // setup code, to run once
 //  oneWire.reset();
   oneWire.begin(ONE_WIRE_BUS);
   dht.begin();
-  ds1820.begin();
+  ds.begin();
   Serial.print("Parasite power is: ");
-  if (ds1820.isParasitePowerMode())
+  if (ds.isParasitePowerMode())
     Serial.println("ON (2 wire)"); else Serial.println("OFF (3 wire)");
-//  ds1820.setResolution(9);            // global resulution, default 9
-  if (ds1820.getAddress(ds1820_0, 0)) {
-    type = ds1820_0[0] == DS18B20MODEL ? "DS18B20" : "DS18S20 / DS1820"; 
+//  ds.setResolution(9);            // global resulution, default 9
+  if (ds.getAddress(ds_0, 0)) {
+    type = ds_0[0] == DS18B20MODEL ? "DS18B20" : "DS18S20 / DS1820"; 
     Serial.println("Found Device " + type + " #0, ROM-Address = "
-                 + deviceAddressToString(ds1820_0));
+                 + deviceAddressToString(ds_0));
     dallasCount += 1;
-    // ds1820.setResolution(ds1820_0, 11);     // resolutuion for this sensor
+    // ds.setResolution(ds_0, 11);     // resolutuion for this sensor
   } else {
     Serial.println("Device DS18x20 #0 not found, will be set to inactive");
     sensor[3].active = false;
   }
-  if (ds1820.getAddress(ds1820_1, 1)) {
-    type = ds1820_0[0] == DS18B20MODEL ? "DS18B20" : "DS18S20 / DS1820"; 
+  if (ds.getAddress(ds_1, 1)) {
+    type = ds_0[0] == DS18B20MODEL ? "DS18B20" : "DS18S20 / DS1820"; 
     Serial.println("Found Device " + type + " #1, ROM-Address = "
-                 + deviceAddressToString(ds1820_1));
+                 + deviceAddressToString(ds_1));
     dallasCount += 1;
-    // ds1820.setResolution(ds1820_1, 11);     // resolutuion for this sensor
+    // ds.setResolution(ds_1, 11);     // resolutuion for this sensor
   } else {
     Serial.println("Device DS18x20 #1 not found, will be set to inactive");
     sensor[4].active = false;
   }
+  
 //  **** This does not work
-//  deviceCount = ds1820.getDeviceCount();
-//  dallasCount = ds1820.getDS18Count();
+//  deviceCount = ds.getDeviceCount();
+//  dallasCount = ds.getDS18Count();
 //  Serial.printf("Found %d OneWire Device(s) \n", deviceCount);
-  Serial.printf("Found %d DS18x00 Sensor(s) \n", dallasCount);  
+  Serial.printf("Found %d DS18x00 Sensor(s) \n", dallasCount);
+  // Setting extension switches
+  pinMode(SW0, OUTPUT);
+  pinMode(SW1, OUTPUT);
+  pinMode(SW2, OUTPUT);
+  pinMode(SW3, OUTPUT);
+  digitalWrite(SW0, HIGH);
+  digitalWrite(SW1, HIGH);
+  digitalWrite(SW2, HIGH);
+  digitalWrite(SW3, HIGH);
+  // pinMode(SW0, INPUT);               // only with external pullup
+  // pinMode(SW1, INPUT);               // only with external pullup
+  // pinMode(SW2, INPUT);               // only with external pullup
+  // pinMode(SW3, INPUT);               // only with external pullup
+  pinMode(SW0, INPUT_PULLUP);           // no external pullup needed
+  pinMode(SW1, INPUT_PULLUP);           // no external pullup needed
+  pinMode(SW2, INPUT_PULLUP);           // no external pullup needed
+  pinMode(SW3, INPUT_PULLUP);           // no external pullup needed
+  Serial.printf("Switch 0 on Pin %d\n", SW0);
+  Serial.printf("Switch 1 on Pin %d\n", SW1);
+  Serial.printf("Switch 2 on Pin %d\n", SW2);
+  Serial.printf("Switch 3 on Pin %d\n", SW3);
 //    getSensorData();                  // not yet
 //    printSensorData();                // not yet
   Serial.println("Configuring local access point...");
