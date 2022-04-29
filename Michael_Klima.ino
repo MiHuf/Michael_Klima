@@ -1,8 +1,8 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2022-02-24
-   Program size:      Sketch 315537 Bytes (30%), Global Vars 31264 Bytes (38%)
+   Last modification: 2022-03-30
+   Program size:      Sketch 316421 Bytes (30%), Global Vars 31628 Bytes (38%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
@@ -38,11 +38,10 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <DHT.h>
-// #include "EspMQTTClient.h"
+// #include "EspMQTTClient.h"   // Not needed!
 #include <PubSubClient.h>
-
-// ***** External constants and variables
-#include "_private.h"
+// ***** External definitions, constants and variables
+#include "Michael_Klima.h"
 
 
 // ***** Pin definitions
@@ -60,13 +59,12 @@
 constexpr static const uint8_t PIN_UART_RX = D5;    // =GPIO14 am Wemos D1 Mini
 constexpr static const uint8_t PIN_UART_TX = D7;    // =GPIO13, UNUNSED
 constexpr static const uint8_t ONE_WIRE_BUS = D6;   // =GPIO12 am Wemos D1 Mini
-
-
-// ***** Constants (alle Zeiten in Millisekunden)
 const uint8_t BLINK_COUNT = 3;  // Default Anzahl Lichtblitze
 const uint16_t PUNKT = 200;     // Punktlaenge (Norm = 100 ms bei 60 BpM)
 const uint16_t ABSTAND = 200;   // Punkt-Strich Abstand (Norm = 100 ms)
 const uint16_t ZEICHEN = 1000;  // Buchstaben-Abstand im Wort (Norm = 3x Punkt)
+const unsigned long processInterval = 30; // process interval in seconds
+const unsigned long refreshInterval = 60; // HTML refresh interval in seconds
 //* Set these to your desired credentials. */
 const char *extSsid = WIFI_SSID;
 const char *extPassword = WIFI_PASS;
@@ -87,7 +85,12 @@ typedef struct {
   String topic;
   bool active;
 } sensor_type;
-#ifdef ZU_HAUSE
+#ifdef TEST_MODE  // Michael Hufschmidt, 2022-03-24
+  String title = "Michaels Raumklima Monitor [Test-Mode]";
+#else
+  String title = "Michaels Raumklima Monitor";
+#endif
+#ifdef ZU_HAUSE_H
   sensor_type sensor[] = {
     {"Feinstaub [Vindriktning]", "0", "µg/m³", 0, 0,
      "ZuHause/Wohnzimmer/Feinstaub", true},
@@ -101,7 +104,7 @@ typedef struct {
     {"CO₂ - Gehalt [SCD 30]", "0.0", "ppm", 0, 0, "", false}
   };
 #endif
-#ifdef IM_INSTITUT
+#ifdef IM_INSTITUT_H
   sensor_type sensor[] = {
     {"Feinstaub [Vindriktning]", "0", "µg/m³", 0, 0, "", true},
     {"Temperatur [DHT 11]", "0.0", "°C", 0, 0, "", false},
@@ -116,6 +119,7 @@ typedef struct {
 int sensorCount = sizeof(sensor) / sizeof(sensor_type);
 uint8_t deviceCount = 0;            // Anzahl der OneWire - Clients
 uint8_t dallasCount = 0;            // Anzahl der DS18x10 - Sensoren
+// DallasTemperature.h, line 63: typedef uint8_t DeviceAddress[8];
 DeviceAddress tempAddr, ds1820_0, ds1820_1;     // DS 18x20 Sensoren
 uint8_t serialRxBuf[80];
 uint8_t rxBufIdx = 0;
@@ -223,9 +227,37 @@ int getIkeaData() {  // from the Make Magazin
   }
 } // getIkeaData()
 
+float readDS1820Temperature(DeviceAddress addr) {
+  float temperature = 0.0;
+  bool ok1 = true, ok2 = true;
+  if (ok1 && ok2) {
+//    ds1820.setWaitForConversion(false);  // makes it async
+    ds1820.requestTemperatures();
+//    ds1820.setWaitForConversion(true);
+  }  // if (ok1 && ok2)
+  if (!ds1820.isConversionComplete()) {
+  delay(1000);
+  }  // if not complete
+  if (addr == nullptr) { return 0.0;}
+  Serial.print("\nNew conversion for Device "
+                  + deviceAddressToString(addr));
+//  ok1 = ds1820.isConnected(addr);  // will loose connection
+//  if (ok1) {
+//    temperature = ds1820.getTempC(addr);
+//  } else {
+//    Serial.println("Device not connected");
+//  } // ok1
+    ok2 = ds1820.requestTemperaturesByAddress(addr);
+    if (ok2) {
+      temperature = ds1820.getTempC(addr);
+    } else {
+      Serial.println("Error: requestTemperaturesByAddress");
+    } // ok2
+  return temperature;
+} // readDS1820Temperature
+
 void getSensorData() {
   runID += 1;
-  bool ok;
   float temperature;
   int feinstaub;
   if (sensor[0].active) {
@@ -256,13 +288,8 @@ void getSensorData() {
     }
   }  // sensor[2].active
   if (sensor[3].active) {
-    delay(1000);
-    ds1820.requestTemperatures();
-    //  ok = ds1820.requestTemperaturesByAddress(ds1820_0);
-    //  ok = ds1820.requestTemperaturesByIndex(0);
-    temperature = ds1820.getTempC(ds1820_0);
-    //  temperature = ds1820.getTempCByIndex(0);
-    if (temperature != DEVICE_DISCONNECTED_C) {
+    temperature = readDS1820Temperature(ds1820_0);
+    if (temperature != DEVICE_DISCONNECTED_C) { // DallasTemperature.h line 36
       // see DallasTemperature.h line 36
       sensor[3].measurement += 1;
       sensor[3].runID = runID;
@@ -273,12 +300,7 @@ void getSensorData() {
     }  // if
   }  // sensor[3].active
   if (sensor[4].active) {
-    delay(1000);
-    ds1820.requestTemperatures();
-    //  ok = ds1820.requestTemperaturesByAddress(ds1820_1);
-    //  ok = ds1820.requestTemperaturesByIndex(1);
-    temperature = ds1820.getTempC(ds1820_1);
-    //  temperature = ds1820.getTempCByIndex(1);
+    temperature = readDS1820Temperature(ds1820_1);
     if (temperature != DEVICE_DISCONNECTED_C) { // DallasTemperature.h line 36
       sensor[4].measurement += 1;
       sensor[4].runID = runID;
@@ -296,7 +318,7 @@ void getSensorData() {
 void publishSensorData() {
   for (uint8_t i = 0; i < sensorCount; i++) {
     if (sensor[i].active) {
-      ;
+      ;  // **** TODO: Publish via MQTT
     }  // if
   }  // for
 }  // publishSensorData()
@@ -380,24 +402,32 @@ String buildHtml() {
 
 
 void setup() {                                      // setup code, to run once
+  String type;
   // Debug Serial
   Serial.begin(115200);
   while (! Serial) ;                                // wait for Debug Serial
   delay(1000);
   pinMode(LED_BUILTIN, OUTPUT);
   Serial.println();
+  #ifdef TEST_MODE  // Michael Hufschmidt, 2022-03-23
+    sensor[0].param = "Feinstaub [Test-Mode]";
+  #endif
+  // discoverOneWireDevices();
   Serial.println(title);
   Serial.printf("Ikea Vindriktning on Pin %d\n", PIN_UART_RX);
   // Software Serial für IKEA Sensor
   sensorSerial.begin(9600);
   pinMode(ONE_WIRE_BUS, INPUT);
+  oneWire.begin(ONE_WIRE_BUS);
   if (oneWire.reset()) {
     Serial.printf("oneWire on Pin %d\n", ONE_WIRE_BUS);
   } else {
     Serial.printf("No devices found on Pin %d\n", ONE_WIRE_BUS);
   }
-  //  **** This does not work!
+//  **** This does not work, deviceCount & dallasCount remain zero
 //  oneWire.reset_search();
+//  deviceCount = 0;
+//  dallasCount = 0;
 //  while (oneWire.search(tempAddr, true)) {
 //    Serial.println("Located Device #" + String(deviceCount) +
 //                   ", ROM-Address = " + deviceAddressToString(tempAddr));
@@ -414,37 +444,45 @@ void setup() {                                      // setup code, to run once
 //  Serial.println("Found " + String(deviceCount) + " Devices of which " +
 //                 String(dallasCount) + " DS18x00 Sensors");
 //  oneWire.reset();
+  oneWire.begin(ONE_WIRE_BUS);
   dht.begin();
   ds1820.begin();
-  ds1820.setResolution(9);                  // global resulution
+  Serial.print("Parasite power is: ");
+  if (ds1820.isParasitePowerMode())
+    Serial.println("ON (2 wire)"); else Serial.println("OFF (3 wire)");
+//  ds1820.setResolution(9);            // global resulution, default 9
   if (ds1820.getAddress(ds1820_0, 0)) {
-    Serial.println("Located Device DS18x20 #0, ROM-Address = " + deviceAddressToString(ds1820_0));
+    type = ds1820_0[0] == DS18B20MODEL ? "DS18B20" : "DS18S20 / DS1820"; 
+    Serial.println("Found Device " + type + " #0, ROM-Address = "
+                 + deviceAddressToString(ds1820_0));
+    dallasCount += 1;
     // ds1820.setResolution(ds1820_0, 11);     // resolutuion for this sensor
   } else {
     Serial.println("Device DS18x20 #0 not found, will be set to inactive");
     sensor[3].active = false;
   }
   if (ds1820.getAddress(ds1820_1, 1)) {
-    Serial.println("Located Device DS18x20 #1, ROM-Address = " + deviceAddressToString(ds1820_1));
+    type = ds1820_0[0] == DS18B20MODEL ? "DS18B20" : "DS18S20 / DS1820"; 
+    Serial.println("Found Device " + type + " #1, ROM-Address = "
+                 + deviceAddressToString(ds1820_1));
+    dallasCount += 1;
     // ds1820.setResolution(ds1820_1, 11);     // resolutuion for this sensor
   } else {
     Serial.println("Device DS18x20 #1 not found, will be set to inactive");
     sensor[4].active = false;
   }
-  Serial.print("Parasite power is: ");
-  if (ds1820.isParasitePowerMode())
-    Serial.println("ON"); else Serial.println("OFF");
-  //  deviceCount = ds1820.getDeviceCount();
-  //  dallasCount = ds1820.getDS18Count();
-  //  Serial.printf("Found %d OneWire Device(s) \n", deviceCount);
-  //  Serial.printf("Found %d DS18x00 Sensor(s) \n", dallasCount);
-  //  getSensorData();
-  //  printSensorData();
+//  **** This does not work
+//  deviceCount = ds1820.getDeviceCount();
+//  dallasCount = ds1820.getDS18Count();
+//  Serial.printf("Found %d OneWire Device(s) \n", deviceCount);
+  Serial.printf("Found %d DS18x00 Sensor(s) \n", dallasCount);  
+//    getSensorData();                  // not yet
+//    printSensorData();                // not yet
   Serial.println("Configuring local access point...");
   //    if (! WiFi.softAPConfig(localIP, localGateway, localNetmask)) {
   //    Serial.println("AP Config Failed");
   //  }
-  WiFi.softAP(mySsid);                  // AP will be open
+  WiFi.softAP(mySsid);                  // AP will be open - or -
   // WiFi.softAP(mySsid, myPassword);   // AP will be password protected
   localIP_s = WiFi.softAPIP().toString().c_str();
   Serial.printf("Local Access Point SSID = %s, local IP address = %s\n",
