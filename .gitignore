@@ -1,0 +1,52 @@
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+*.d
+
+# Libraries
+*.lib
+*.a
+
+# Shared objects
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Python
+*.pyo
+.idea
+__pycache__
+
+# Latex
+*.aux
+*.cls
+*.dvi
+*.idx
+*.log
+*.toc
+*.lof
+
+# Documentation
+latex/*
+
+# kile
+*.kilepr
+
+# Archives
+*gz
+*zip
+
+# Editors
+.kateproject
+.kateproject.d
+
+# Backups
+*~
+*.bak
+*.back
+*.backup
+
+# Other
