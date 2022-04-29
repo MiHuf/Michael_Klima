@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             privat.h
    Created:           2022-04-05
-   Last modification: 2022-04-05
+   Last modification: 2022-04-27
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -24,4 +24,7 @@
   #define APSSID "zzz"
   #define MQTT_BROKER "broker.mqtt-dashboard.com"
   // #define MQTT_BROKER "192.168.0.2"
+  #define MQTT_USER "myUser"
+  #define MQTT_PASS "myPassword"
+  
 #endif // PRIVAT_H

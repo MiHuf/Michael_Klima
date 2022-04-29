@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             Michael_Sensoren.h
    Created:           2022-04-08
-   Last modification: 2022-04-09
+   Last modification: 2022-04-26
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -76,7 +76,7 @@
       {"Luftfeuchte [DHT 11]", "0.0", "%", 0, 0,
        "ZuHause/Wohnzimmer/Luftfeuchte", true, getDHT_Humidity},
       {"Temperatur [DHT 11]", "0.0", "°C", 0, 0,
-       "ZuHause/Wohnzimmer/Temperatur_int", true, getDHT_Temperature},
+       "ZuHause/Wohnzimmer/Temperatur_int", false, getDHT_Temperature},
       {"Temperatur [DS 18x20 #0]", "0.0", "°C", 0, 0,
        "ZuHause/Wohnzimmer/Temperatur_ext", true, getDS1820_0},
       {"Temperatur [DS 18x20 #1]", "0.0", "°C", 0, 0,

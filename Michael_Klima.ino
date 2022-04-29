@@ -1,8 +1,8 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2022-04-09
-   Program size:      Sketch 317109 Bytes (30%), Global Vars 32068 Bytes (39%)
+   Last modification: 2022-04-27
+   Program size:      Sketch 430641 Bytes (41%), Global Vars 32940 Bytes (40%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
@@ -38,8 +38,10 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <DHT.h>
-// #include "EspMQTTClient.h"   // Not needed!
+#include <time.h>
+#include <TZ.h>
 #include <PubSubClient.h>
+#include <CertStoreBearSSL.h>
 #include <functional>
 // ***** External definitions, constants and variables
 #include "Michael_Klima.h"
@@ -75,11 +77,14 @@ const char *extPassword = WIFI_PASS;
 const char *mySsid = APSSID;
 const char *myPassword = APPSK;
 const char* mqtt_server = MQTT_BROKER;
+const char* mqtt_user = MQTT_USER;
+const char* mqtt_password = MQTT_PASS;
 
 
 // ***** Variables
 String localIP_s, macAddress_s, externalIP_s;
 bool wlanOK = false;
+bool mqttOK = false;
 #ifdef TEST_MODE
   String title = "Michaels Raumklima Monitor [Test-Mode]";
 #else
@@ -95,6 +100,7 @@ uint8_t serialRxBuf[80];
 uint8_t rxBufIdx = 0;
 unsigned long runID = 0;
 unsigned long previousMillis = 0;
+String clientId = "ESP8266Client-";
 char msg[MSG_BUFFER_SIZE];
 unsigned long lastMsg = 0;
 
@@ -102,8 +108,10 @@ unsigned long lastMsg = 0;
 // ***** Objects
 SoftwareSerial sensorSerial(PIN_UART_RX, PIN_UART_TX);
 ESP8266WebServer webServer(80);
-WiFiClient espClient;
+// WiFiClient espClient;
+WiFiClientSecure espClient;
 PubSubClient client(espClient);
+BearSSL::CertStore certStore;
 OneWire oneWire(ONE_WIRE_BUS);
 DHT dht(ONE_WIRE_BUS, DHTTYPE, 6);
 DallasTemperature ds(&oneWire);
@@ -130,8 +138,7 @@ String deviceAddressToString(DeviceAddress a) {
 } // deviceAddressToString(...)
 
 void connectWiFi() {
-  unsigned long now = millis();
-  unsigned long until = now + 1000 * wlanTimeout;
+  unsigned long until = millis() + 1000 * wlanTimeout;
   if (wlanOK) return;
   // connecting to  external WLAN network
   // https://arduino-esp8266.readthedocs.io/en/3.0.2/esp8266wifi/readme.html
@@ -295,14 +302,6 @@ void getSensorData() {
   }  // for
 }  // getSensorData()
 
-void publishSensorData() {
-  for (uint8_t i = 0; i < sensorCount; i++) {
-    if (sensor[i].topic.length() > 0) {
-      ;  // **** TODO: Publish via MQTT
-    }  // if
-  }  // for
-}  // publishSensorData()
-
 String formatSensorData(bool html = false) {
   String out = "";
   out += html ? "<p><br>" : "\n";
@@ -375,6 +374,12 @@ String buildHtml() {
   } else {
     page += ", Timeout after " + String(wlanTimeout) + " s</p> \r\n";
   }
+  if (mqttOK) {
+    page += "<p>MQTT Broker = " + String(mqtt_server) +
+            "<br>MQTT Client id = " + clientId + "</p> \r\n";
+  } else {
+    page += "<p> MQTT Timeout after " + String(mqttTimeout) + " s</p> \r\n";
+  }
   page += formatSensorData(true);
   page += "</div>\r\n";
   page += "</body>\r\n";
@@ -382,6 +387,73 @@ String buildHtml() {
   return page;
 }  //  buildHtml()
 
+
+// ***** MQTT Functions
+
+void publishSensorData() {
+    snprintf (msg, MSG_BUFFER_SIZE, "hello world #%ld", runID);
+    Serial.print("Publish message: ");
+    Serial.println(msg);
+    client.publish("outTopic", msg);  
+//  for (uint8_t i = 0; i < sensorCount; i++) {
+//    if (sensor[i].topic.length() > 0) {
+//      ;  // **** TODO: Publish via MQTT
+//    }  // if
+//  }  // for
+}  // publishSensorData()
+
+void callback(char* topic, byte* payload, unsigned int length) {
+  Serial.print("Message arrived [");
+  Serial.print(topic);
+  Serial.print("] ");
+  for (int i = 0; i < length; i++) {
+    Serial.print((char)payload[i]);
+  }
+  Serial.println();
+  // Switch on the LED if an 1 was received as first character
+  if ((char)payload[0] == '1') {
+    digitalWrite(LED_BUILTIN, LOW);   // Turn the LED on (Note that LOW is the voltage level
+    // but actually the LED is on; this is because
+    // it is active low on the ESP-01)
+  } else {
+    digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
+  }
+}  // callback(..)
+
+void reconnect() { 
+  unsigned long until = millis() + 1000 * mqttTimeout;
+  mqttOK = client.connected();
+  if (mqttOK) return;
+  // Loop until we're reconnected
+  while (!mqttOK && (millis() < until)) {
+    Serial.println("Attempting MQTT connection ...");
+    // Create a random client ID
+    // clientId = "ESP8266Client-";
+    // clientId += String(random(0xffff), HEX);
+    clientId = "ESP8266_";
+    clientId += String(mySsid);
+    // Attempt to connect
+    if (client.connect(clientId.c_str()), mqtt_user, mqtt_password ) {
+      Serial.println("MQTT Broker = " + String(mqtt_server));
+      Serial.println("MQTT Client id = " + clientId);
+      // Once connected, publish an announcement...
+      client.publish("outTopic", "hello world");
+      // ... and resubscribe
+      client.subscribe("inTopic");
+      mqttOK = true;
+    } else {
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");
+      // Wait 5 seconds before retrying
+      delay(5000);
+    }
+  } // while
+  if (!mqttOK) Serial.printf("MQTT Timeout after %d s", mqttTimeout);
+} // reconnect()
+
+
+// ***** Main Functions
 
 void setup() {                                      // setup code, to run once
   String type;
@@ -453,7 +525,6 @@ void setup() {                                      // setup code, to run once
     Serial.println("Device DS18x20 #1 not found, will be set to inactive");
     sensor[4].active = false;
   }
-  
 //  **** This does not work
 //  deviceCount = ds.getDeviceCount();
 //  dallasCount = ds.getDS18Count();
@@ -497,18 +568,27 @@ void setup() {                                      // setup code, to run once
   webServer.on("/", handle_OnConnect);
   webServer.begin();
   Serial.println("HTTP server started.");
+  if (wlanOK) reconnect();
   blink();                             // when setup finished
 }  // setup()
 
 void loop() {                                       // main code, repeatedly
   unsigned long currentMillis = millis();
+  randomSeed(micros());
   webServer.handleClient();
   if (currentMillis - previousMillis >= 1000 * processInterval) {
     previousMillis = currentMillis;
     getSensorData();
     printSensorData();
+    if (mqttOK) {
+      publishSensorData();
+    } 
+//    if (!mqttOK) {
+//      reconnect();
+//    } // mqttOK
+//    client.loop();
 #ifdef DO_BLINK
     blink(5);
 #endif
-  }
+  }  // currentMillis < ...
 } // loop()
