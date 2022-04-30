@@ -7,7 +7,7 @@ Im Original: VINDRIKTNING Ikea Luftguete Sensor -> AdafruitIO
 
 ## Life Version
 
-Click Hier: <http://hufschmidt.ddns.krude.de:8080/>
+Klicke hier: <http://hufschmidt.ddns.krude.de:8080/>
 
 ## TODO
 
@@ -24,19 +24,14 @@ Und hier die Adapter-Platine:
 ![pdf Adapter PCB](D1-Mini_Adapter_pcb_Eurocircuits.png "Platine")
 
 ## Quellen für den Arduino Code
-|Was     |URL                                        |
+|Was     |URL|
 |--------|------------------------------------------------------------------------|
-|General:| <http://hufschmidt.ddns.krude.de:8080/>                                | 
-|ESP8266:| <https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/>|
-|OneWire:| <https://github.com/PaulStoffregen/OneWire/blob/master/OneWire.h>      |
-|        |<https://www.arduino.cc/reference/en/libraries/onewire/>                |
+|ESP8266:|<https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/>|
+|OneWire:|<https://github.com/PaulStoffregen/OneWire/blob/master/OneWire.h>|
+|        |<https://www.arduino.cc/reference/en/libraries/onewire/>|
 |DS18B20:|<https://github.com/milesburton/Arduino-Temperature-Control-Library/blob/master/DallasTemperature.h>|
 |DHT11:  |<https://cdn-learn.adafruit.com/downloads/pdf/dht.pdf>|
 |        |<https://github.com/adafruit/DHT-sensor-library>|
 |MQTT:   |<https://github.com/knolleary/pubsubclient>|
-
-
-
-
 
 
