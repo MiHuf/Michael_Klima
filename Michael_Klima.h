@@ -13,6 +13,7 @@
   // Uncomment only one of these three
   #include "privat.h"         // entweder
   // #include "im_institut.h"    // oder 
+  // #include "michael.h"     
   #define APPSK  "geheim"
   #define MSG_BUFFER_SIZE (127)
   #define DHTTYPE DHT11       // define the type of sensor (DHT11 or DHT22)
