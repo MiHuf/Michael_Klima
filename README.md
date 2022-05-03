@@ -4,13 +4,13 @@ Michaels Raumklima-Monitor. Inspiriert durch den Artikel
 "IKEA Vindiktning hacken", siehe Make 5/2021, Seite 14 ff und hier: <https://techtest.org/anleitung-wlan-feinstaub-und-temperatur-sensor-ikea-vindriktning-hack/>
 
 Der Code ist vorbereitet für den Anschluß weiterer Sensoren.
-Im Original: VINDRIKTNING Ikea Luftguete Sensor -> AdafruitIO
+Im Original: VINDRIKTNING Ikea Luftgüte Sensor -> AdafruitIO
 
 ## Installation und Konfiguration
 
 Den Projekt-Ordner "Michael_Klima" von github klonen.
 
-Der Mircocontroller "Wemos D1 Mini ESP8266" wird programmiert mit der Arduino IDE <https://www.heise.de/ct/artikel/Arduino-IDE-installieren-und-fit-machen-fuer-ESP8266-und-ESP32-4130814.html>.
+Der Mircocontroller "Wemos D1 Mini ESP8266" wird programmiert mit der Arduino IDE <https://www.heise.de/ct/artikel/Arduino-IDE-installieren-und-fit-machen-fuer-ESP8266-und-ESP32-4130814.html>. Die Sprache ist im Wesentlichen C++.
 
 Vorher müssen einige Dateien noch angepasst werden:
 
@@ -22,13 +22,13 @@ Vorher müssen einige Dateien noch angepasst werden:
 
 Anschließend mit der Arduino IDE kompiliern und auf den D1 Mini hochladen.
 
-## Life Version
+## Life Demo
 
 Klicke hier: <http://hufschmidt.ddns.krude.de:8080/>
 
 ## TODO
 
-  * Geeigneten MQTT Broker / Server auswählen und evtl. Code anpassen.
+  * Geeigneten MQTT Broker / Server auswählen und evtl. Code anpassen
 
   * Erweiterung mit CO₂ Sensor SCD-30 <https://www.arduino.cc/reference/en/libraries/sparkfun-scd30-arduino-library/>
 
