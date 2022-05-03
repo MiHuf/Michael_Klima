@@ -11,6 +11,7 @@
 
   // ***** Functions used below, defined in Michael_Klima.ino
   String getDummy();
+  String getRandom();
   String getIkeaData();
   String getDS1820_0();
   String getDS1820_1();
@@ -73,7 +74,7 @@
     sensor_type sensor[] = {
       #ifdef TEST_MODE  // Michael Hufschmidt, 2022-03-23
         {"Feinstaub [Test-Mode]", "0", "µg/m³", 0, 0,
-         "ZuHause/Wohnzimmer/Feinstaub", true, getIkeaData},
+         "ZuHause/Wohnzimmer/Feinstaub", true, getRandom},
       #else
         {"Feinstaub [Vindriktning]", "0", "µg/m³", 0, 0,
          "ZuHause/Wohnzimmer/Feinstaub", true, getIkeaData},

@@ -172,11 +172,14 @@ String getDummy() {
   return "???";
 }
 
+String getRandom() {
+  return String(random(20, 50));
+}
+
 String getIkeaData() {  // from the Make Magazin
   int data;
   uint8_t rxBufIdx = 0;
   uint8_t checksum = 0;
-  String out;
   // Sensor Serial aushorchen
   while ((sensorSerial.available() && rxBufIdx < 127) ||
          rxBufIdx < 20) {
@@ -195,11 +198,7 @@ String getIkeaData() {  // from the Make Magazin
   } else {
     data = -1;
   }
-  #ifdef TEST_MODE  // Michael Hufschmidt, 2022-02-23
-    data = random(20, 50);
-  #endif
-  out = String(data);
-  return out;
+  return String(data);
 } // getIkeaData()
 
 String getDHT_Temperature() {
