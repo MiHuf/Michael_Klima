@@ -1,34 +1,18 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2022-04-27
+   Last modification: 2022-05-03
    Program size:      Sketch 430641 Bytes (41%), Global Vars 32940 Bytes (40%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
 /* Michaels Raumklima-Monitor. Inspiriert durch den Artikel "IKEA Vindiktning
-   hacken", siehe Make 5/2021, Seite 14 ff. Es ist geplant, weitere Sensoren
-   anzuschliessen.
+   hacken", siehe Make 5/2021, Seite 14 ff.
+   
    Im Original: VINDRIKTNING Ikea Luftguete Sensor -> AdafruitIO
 
-   ***** Computer: Wemos D1 Mini ESP8266
-   https://www.manualslib.com/manual/1800815/Wemos-D1-Mini.html
-   https://www.espressif.com/sites/default/files/documentation/0a-esp8266ex_datasheet_en.pdf
-   https://www.espressif.com/sites/default/files/documentation/esp8266-technical_reference_en.pdf
+   Siehe https://github.com/MiHuf/Michael_Klima#readme
 
-   ***** Quellen fuer die Libraries und uebernommene Code-Bloecke:
-   https://blog.rolandbaer.ch/2020/03/30/wemos-d1-mini-als-temperatur-und-luftfeuchtigkeits-webserver/
-   Serial Code: https://github.com/Hypfer/esp8266-vindriktning-particle-sensor
-   Examples: https://github.com/wemos/D1_mini_Examples
-   ESP8266:  https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/src
-             https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WiFi/src/ESP8266WiFi.h
-   OneWire:  https://github.com/PaulStoffregen/OneWire/blob/master/OneWire.h
-             https://www.arduino.cc/reference/en/libraries/onewire/
-   DS18B20:  https://github.com/milesburton/Arduino-Temperature-Control-Library/blob/master/DallasTemperature.h
-   DHT11:    https://cdn-learn.adafruit.com/downloads/pdf/dht.pdf
-             https://github.com/adafruit/DHT-sensor-library
-   MQTT:     https://github.com/knolleary/pubsubclient
-   *** TODO: add MQTT functionality
  * ***************************************************************************/
 
 // ***** Includes
@@ -463,9 +447,6 @@ void setup() {                                      // setup code, to run once
   delay(1000);
   pinMode(LED_BUILTIN, OUTPUT);
   Serial.println();
-  #ifdef TEST_MODE  // Michael Hufschmidt, 2022-03-23
-    sensor[0].param = "Feinstaub [Test-Mode]";
-  #endif
   // discoverOneWireDevices();
   Serial.println(title);
   Serial.printf("Ikea Vindriktning on Pin %d\n", PIN_UART_RX);

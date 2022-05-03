@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             Michael_Sensoren.h
    Created:           2022-04-08
-   Last modification: 2022-04-26
+   Last modification: 2022-05-03
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -71,8 +71,13 @@
 
   #ifdef MICHAEL_H
     sensor_type sensor[] = {
-      {"Feinstaub [Vindriktning]", "0", "µg/m³", 0, 0,
-       "ZuHause/Wohnzimmer/Feinstaub", true, getIkeaData},
+      #ifdef TEST_MODE  // Michael Hufschmidt, 2022-03-23
+        {"Feinstaub [Test-Mode]", "0", "µg/m³", 0, 0,
+         "ZuHause/Wohnzimmer/Feinstaub", true, getIkeaData},
+      #else
+        {"Feinstaub [Vindriktning]", "0", "µg/m³", 0, 0,
+         "ZuHause/Wohnzimmer/Feinstaub", true, getIkeaData},
+      #endif
       {"Luftfeuchte [DHT 11]", "0.0", "%", 0, 0,
        "ZuHause/Wohnzimmer/Luftfeuchte", true, getDHT_Humidity},
       {"Temperatur [DHT 11]", "0.0", "°C", 0, 0,
