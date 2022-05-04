@@ -50,6 +50,7 @@ Und hier die Adapter-Platine:
 |Was     |URL|
 |--------|------------------------------------------------------------------------|
 |ESP8266:|<https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/>|
+|Time-Server:|<https://werner.rothschopf.net/201802_arduino_esp8266_ntp.htm>|
 |OneWire:|<https://github.com/PaulStoffregen/OneWire/blob/master/OneWire.h>|
 |        |<https://www.arduino.cc/reference/en/libraries/onewire/>|
 |DS18B20:|<https://github.com/milesburton/Arduino-Temperature-Control-Library/blob/master/DallasTemperature.h>|

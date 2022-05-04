@@ -1,8 +1,8 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2022-05-03
-   Program size:      Sketch 430641 Bytes (41%), Global Vars 32940 Bytes (40%)
+   Last modification: 2022-05-04
+   Program size:      Sketch 439129 Bytes (42%), Global Vars 33452 Bytes (40%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
@@ -49,6 +49,11 @@ constexpr static const uint8_t SW0 = SCL;           // =GPIO5 / D1 / SCL
 constexpr static const uint8_t SW1 = SDA;           // =GPIO4 / D2 / SDA
 constexpr static const uint8_t SW2 = D3;            // =GPIO0
 constexpr static const uint8_t SW3 = D4;            // =GPIO2
+
+// ***** General Settings
+#define MY_NTP_SERVER "at.pool.ntp.org"           
+#define MY_TZ "CET-1CEST,M3.5.0/02,M10.5.0/03"
+const String wotag[] = {"So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"};
 const uint8_t BLINK_COUNT = 3;  // Default Anzahl Lichtblitze
 const uint16_t PUNKT = 200;     // Punktlaenge (Norm = 100 ms bei 60 BpM)
 const uint16_t ABSTAND = 200;   // Punkt-Strich Abstand (Norm = 100 ms)
@@ -69,6 +74,9 @@ const char* mqtt_password = MQTT_PASS;
 String localIP_s, macAddress_s, externalIP_s;
 bool wlanOK = false;
 bool mqttOK = false;
+bool timeOK = false;
+time_t now;                         // this is the epoch
+tm tm;                              // the structure tm holds time information in a more convient way
 #ifdef TEST_MODE
   String title = "Michaels Raumklima Monitor [Test-Mode]";
 #else
@@ -87,7 +95,7 @@ unsigned long previousMillis = 0;
 String clientId = "ESP8266Client-";
 char msg[MSG_BUFFER_SIZE];
 unsigned long lastMsg = 0;
-
+String startTime = "";
 
 // ***** Objects
 SoftwareSerial sensorSerial(PIN_UART_RX, PIN_UART_TX);
@@ -149,15 +157,46 @@ void connectWiFi() {
   return;
 }  // connectWiFi()
 
+String lz(int num) {
+  // add leading zero
+  if (num >= 10) {
+    return String(num);
+  } else {
+    return "0" + String(num);
+  }
+} // lz()
+
+String getTime() {
+  String out = "";
+  if (timeOK) {
+    time(&now);                       // read the current time
+    localtime_r(&now, &tm);           // update the structure tm with the current time
+    out += wotag[tm.tm_wday] + ", den ";
+    out += lz(tm.tm_mday) + "."
+         + lz((tm.tm_mon + 1)) +  "."
+         + String((tm.tm_year + 1900));
+    out += " ";
+    out += lz(tm.tm_hour) + ":"
+         + lz(tm.tm_min)  + ":"
+         + lz(tm.tm_sec);
+  } // if
+  return out;
+} // getTime()
+
 String runInfo() {
   unsigned long currentMillis, d, h, m, s;
   currentMillis = millis();
+  String info = "";
   s = currentMillis / 1000;
   m = s / 60;
   h = m / 60;
   d = h / 24;
-  String info = "Run #";
+  // info += String(APSSID) + " gestartet: " + startTime; // not yet ready;
+  info += "Run #";
   info += String(runID);
+  if (timeOK) {
+    info += " vom " + getTime();
+  }
   info += ", Uptime: " + String(d) + " d, ";
   info += String(h % 24) + " h, ";
   info += String(m % 60) + " m, ";
@@ -287,9 +326,11 @@ void getSensorData() {
 
 String formatSensorData(bool html = false) {
   String out = "";
-  out += html ? "<p><br>" : "\n";
+  out += html ? "<p>" : "\n";
+  out += String(APSSID) + " gestartet: " + startTime;
+  out += html ? "</p>\r\n<p>" : "\n";
   out += runInfo();
-  out += html ? "</p> \r\n" : "\n";
+  out += html ? "</p>\r\n" : "\n";
   for (uint8_t i = 0; i < sensorCount; i++) {
     if (sensor[i].active) {
       out += html ? "<p>" : "";
@@ -548,7 +589,11 @@ void setup() {                                      // setup code, to run once
   webServer.on("/", handle_OnConnect);
   webServer.begin();
   Serial.println("HTTP server started.");
-  if (wlanOK) reconnect();
+  if (wlanOK) {
+    reconnect();
+    configTime(MY_TZ, MY_NTP_SERVER); // --> Here is the IMPORTANT ONE LINER needed in your sketch!
+    timeOK = true;
+  } // wlanOK
   blink();                             // when setup finished
 }  // setup()
 
@@ -557,6 +602,7 @@ void loop() {                                       // main code, repeatedly
   randomSeed(micros());
   webServer.handleClient();
   if (currentMillis - previousMillis >= 1000 * processInterval) {
+    if (startTime == "" & timeOK) startTime = getTime();
     previousMillis = currentMillis;
     getSensorData();
     printSensorData();
