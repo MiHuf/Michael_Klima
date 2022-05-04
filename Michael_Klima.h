@@ -11,8 +11,8 @@
   // Comment out for use with real Vindriktning Sensor
   // #define TEST_MODE              // Uncomment for use without Vindriktning
   // Uncomment only one of these three
-  #include "privat.h"         // entweder
-  // #include "im_institut.h"    // oder 
+  // #include "privat.h"         // entweder
+  #include "im_institut.h"    // oder 
   // #include "michael.h"     
   #define APPSK  "geheim"
   #define MSG_BUFFER_SIZE (127)
