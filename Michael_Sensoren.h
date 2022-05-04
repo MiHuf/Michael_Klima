@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             Michael_Sensoren.h
    Created:           2022-04-08
-   Last modification: 2022-05-03
+   Last modification: 2022-05-04
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -36,8 +36,13 @@
 
   #ifdef PRIVAT_H
     sensor_type sensor[] = {
-      {"Feinstaub [Vindriktning]", "0", "µg/m³", 0, 0,
-       "Privat/Wohnzimmer/Feinstaub", true, getIkeaData},
+      #ifdef TEST_MODE
+        {"Feinstaub [Test-Mode]", "0", "µg/m³", 0, 0,
+         "Privat/Wohnzimmer/Feinstaub", true, getRandom},
+      #else
+        {"Feinstaub [Vindriktning]", "0", "µg/m³", 0, 0,
+         "Privat/Wohnzimmer/Feinstaub", true, getIkeaData},
+      #endif
       {"Luftfeuchte [DHT 11]", "0.0", "%", 0, 0,
        "Privat/Wohnzimmer/Luftfeuchte", true, getDHT_Humidity},
       {"Temperatur [DHT 11]", "0.0", "°C", 0, 0,
@@ -54,8 +59,13 @@
 
   #ifdef IM_INSTITUT_H
     sensor_type sensor[] = {
-      {"Feinstaub [Vindriktning]", "0", "µg/m³", 0, 0,
-       "ZuHause/Wohnzimmer/Feinstaub", true, getIkeaData},
+      #ifdef TEST_MODE
+        {"Feinstaub [Test-Mode]", "0", "µg/m³", 0, 0,
+         "Uni/Büro/Wohnzimmer/Feinstaub", true, getRandom},
+      #else
+        {"Feinstaub [Vindriktning]", "0", "µg/m³", 0, 0,
+         "Uni/Büro/Wohnzimmer/Feinstaub", true, getIkeaData},
+      #endif
       {"Luftfeuchte [DHT 11]", "0.0", "%", 0, 0,
        "Uni/Büro/Luftfeuchte", false, getDHT_Humidity},
       {"Temperatur [DHT 11]", "0.0", "°C", 0, 0,
@@ -72,7 +82,7 @@
 
   #ifdef MICHAEL_H
     sensor_type sensor[] = {
-      #ifdef TEST_MODE  // Michael Hufschmidt, 2022-03-23
+      #ifdef TEST_MODE
         {"Feinstaub [Test-Mode]", "0", "µg/m³", 0, 0,
          "ZuHause/Wohnzimmer/Feinstaub", true, getRandom},
       #else
