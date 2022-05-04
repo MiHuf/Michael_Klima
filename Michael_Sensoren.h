@@ -61,10 +61,10 @@
     sensor_type sensor[] = {
       #ifdef TEST_MODE
         {"Feinstaub [Test-Mode]", "0", "µg/m³", 0, 0,
-         "Uni/Büro/Wohnzimmer/Feinstaub", true, getRandom},
+         "Uni/Büro/Feinstaub", true, getRandom},
       #else
         {"Feinstaub [Vindriktning]", "0", "µg/m³", 0, 0,
-         "Uni/Büro/Wohnzimmer/Feinstaub", true, getIkeaData},
+         "Uni/Büro/Feinstaub", true, getIkeaData},
       #endif
       {"Luftfeuchte [DHT 11]", "0.0", "%", 0, 0,
        "Uni/Büro/Luftfeuchte", false, getDHT_Humidity},
