@@ -1,7 +1,7 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2022-05-04
+   Last modification: 2022-05-05
    Program size:      Sketch 439129 Bytes (42%), Global Vars 33452 Bytes (40%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -51,7 +51,6 @@ constexpr static const uint8_t SW2 = D3;            // =GPIO0
 constexpr static const uint8_t SW3 = D4;            // =GPIO2
 
 // ***** General Settings
-#define MY_NTP_SERVER "at.pool.ntp.org"           
 #define MY_TZ "CET-1CEST,M3.5.0/02,M10.5.0/03"
 const String wotag[] = {"So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"};
 const uint8_t BLINK_COUNT = 3;  // Default Anzahl Lichtblitze
