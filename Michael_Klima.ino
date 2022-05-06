@@ -1,8 +1,8 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2022-05-05
-   Program size:      Sketch 439129 Bytes (42%), Global Vars 33452 Bytes (40%)
+   Last modification: 2022-05-06
+   Program size:      Sketch 439173 Bytes (42%), Global Vars 33376 Bytes (40%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
@@ -577,8 +577,11 @@ void setup() {                                      // setup code, to run once
   //    if (! WiFi.softAPConfig(localIP, localGateway, localNetmask)) {
   //    Serial.println("AP Config Failed");
   //  }
-  WiFi.softAP(mySsid);                  // AP will be open - or -
-  // WiFi.softAP(mySsid, myPassword);   // AP will be password protected
+  #ifdef OPEN_WIFI
+    WiFi.softAP(mySsid);                // AP will be open - or -
+  #else
+    WiFi.softAP(mySsid, myPassword);    // AP will be password protected
+  #endif
   localIP_s = WiFi.softAPIP().toString().c_str();
   Serial.printf("Local Access Point SSID = %s, local IP address = %s\n",
                 mySsid, localIP_s.c_str());

@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             im_institut.h
    Created:           2022-03-26
-   Last modification: 2022-05-05
+   Last modification: 2022-05-06
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -57,6 +57,8 @@ URL auf uh2ulnmpc54: http://192.168.1.1:8081/
   #define WIFI_PASS "2beannounced"
   // Local Access Point Parameters, Michael Hufschmidt, 2022-01-12
   #define APSSID "Michael_2"
+  #define OPEN_WIFI            // comment out when using open WiFi with APSSK
+  #define APPSK  "geheim123"   // Min. 8 characters
   // #define MQTT_BROKER "broker.mqtt-dashboard.com"
   #define MQTT_BROKER "10.42.1.1"
   #define MQTT_USER "michael"

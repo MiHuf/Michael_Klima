@@ -9,12 +9,11 @@
 #ifndef MICHAEL_KLIMA_H
   #define MICHAEL_KLIMA_H
   // Comment out for use with real Vindriktning Sensor
-  // #define TEST_MODE              // Uncomment for use without Vindriktning
+  #define TEST_MODE              // Uncomment for use without Vindriktning
   // Uncomment only one of these three
   // #include "privat.h"         // entweder
-  #include "im_institut.h"    // oder 
-  // #include "michael.h"     
-  #define APPSK  "geheim"
+  // #include "im_institut.h"    // oder 
+  #include "michael.h"     
   #define MSG_BUFFER_SIZE (127)
   #define DHTTYPE DHT11       // define the type of sensor (DHT11 or DHT22)
   // #define DO_BLINK         // Comment out to suppress LED blinking     
