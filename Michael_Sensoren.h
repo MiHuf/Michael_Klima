@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             Michael_Sensoren.h
    Created:           2022-04-08
-   Last modification: 2022-05-04
+   Last modification: 2022-05-07
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -21,6 +21,7 @@
   String getSwitch_1();
   String getSwitch_2();
   String getSwitch_3();
+  String getADC0();
   
   // ***** Sensors should be defined here
   typedef struct {

@@ -1,7 +1,7 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2022-05-06
+   Last modification: 2022-05-07
    Program size:      Sketch 439173 Bytes (42%), Global Vars 33376 Bytes (40%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -49,6 +49,7 @@ constexpr static const uint8_t SW0 = SCL;           // =GPIO5 / D1 / SCL
 constexpr static const uint8_t SW1 = SDA;           // =GPIO4 / D2 / SDA
 constexpr static const uint8_t SW2 = D3;            // =GPIO0
 constexpr static const uint8_t SW3 = D4;            // =GPIO2
+constexpr static const uint8_t ADC0 = A0;           // = Analog input, Pin 17
 
 // ***** General Settings
 #define MY_TZ "CET-1CEST,M3.5.0/02,M10.5.0/03"
@@ -298,7 +299,8 @@ String getSwitch_2() {
 }
 String getSwitch_3() {
   return readSwitch(SW3);
-}String readSwitch(uint8_t pin) {
+}
+String readSwitch(uint8_t pin) {
   String out;
   if (digitalRead(pin)) {
     out = "open (High)";
@@ -307,6 +309,9 @@ String getSwitch_3() {
   }
   return out;
 } // readSwitch
+String getADC0(){
+  return String(analogRead(ADC0));
+} // getADC0()
 
 void getSensorData() {
   String value = "";
@@ -571,6 +576,7 @@ void setup() {                                      // setup code, to run once
   Serial.printf("Switch 1 on Pin %d\n", SW1);
   Serial.printf("Switch 2 on Pin %d\n", SW2);
   Serial.printf("Switch 3 on Pin %d\n", SW3);
+  Serial.printf("ADC 0 on Pin %d\n", ADC0);
 //    getSensorData();                  // not yet
 //    printSensorData();                // not yet
   Serial.println("Configuring local access point...");
