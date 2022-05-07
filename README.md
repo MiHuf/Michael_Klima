@@ -14,11 +14,9 @@ Der Mircocontroller "Wemos D1 Mini ESP8266" wird programmiert mit der Arduino ID
 
 Vorher müssen einige Dateien noch angepasst werden:
 
- 1. Datei privat.h, Zeilen 21 - 28: Eigene Zugangsdaten eintragen.
+ 1. Datei privat.h, / im_institut.h / ..., Sektion "***** My Settings": Zugangsdaten anpassen.
 
- 2. Datei Michael_Klima.h, Zeilen 14 - 16 anpassen.
-
- 3. Eventuell: Datei Michael_Sensoren.h ab Zeile 36 anpassen.
+ 2. Datei Michael_Klima.h, ab Zeile 38 anpassen
 
 Anschließend mit der Arduino IDE kompiliern und auf den D1 Mini hochladen.
 
@@ -31,8 +29,6 @@ Klicke hier: <http://hufschmidt.ddns.krude.de:8080/>
   * Geeigneten MQTT Broker / Server auswählen und evtl. Code anpassen
 
   * Erweiterung mit CO₂ Sensor SCD-30 <https://www.arduino.cc/reference/en/libraries/sparkfun-scd30-arduino-library/>
-
-  * Erweiterung mit LDR Helligkeits-Sensor, z.B. MSP-107 <https://makesmart.shop/MSP-107-Lichtsensor-Helligkeitssensor-Digital-Analog-Sensor>
 
   * Erweiterung mit Luftdruck Sensor
 
