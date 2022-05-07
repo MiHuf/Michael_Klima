@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             im_institut.h
    Created:           2022-03-26
-   Last modification: 2022-05-06
+   Last modification: 2022-05-07
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -52,7 +52,32 @@ URL auf uh2ulnmpc54: http://192.168.1.1:8080/
 URL auf uh2ulnmpc54: http://192.168.1.1:8081/
 
  * ***************************************************************************/
+  // ***** My Sensor definition
+  sensor_type sensor[] = {
+    #ifdef TEST_MODE
+      {"Feinstaub [Test-Mode]", "0", "µg/m³", 0, 0,
+       "Uni/Büro/Feinstaub", true, getRandom},
+    #else
+      {"Feinstaub [Vindriktning]", "0", "µg/m³", 0, 0,
+       "Uni/Büro/Feinstaub", true, getIkeaData},
+    #endif
+    {"Luftfeuchte [DHT 11]", "0.0", "%", 0, 0,
+     "Uni/Büro/Luftfeuchte", false, getDHT_Humidity},
+    {"Temperatur [DHT 11]", "0.0", "°C", 0, 0,
+     "Uni/Büro/Temperatur_int", false, getDHT_Temperature},
+    {"Temperatur [DS 18x20 #0]", "0.0", "°C", 0, 0,
+     "Uni/Büro/Temperatur_ext", true, getDS1820_0},
+    {"Temperatur [DS 18x20 #1]", "0.0", "°C", 0, 0,
+     "Uni/Büro/Temperatur_int", true, getDS1820_1},
+    {"CO₂ - Gehalt [SCD 30]", "0.0", "ppm", 0, 0, "", false, getDummy},
+    {"Schalter SW0", "open (High)", "", 0, 0, "", true, getSwitch_0},
+    {"Schalter SW1", "open (High)", "", 0, 0, "", true, getSwitch_1},
+    {"Schalter SW2", "open (High)", "", 0, 0, "", false, getSwitch_2},
+    {"Schalter SW3", "open (High)", "", 0, 0, "", false, getSwitch_3},
+    {"Analog Input", "0", "/ 1023", 0, 0, "", false, getADC0}    
+  };
 
+  // ***** My Settings
   #define WIFI_SSID "NM-AP"
   #define WIFI_PASS "2beannounced"
   // Local Access Point Parameters, Michael Hufschmidt, 2022-01-12
@@ -63,6 +88,7 @@ URL auf uh2ulnmpc54: http://192.168.1.1:8081/
   #define MQTT_BROKER "10.42.1.1"
   #define MQTT_USER "michael"
   #define MQTT_PASS "geheim"
+  // #define HAS_INTERNET    // comment out if not
   // #define MY_NTP_SERVER "at.pool.ntp.org"
   #define MY_NTP_SERVER "10.42.1.1"
 #endif // IM_INSTITUT_H

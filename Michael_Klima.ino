@@ -2,7 +2,7 @@
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
    Last modification: 2022-05-07
-   Program size:      Sketch 439173 Bytes (42%), Global Vars 33376 Bytes (40%)
+   Program size:      Sketch 439677 Bytes (42%), Global Vars 33704 Bytes (41%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
@@ -82,7 +82,6 @@ tm tm;                              // the structure tm holds time information i
 #else
   String title = "Michaels Raumklima Monitor";
 #endif
-#include "Michael_Sensoren.h"
 int sensorCount = sizeof(sensor) / sizeof(sensor_type);
 uint8_t deviceCount = 0;            // Anzahl der OneWire - Clients
 uint8_t dallasCount = 0;            // Anzahl der DS18x10 - Sensoren
@@ -191,7 +190,6 @@ String runInfo() {
   m = s / 60;
   h = m / 60;
   d = h / 24;
-  // info += String(APSSID) + " gestartet: " + startTime; // not yet ready;
   info += "Run #";
   info += String(runID);
   if (timeOK) {
@@ -309,6 +307,7 @@ String readSwitch(uint8_t pin) {
   }
   return out;
 } // readSwitch
+
 String getADC0(){
   return String(analogRead(ADC0));
 } // getADC0()
@@ -331,7 +330,7 @@ void getSensorData() {
 String formatSensorData(bool html = false) {
   String out = "";
   out += html ? "<p>" : "\n";
-  out += String(APSSID) + " gestartet: " + startTime;
+  out += String(APSSID) + " gestartet" + startTime;
   out += html ? "</p>\r\n<p>" : "\n";
   out += runInfo();
   out += html ? "</p>\r\n" : "\n";
@@ -589,8 +588,13 @@ void setup() {                                      // setup code, to run once
     WiFi.softAP(mySsid, myPassword);    // AP will be password protected
   #endif
   localIP_s = WiFi.softAPIP().toString().c_str();
-  Serial.printf("Local Access Point SSID = %s, local IP address = %s\n",
-                mySsid, localIP_s.c_str());
+  #ifdef OPEN_WIFI
+    Serial.printf("Local Access Point SSID = %s\n", mySsid);
+  #else
+    Serial.printf("Local Access Point SSID = %s, Password = %s\n",
+                  mySsid, myPassword);
+  #endif
+  Serial.printf("Local IP address = %s\n", localIP_s.c_str());
   macAddress_s = WiFi.softAPmacAddress();
   Serial.printf("MAC address = %s\n", macAddress_s.c_str());
   connectWiFi();                        // connect to external WLAN
@@ -599,8 +603,13 @@ void setup() {                                      // setup code, to run once
   Serial.println("HTTP server started.");
   if (wlanOK) {
     reconnect();
-    configTime(MY_TZ, MY_NTP_SERVER); // --> Here is the IMPORTANT ONE LINER needed in your sketch!
-    timeOK = true;
+    #ifdef HAS_INTERNET
+      configTime(MY_TZ, MY_NTP_SERVER); // Here is the IMPORTANT ONE LINER
+      Serial.println("NTP-Server = " + String(MY_NTP_SERVER));
+      timeOK = true;
+    #else
+      Serial.println("No NTP-Server");
+    #endif
   } // wlanOK
   blink();                             // when setup finished
 }  // setup()
@@ -610,7 +619,7 @@ void loop() {                                       // main code, repeatedly
   randomSeed(micros());
   webServer.handleClient();
   if (currentMillis - previousMillis >= 1000 * processInterval) {
-    if (startTime == "" & timeOK) startTime = getTime();
+    if (startTime == "" & timeOK) startTime = ": " + getTime();
     previousMillis = currentMillis;
     getSensorData();
     printSensorData();
