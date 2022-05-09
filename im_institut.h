@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             im_institut.h
    Created:           2022-03-26
-   Last modification: 2022-05-07
+   Last modification: 2022-05-09
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -88,7 +88,7 @@ URL auf uh2ulnmpc54: http://192.168.1.1:8081/
   #define MQTT_BROKER "10.42.1.1"
   #define MQTT_USER "michael"
   #define MQTT_PASS "geheim"
-  // #define HAS_INTERNET    // comment out if not
+  #define HAS_INTERNET         // comment out if not
   // #define MY_NTP_SERVER "at.pool.ntp.org"
   #define MY_NTP_SERVER "10.42.1.1"
 #endif // IM_INSTITUT_H
