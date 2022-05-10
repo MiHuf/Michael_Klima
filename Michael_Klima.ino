@@ -1,7 +1,7 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2022-05-07
+   Last modification: 2022-05-10
    Program size:      Sketch 439677 Bytes (42%), Global Vars 33704 Bytes (41%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -58,8 +58,6 @@ const uint8_t BLINK_COUNT = 3;  // Default Anzahl Lichtblitze
 const uint16_t PUNKT = 200;     // Punktlaenge (Norm = 100 ms bei 60 BpM)
 const uint16_t ABSTAND = 200;   // Punkt-Strich Abstand (Norm = 100 ms)
 const uint16_t ZEICHEN = 1000;  // Buchstaben-Abstand im Wort (Norm = 3x Punkt)
-const unsigned long processInterval = 30; // process interval in seconds
-const unsigned long refreshInterval = 60; // HTML refresh interval in seconds
 //* Set these to your desired credentials. */
 const char *extSsid = WIFI_SSID;
 const char *extPassword = WIFI_PASS;

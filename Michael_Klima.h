@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             Michael_Klima.h
    Created:           2021-12-21
-   Last modification: 2022-05-07
+   Last modification: 2022-05-10
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -39,10 +39,12 @@
   // Comment out for use with real Vindriktning Sensor
   // #define TEST_MODE              // Uncomment for use without Vindriktning
   // include only one of "privat.h", "im_institut.h", "michael.h", ...
-  #include "im_institut.h"     
+  #include "privat.h"     
   #define MSG_BUFFER_SIZE (127)
   #define DHTTYPE DHT11       // define the type of sensor (DHT11 or DHT22)
   // #define DO_BLINK         // Comment out to suppress LED blinking     
-  unsigned long wlanTimeout = 60;  // timeout in seconds
-  unsigned long mqttTimeout = 30;  // timeout in seconds
+  const unsigned long wlanTimeout = 60;     // timeout in seconds
+  const unsigned long mqttTimeout = 30;     // timeout in seconds
+  const unsigned long processInterval = 30; // process interval in seconds
+  const unsigned long refreshInterval = 60; // HTML refresh in seconds
 #endif // MICHAEL_KLIMA_H
