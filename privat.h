@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             privat.h
    Created:           2022-04-05
-   Last modification: 2022-05-10
+   Last modification: 2022-05-31
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -39,7 +39,8 @@
     {"Schalter SW1", "open (High)", "", 0, 0, "", true, getSwitch_1},
     {"Schalter SW2", "open (High)", "", 0, 0, "", true, getSwitch_2},
     {"Schalter SW3", "open (High)", "", 0, 0, "", true, getSwitch_3},
-    {"Analog Input", "0", "/ 1023", 0, 0, "", true, getADC0}
+    {"Analog Input", "0", "/ 1024", 0, 0, "", false, getADC0},
+    {"Helligkeit [LDR]", "0", "Lux", 0, 0, "", true, getLDR}
   };
 
   // ***** My Settings
@@ -55,4 +56,9 @@
   #define MQTT_PASS "myPassword"
   #define HAS_INTERNET        // comment out if not
   #define MY_NTP_SERVER "at.pool.ntp.org"
+  // LDR Parameters for Type = GL 5539:
+  #define RPD 4.7e3       // LDR Pull-Down Resistor
+  #define R10 75.0e3      // LDR R(10 Lux)
+  #define GAMMA 0.8       // LDR Gamma-Value / Sensitivity 
+  
 #endif // PRIVAT_H

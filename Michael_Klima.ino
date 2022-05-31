@@ -1,8 +1,8 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2022-05-10
-   Program size:      Sketch 439677 Bytes (42%), Global Vars 33704 Bytes (41%)
+   Last modification: 2022-05-31
+   Program size:      Sketch 443133 Bytes (42%), Global Vars 33816 Bytes (41%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
@@ -84,7 +84,7 @@ int sensorCount = sizeof(sensor) / sizeof(sensor_type);
 uint8_t deviceCount = 0;            // Anzahl der OneWire - Clients
 uint8_t dallasCount = 0;            // Anzahl der DS18x10 - Sensoren
 // DallasTemperature.h, line 63: typedef uint8_t DeviceAddress[8];
-DeviceAddress tempAddr, ds_0, ds_1;     // DS 18x20 Sensoren
+DeviceAddress tempAddr, ds_0, ds_1; // DS 18x20 Sensoren
 uint8_t serialRxBuf[80];
 uint8_t rxBufIdx = 0;
 unsigned long runID = 0;
@@ -93,6 +93,10 @@ String clientId = "ESP8266Client-";
 char msg[MSG_BUFFER_SIZE];
 unsigned long lastMsg = 0;
 String startTime = "";
+double rpd = RPD;                   // LDR Pull-Down Resistor
+double r10 = R10;                   // LDR R(10 Lux)
+double sens = GAMMA;                // LDR Gamma-Value / Sensitivity 
+
 
 // ***** Objects
 SoftwareSerial sensorSerial(PIN_UART_RX, PIN_UART_TX);
@@ -309,6 +313,18 @@ String readSwitch(uint8_t pin) {
 String getADC0(){
   return String(analogRead(ADC0));
 } // getADC0()
+String getLDR() {
+  int adc = analogRead(ADC0);
+  double b  = 0.0;
+  String out = "", bs = "";
+  if (adc <= 1 || adc >= 1023) {
+    return "overflow";
+  }
+  b = 10.0 * exp(- log((rpd / r10) * (1024.0 / adc - 1.0)) / sens);
+  bs = b < 100.0 ? String(b, 2) : String(b);
+  out = "ADC = " + String(adc) + " = " + bs;
+  return out ;
+} // getLDR()
 
 void getSensorData() {
   String value = "";
@@ -574,6 +590,10 @@ void setup() {                                      // setup code, to run once
   Serial.printf("Switch 2 on Pin %d\n", SW2);
   Serial.printf("Switch 3 on Pin %d\n", SW3);
   Serial.printf("ADC 0 on Pin %d\n", ADC0);
+  Serial.printf("LDR-Params: Rpd = %f, R10 = %f, gamma = %f\n", \
+                rpd, r10, sens);
+  // double e = exp(1);                 // for testing
+  // Serial.printf("e = %f, ln(e) = %f\n", exp(1), log(e));
 //    getSensorData();                  // not yet
 //    printSensorData();                // not yet
   Serial.println("Configuring local access point...");

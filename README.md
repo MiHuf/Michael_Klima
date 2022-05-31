@@ -6,6 +6,8 @@ Michaels Raumklima-Monitor. Inspiriert durch den Artikel
 Der Code ist vorbereitet für den Anschluß weiterer Sensoren.
 Im Original: VINDRIKTNING Ikea Luftgüte Sensor -> AdafruitIO
 
+Neueste Ergänzung: Absolute (aber ungenaue) Helligkeitsmessung mit einem LDR Photowiderstand. Parameter müssen in der jeweiligen Zugangsdaten-Datei xxx.h angepasst werden. Siehe LDR-Photometer.pdf.
+
 ## Installation und Konfiguration
 
 Den Projekt-Ordner "Michael_Klima" von github klonen.
@@ -59,4 +61,6 @@ Und hier die Adapter-Platine:
 | |<https://github.com/ioBroker/ioBroker>|
 |MQTT Broker Mosquitto:|<http://www.steves-internet-guide.com/install-mosquitto-linux/>|
 |MQTT Broker sensatio:|<https://www.sensatio.io/>|
+|MQTT Arduino Cloud:|<https://www.cloudino.io/>|
+
 

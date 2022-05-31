@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             im_institut.h
    Created:           2022-03-26
-   Last modification: 2022-05-10
+   Last modification: 2022-05-31
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -74,7 +74,8 @@ URL auf uh2ulnmpc54: http://192.168.1.1:8081/
     {"Schalter SW1", "open (High)", "", 0, 0, "", true, getSwitch_1},
     {"Schalter SW2", "open (High)", "", 0, 0, "", false, getSwitch_2},
     {"Schalter SW3", "open (High)", "", 0, 0, "", false, getSwitch_3},
-    {"Analog Input", "0", "/ 1023", 0, 0, "", false, getADC0}    
+    {"Analog Input", "0", "/ 1024", 0, 0, "", false, getADC0},
+    {"Helligkeit [LDR]", "0", "Lux", 0, 0, "", true, getLDR}
   };
 
   // ***** My Settings
@@ -91,4 +92,8 @@ URL auf uh2ulnmpc54: http://192.168.1.1:8081/
   #define HAS_INTERNET         // comment out if not
   // #define MY_NTP_SERVER "at.pool.ntp.org"
   #define MY_NTP_SERVER "10.42.1.1"
+  // LDR Parameters for Type = GL 5539:
+  #define RPD 4.7e3       // LDR Pull-Down Resistor
+  #define R10 75.0e3      // LDR R(10 Lux)
+  #define GAMMA 0.8       // LDR Gamma-Value / Sensitivity 
 #endif // IM_INSTITUT_H
