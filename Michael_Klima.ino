@@ -1,7 +1,7 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2022-05-31
+   Last modification: 2022-06-01
    Program size:      Sketch 443133 Bytes (42%), Global Vars 33816 Bytes (41%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -74,7 +74,7 @@ bool wlanOK = false;
 bool mqttOK = false;
 bool timeOK = false;
 time_t now;                         // this is the epoch
-tm tm;                              // the structure tm holds time information in a more convient way
+tm tm;                              // time information in a structure
 #ifdef TEST_MODE
   String title = "Michaels Raumklima Monitor [Test-Mode]";
 #else
@@ -321,8 +321,8 @@ String getLDR() {
     return "overflow";
   }
   b = 10.0 * exp(- log((rpd / r10) * (1024.0 / adc - 1.0)) / sens);
-  bs = b < 100.0 ? String(b, 2) : String(b);
-  out = "ADC = " + String(adc) + " = " + bs;
+  bs = b < 100.0 ? String(b, 2) : String(b, 0);
+  out = "ADC = " + String(adc) + " » = " + bs; // », →, ≡ oder ⇔
   return out ;
 } // getLDR()
 
