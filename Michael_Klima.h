@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             Michael_Klima.h
    Created:           2021-12-21
-   Last modification: 2022-05-31
+   Last modification: 2022-06-08
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -9,7 +9,7 @@
 #ifndef MICHAEL_KLIMA_H
   #define MICHAEL_KLIMA_H
   // ***** Functions used in 
-  //       "privat.h", "im_institut.h", "michael.h", "andreas.h", "annika.h", ...
+  //       "privat.h", "im_institut.h", "_xxx.h"
   // defined in Michael_Klima.ino
   String getDummy();
   String getRandom();
@@ -34,14 +34,15 @@
     unsigned long runID;
     String topic;
     bool active;
-    std::function<String(void) > sensor_read;
+    std::function<String(void)> sensor_read;
   } sensor_type;
 
   // ***** Lines below may need modification
   // Comment out for use with real Vindriktning Sensor
   // #define TEST_MODE              // Uncomment for use without Vindriktning
   // include only one of
-  //       "privat.h", "im_institut.h", "michael.h", "andreas.h", "annika.h", ...
+  // "privat.h", "im_institut.h", "_michael.h", "_andreas.h", "_annika.h", ...
+  // files "_xxx.h" will not be included in the github repository.
   #include "privat.h"     
   #define MSG_BUFFER_SIZE (127)
   #define DHTTYPE DHT11       // define the type of sensor (DHT11 or DHT22)

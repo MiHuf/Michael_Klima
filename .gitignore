@@ -1,6 +1,5 @@
 # private files
-michael.h
-
+_*.h
 
 # Object files
 *.o
