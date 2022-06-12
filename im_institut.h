@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             im_institut.h
    Created:           2022-03-26
-   Last modification: 2022-05-31
+   Last modification: 2022-06-10
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -12,7 +12,6 @@
 /******************** Boot-Log with the Serial Monitor ***********************
  *  Copy the boot messages from the Serial Monitor and paste it here!
  *  Serial Monitor, Hardware:
-
 Michaels Raumklima Monitor
 Ikea Vindriktning on Pin 14
 oneWire on Pin 12
@@ -24,25 +23,31 @@ Switch 0 on Pin 5
 Switch 1 on Pin 4
 Switch 2 on Pin 0
 Switch 3 on Pin 2
+ADC 0 on Pin 17
+LDR-Params: Rpd = 5100.000000, R10 = 20000.000000, gamma = 0.600000
 Configuring local access point...
-Local Access Point SSID = Michael_2, local IP address = 192.168.4.1
+Local Access Point SSID = Michael_2
+Local IP address = 192.168.4.1
 MAC address = EA:DB:84:E1:64:3E
 Connecting to external WLAN SSID NM-AP with Password 2beannounced
-.............................
+....
 External WLAN SSID NM-AP connected, ext. IP address = 10.42.1.116
 HTTP server started.
 Attempting MQTT connection ...
 MQTT Broker = 10.42.1.1
 MQTT Client id = ESP8266_Michael_2
+NTP-Server = 10.42.1.1
 
 New conversion for Device 3c 0 8 3  59 6a 6 10
 New conversion for Device ea 0 8 3  69 83 a3 10
-Run #1, Uptime: 0 d, 0 h, 0 m, 51 s 
+Michael_2 gestartet: Fr, den 10.06.2022 14:28:16
+Run #1 vom Fr, den 10.06.2022 14:28:19, Uptime: 0 d, 0 h, 0 m, 32 s 
 Feinstaub [Vindriktning]: -1 µg/m³ (Messung #1 in Run #1)
-Temperatur [DS 18x20 #0]: 21.8 °C (Messung #1 in Run #1)
-Temperatur [DS 18x20 #1]: 24.3 °C (Messung #1 in Run #1)
+Temperatur [DS 18x20 #0]: 26.5 °C (Messung #1 in Run #1)
+Temperatur [DS 18x20 #1]: 27.6 °C (Messung #1 in Run #1)
 Schalter SW0: open (High)  (Messung #1 in Run #1)
 Schalter SW1: open (High)  (Messung #1 in Run #1)
+Helligkeit [LDR]: ADC = 378 » = 39.92 Lux (Messung #1 in Run #1)
 Publish message: hello world #1
 
 URL auf uh2ulnmpc54: http://192.168.1.1:8080/
@@ -65,9 +70,9 @@ URL auf uh2ulnmpc54: http://192.168.1.1:8081/
      "Uni/Büro/Luftfeuchte", false, getDHT_Humidity},
     {"Temperatur [DHT 11]", "0.0", "°C", 0, 0,
      "Uni/Büro/Temperatur_int", false, getDHT_Temperature},
-    {"Temperatur [DS 18x20 #0]", "0.0", "°C", 0, 0,
+    {"Temperatur [DS 18x20 #0, außen]", "0.0", "°C", 0, 0,
      "Uni/Büro/Temperatur_ext", true, getDS1820_0},
-    {"Temperatur [DS 18x20 #1]", "0.0", "°C", 0, 0,
+    {"Temperatur [DS 18x20 #1, innen]", "0.0", "°C", 0, 0,
      "Uni/Büro/Temperatur_int", true, getDS1820_1},
     {"CO₂ - Gehalt [SCD 30]", "0.0", "ppm", 0, 0, "", false, getDummy},
     {"Schalter SW0", "open (High)", "", 0, 0, "", true, getSwitch_0},
@@ -92,8 +97,8 @@ URL auf uh2ulnmpc54: http://192.168.1.1:8081/
   #define HAS_INTERNET         // comment out if not
   // #define MY_NTP_SERVER "at.pool.ntp.org"
   #define MY_NTP_SERVER "10.42.1.1"
-  // LDR Parameters for Type = GL 5539:
-  #define RPD 4.7e3       // LDR Pull-Down Resistor
-  #define R10 75.0e3      // LDR R(10 Lux)
-  #define GAMMA 0.8       // LDR Gamma-Value / Sensitivity 
+  // LDR Parameters for Type = GL 5537:
+  #define RPD 5.1e3       // LDR Pull-Down Resistor
+  #define R10 20.0e3      // LDR R(10 Lux)
+  #define GAMMA 0.6       // LDR Gamma-Value / Sensitivity 
 #endif // IM_INSTITUT_H
