@@ -1,8 +1,8 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2022-06-01
-   Program size:      Sketch 443133 Bytes (42%), Global Vars 33816 Bytes (41%)
+   Last modification: 2022-06-14
+   Program size:      Sketch 436413 Bytes (42%), Global Vars 33836 Bytes (41%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
@@ -104,7 +104,7 @@ ESP8266WebServer webServer(80);
 // WiFiClient espClient;
 WiFiClientSecure espClient;
 PubSubClient client(espClient);
-BearSSL::CertStore certStore;
+// BearSSL::CertStore certStore;
 OneWire oneWire(ONE_WIRE_BUS);
 DHT dht(ONE_WIRE_BUS, DHTTYPE, 6);
 DallasTemperature ds(&oneWire);
@@ -251,7 +251,11 @@ String getDS1820_0() {
   return readDS1820Temperature(ds_0);
 }
 String getDS1820_1() {
-  return readDS1820Temperature(ds_1);
+  if (dallasCount > 1) {
+    return readDS1820Temperature(ds_1);
+  } else {
+    return "disconnected";
+  }
 }
 String readDS1820Temperature(DeviceAddress addr) {
   String out = "";
@@ -317,11 +321,12 @@ String getLDR() {
   int adc = analogRead(ADC0);
   double b  = 0.0;
   String out = "", bs = "";
-  if (adc <= 1 || adc >= 1023) {
-    return "overflow";
+  if (adc > 1 || adc < 1023) {
+    b = 10.0 * exp(- log((rpd / r10) * (1024.0 / adc - 1.0)) / sens);
+    bs = b < 100.0 ? String(b, 2) : String(b, 0);
+  } else {
+    bs = "overflow";
   }
-  b = 10.0 * exp(- log((rpd / r10) * (1024.0 / adc - 1.0)) / sens);
-  bs = b < 100.0 ? String(b, 2) : String(b, 0);
   out = "ADC = " + String(adc) + " » = " + bs; // », →, ≡ oder ⇔
   return out ;
 } // getLDR()
@@ -331,13 +336,13 @@ void getSensorData() {
   runID += 1;
   for (uint8_t i = 0; i < sensorCount; i++) {
     value = sensor[i].sensor_read();
-    if (value != "nan" && value != "???") {
-      sensor[i].value = value;
-      if (value != "disconnected") {
-        sensor[i].measurement += 1;
-        sensor[i].runID = runID;
-      }
-    } // if value
+//    if (sensor[i].active) {
+        sensor[i].value = value;
+        if (value != "disconnected" && value != "nan" && value != "???") {
+          sensor[i].measurement += 1;
+          sensor[i].runID = runID;
+        } // if value
+//    }  // if active
   }  // for
 }  // getSensorData()
 
@@ -355,7 +360,7 @@ String formatSensorData(bool html = false) {
       out += " (Messung #" + String(sensor[i].measurement);
       out += " in Run #" + String(sensor[i].runID) + ")";
       out += html ? "</p> \r\n" : "\n";
-    } // if
+    } // if active
   } // for i
   return out;
 }  // formatSensorData()
@@ -406,6 +411,8 @@ String buildHtml() {
   page += "<body>\r\n";
   page += "<div id=\"webpage\">\r\n";
   page += "<h1>" + title + "</h1> \r\n";
+  page += "<p>Siehe <a href=\"https://github.com/MiHuf/Michael_Klima\" \
+          target=\"_blank\">github.com/MiHuf/Michael_Klima</a>\r\n";
   page += "<p>Local Access Point SSID = " + String(mySsid) +
           ", IP address = " + localIP_s +
           ", MAC address = " + macAddress_s + "</p> \r\n";
@@ -504,15 +511,15 @@ void setup() {                                      // setup code, to run once
   delay(1000);
   pinMode(LED_BUILTIN, OUTPUT);
   Serial.println();
-  // discoverOneWireDevices();
   Serial.println(title);
-  Serial.printf("Ikea Vindriktning on Pin %d\n", PIN_UART_RX);
+  Serial.printf("Defined %d sensors in the Software\n", sensorCount);
+  Serial.printf("Software UART (Ikea) on Pin %d\n", PIN_UART_RX);
   // Software Serial für IKEA Sensor
   sensorSerial.begin(9600);
   pinMode(ONE_WIRE_BUS, INPUT);
   oneWire.begin(ONE_WIRE_BUS);
   if (oneWire.reset()) {
-    Serial.printf("oneWire on Pin %d\n", ONE_WIRE_BUS);
+    Serial.printf("oneWire Bus on Pin %d\n", ONE_WIRE_BUS);
   } else {
     Serial.printf("No devices found on Pin %d\n", ONE_WIRE_BUS);
   }
@@ -549,9 +556,9 @@ void setup() {                                      // setup code, to run once
                  + deviceAddressToString(ds_0));
     dallasCount += 1;
     // ds.setResolution(ds_0, 11);     // resolutuion for this sensor
-  } else {
-    Serial.println("Device DS18x20 #0 not found, will be set to inactive");
-    sensor[3].active = false;
+//  } else {
+//    Serial.println("Device DS18x20 #0 not found, will be set to inactive");
+//    sensor[3].active = false;
   }
   if (ds.getAddress(ds_1, 1)) {
     type = ds_0[0] == DS18B20MODEL ? "DS18B20" : "DS18S20 / DS1820"; 
@@ -559,9 +566,9 @@ void setup() {                                      // setup code, to run once
                  + deviceAddressToString(ds_1));
     dallasCount += 1;
     // ds.setResolution(ds_1, 11);     // resolutuion for this sensor
-  } else {
-    Serial.println("Device DS18x20 #1 not found, will be set to inactive");
-    sensor[4].active = false;
+//  } else {
+//    Serial.println("Device DS18x20 #1 not found, will be set to inactive");
+//    sensor[4].active = false;
   }
 //  **** This does not work
 //  deviceCount = ds.getDeviceCount();
@@ -592,8 +599,6 @@ void setup() {                                      // setup code, to run once
   Serial.printf("ADC 0 on Pin %d\n", ADC0);
   Serial.printf("LDR-Params: Rpd = %f, R10 = %f, gamma = %f\n", \
                 rpd, r10, sens);
-  // double e = exp(1);                 // for testing
-  // Serial.printf("e = %f, ln(e) = %f\n", exp(1), log(e));
 //    getSensorData();                  // not yet
 //    printSensorData();                // not yet
   Serial.println("Configuring local access point...");
@@ -605,13 +610,13 @@ void setup() {                                      // setup code, to run once
   #else
     WiFi.softAP(mySsid, myPassword);    // AP will be password protected
   #endif
-  localIP_s = WiFi.softAPIP().toString().c_str();
   #ifdef OPEN_WIFI
     Serial.printf("Local Access Point SSID = %s\n", mySsid);
   #else
     Serial.printf("Local Access Point SSID = %s, Password = %s\n",
                   mySsid, myPassword);
   #endif
+  localIP_s = WiFi.softAPIP().toString();
   Serial.printf("Local IP address = %s\n", localIP_s.c_str());
   macAddress_s = WiFi.softAPmacAddress();
   Serial.printf("MAC address = %s\n", macAddress_s.c_str());
