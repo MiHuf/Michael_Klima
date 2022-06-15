@@ -1,7 +1,7 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2022-06-14
+   Last modification: 2022-06-15
    Program size:      Sketch 436413 Bytes (42%), Global Vars 33836 Bytes (41%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -31,7 +31,7 @@
 #include "Michael_Klima.h"
 
 // ***** Pin definitions
-#ifdef LED_BUILTIN                                  // true for D1 Mini
+#ifdef LED_BUILTIN                                  // true for D1 Mini, =D4
   #define AN LOW
   #define AUS HIGH
 #else                                               // not a D1 Mini
@@ -48,7 +48,8 @@ constexpr static const uint8_t ONE_WIRE_BUS = D6;   // =GPIO12 am Wemos D1 Mini
 constexpr static const uint8_t SW0 = SCL;           // =GPIO5 / D1 / SCL
 constexpr static const uint8_t SW1 = SDA;           // =GPIO4 / D2 / SDA
 constexpr static const uint8_t SW2 = D3;            // =GPIO0
-constexpr static const uint8_t SW3 = D4;            // =GPIO2
+constexpr static const uint8_t SW3 = D4;            // =GPIO2 =LED_BUILTIN
+// ***** Warning! Will not boot if D4 / LED_BUILTIN is LOW !!!
 constexpr static const uint8_t ADC0 = A0;           // = Analog input, Pin 17
 
 // ***** General Settings
