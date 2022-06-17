@@ -1,13 +1,14 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2022-06-15
-   Program size:      Sketch 436413 Bytes (42%), Global Vars 33836 Bytes (41%)
+   Last modification: 2022-06-17
+   Program size:      Sketch 436441 Bytes (41%), Global Vars 33856 Bytes (41%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
 /* Michaels Raumklima-Monitor. Inspiriert durch den Artikel "IKEA Vindiktning
-   hacken", siehe Make 5/2021, Seite 14 ff.
+   hacken", siehe Make 5/2021, Seite 14 ff und hier:
+   https://techtest.org/anleitung-wlan-feinstaub-und-temperatur-sensor-ikea-vindriktning-hack/
    
    Im Original: VINDRIKTNING Ikea Luftguete Sensor -> AdafruitIO
 
@@ -339,7 +340,7 @@ void getSensorData() {
     value = sensor[i].sensor_read();
 //    if (sensor[i].active) {
         sensor[i].value = value;
-        if (value != "disconnected" && value != "nan" && value != "???") {
+        if (value != "disconnected" && value != "nan" && value != "???" && value != "inf") {
           sensor[i].measurement += 1;
           sensor[i].runID = runID;
         } // if value
@@ -404,7 +405,7 @@ String buildHtml() {
   page += "<style type=\"text/css\">\r\n";
   page += "  html {font-family: Helvetica; display: inline-block; ";
   page +=  "margin: 0px auto; text-align: left;}\r\n";
-  page += "  body {background-color: #FFC;margin-top: 50px; margin-left: 20px;}\r\n";
+  page += "  body {background-color: #FFC; margin-top: 50px; margin-left: 20px;}\r\n";
   page += "  h1 {color: #33C; margin: 20px auto 30px;}\r\n";
   page += "  p {font-size: 24px; color: #933; margin-bottom: 10px;}\r\n";
   page += "</style>\r\n";
@@ -413,7 +414,7 @@ String buildHtml() {
   page += "<div id=\"webpage\">\r\n";
   page += "<h1>" + title + "</h1> \r\n";
   page += "<p>Siehe <a href=\"https://github.com/MiHuf/Michael_Klima\" \
-          target=\"_blank\">github.com/MiHuf/Michael_Klima</a>\r\n";
+          target=\"_blank\">github.com/MiHuf/Michael_Klima</a></p>\r\n";
   page += "<p>Local Access Point SSID = " + String(mySsid) +
           ", IP address = " + localIP_s +
           ", MAC address = " + macAddress_s + "</p> \r\n";
