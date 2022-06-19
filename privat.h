@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             privat.h
    Created:           2022-04-05
-   Last modification: 2022-05-31
+   Last modification: 2022-06-19
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -44,6 +44,7 @@
   };
 
   // ***** My Settings
+  // #define MY_TITLE "Raumklima Monitor"  // uncomment for own title
   #define WIFI_SSID "xxx"
   #define WIFI_PASS "yyy"
   // Local Access Point Parameters, Michael Hufschmidt, 2022-01-12

@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             im_institut.h
    Created:           2022-03-26
-   Last modification: 2022-06-10
+   Last modification: 2022-06-19
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -84,6 +84,7 @@ URL auf uh2ulnmpc54: http://192.168.1.1:8081/
   };
 
   // ***** My Settings
+  // #define MY_TITLE "Raumklima Monitor"  // uncomment for own title
   #define WIFI_SSID "NM-AP"
   #define WIFI_PASS "2beannounced"
   // Local Access Point Parameters, Michael Hufschmidt, 2022-01-12

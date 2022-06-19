@@ -1,8 +1,8 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2022-06-17
-   Program size:      Sketch 436441 Bytes (41%), Global Vars 33856 Bytes (41%)
+   Last modification: 2022-06-19
+   Program size:      Sketch 436465 Bytes (41%), Global Vars 33944 Bytes (41%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
@@ -77,8 +77,8 @@ bool mqttOK = false;
 bool timeOK = false;
 time_t now;                         // this is the epoch
 tm tm;                              // time information in a structure
-#ifdef TEST_MODE
-  String title = "Michaels Raumklima Monitor [Test-Mode]";
+#ifdef MY_TITLE
+  String title = MY_TITLE;
 #else
   String title = "Michaels Raumklima Monitor";
 #endif

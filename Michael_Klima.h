@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             Michael_Klima.h
    Created:           2021-12-21
-   Last modification: 2022-06-08
+   Last modification: 2022-06-19
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -38,10 +38,8 @@
   } sensor_type;
 
   // ***** Lines below may need modification
-  // Comment out for use with real Vindriktning Sensor
-  // #define TEST_MODE              // Uncomment for use without Vindriktning
   // include only one of
-  // "privat.h", "im_institut.h", "_michael.h", "_andreas.h", "_annika.h", ...
+  // "privat.h", "im_institut.h", "_michael.h", "_test.h", "_andreas.h", "_annika.h", ...
   // files "_xxx.h" will not be included in the github repository.
   #include "privat.h"     
   #define MSG_BUFFER_SIZE (127)
