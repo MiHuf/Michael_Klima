@@ -1,7 +1,7 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2022-06-19
+   Last modification: 2022-06-20
    Program size:      Sketch 436465 Bytes (41%), Global Vars 33944 Bytes (41%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -515,8 +515,8 @@ void setup() {                                      // setup code, to run once
   Serial.println();
   Serial.println(title);
   Serial.printf("Defined %d sensors in the Software\n", sensorCount);
-  Serial.printf("Software UART (Ikea) on Pin %d\n", PIN_UART_RX);
   // Software Serial für IKEA Sensor
+  Serial.printf("Software UART (Ikea) on Pin %d\n", PIN_UART_RX);
   sensorSerial.begin(9600);
   pinMode(ONE_WIRE_BUS, INPUT);
   oneWire.begin(ONE_WIRE_BUS);
@@ -561,7 +561,7 @@ void setup() {                                      // setup code, to run once
 //  } else {
 //    Serial.println("Device DS18x20 #0 not found, will be set to inactive");
 //    sensor[3].active = false;
-  }
+  }  // ds.getAddress(...)
   if (ds.getAddress(ds_1, 1)) {
     type = ds_0[0] == DS18B20MODEL ? "DS18B20" : "DS18S20 / DS1820"; 
     Serial.println("Found Device " + type + " #1, ROM-Address = "
@@ -571,7 +571,7 @@ void setup() {                                      // setup code, to run once
 //  } else {
 //    Serial.println("Device DS18x20 #1 not found, will be set to inactive");
 //    sensor[4].active = false;
-  }
+  }  // ds.getAddress(...)
 //  **** This does not work
 //  deviceCount = ds.getDeviceCount();
 //  dallasCount = ds.getDS18Count();
