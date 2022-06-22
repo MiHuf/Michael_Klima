@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             im_institut.h
    Created:           2022-03-26
-   Last modification: 2022-06-20
+   Last modification: 2022-06-22
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -12,9 +12,11 @@
 /******************** Boot-Log with the Serial Monitor ***********************
  *  Copy the boot messages from the Serial Monitor and paste it here!
  *  Serial Monitor, Hardware:
+
 Michaels Raumklima Monitor
-Ikea Vindriktning on Pin 14
-oneWire on Pin 12
+Defined 12 sensors in the Software
+Software UART (Ikea) on Pin 14
+oneWire Bus on Pin 12
 Parasite power is: OFF (3 wire)
 Found Device DS18S20 / DS1820 #0, ROM-Address = 3c 0 8 3  59 6a 6 10
 Found Device DS18S20 / DS1820 #1, ROM-Address = ea 0 8 3  69 83 a3 10
@@ -40,14 +42,14 @@ NTP-Server = 10.42.1.1
 
 New conversion for Device 3c 0 8 3  59 6a 6 10
 New conversion for Device ea 0 8 3  69 83 a3 10
-Michael_2 gestartet: Fr, den 10.06.2022 14:28:16
-Run #1 vom Fr, den 10.06.2022 14:28:19, Uptime: 0 d, 0 h, 0 m, 32 s 
+Michael_2 gestartet: Mi, den 22.06.2022 10:05:50
+Run #1 vom Mi, den 22.06.2022 10:05:53, Uptime: 0 d, 0 h, 0 m, 32 s 
 Feinstaub [Vindriktning]: -1 µg/m³ (Messung #1 in Run #1)
-Temperatur [DS 18x20 #0]: 26.5 °C (Messung #1 in Run #1)
-Temperatur [DS 18x20 #1]: 27.6 °C (Messung #1 in Run #1)
+Temperatur [DS 18x20 #0, außen]: 19.3 °C (Messung #1 in Run #1)
+Temperatur [DS 18x20 #1, innen]: 27.9 °C (Messung #1 in Run #1)
 Schalter SW0: open (High)  (Messung #1 in Run #1)
 Schalter SW1: open (High)  (Messung #1 in Run #1)
-Helligkeit [LDR]: ADC = 378 » = 39.92 Lux (Messung #1 in Run #1)
+Helligkeit [LDR GL5537]: ADC = 513 » = 98.16 Lux (Messung #1 in Run #1)
 Publish message: hello world #1
 
 URL auf uh2ulnmpc54: http://192.168.1.1:8080/
@@ -80,7 +82,7 @@ URL auf uh2ulnmpc54: http://192.168.1.1:8081/
     {"Schalter SW2", "open (High)", "", 0, 0, "", false, getSwitch_2},
     {"Schalter SW3", "open (High)", "", 0, 0, "", false, getSwitch_3},
     {"Analog Input", "0", "/ 1024", 0, 0, "", false, getADC0},
-    {"Helligkeit [LDR]", "0", "Lux", 0, 0, "", true, getLDR}
+    {"Helligkeit [LDR GL5537]", "0", "Lux", 0, 0, "", true, getLDR}
   };
 
   // ***** My Settings
