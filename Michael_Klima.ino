@@ -1,8 +1,8 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2022-06-20
-   Program size:      Sketch 436465 Bytes (41%), Global Vars 33944 Bytes (41%)
+   Last modification: 2022-06-22
+   Program size:      Sketch 436465 Bytes (41%), Global Vars 33924 Bytes (41%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
@@ -323,7 +323,7 @@ String getLDR() {
   int adc = analogRead(ADC0);
   double b  = 0.0;
   String out = "", bs = "";
-  if (adc > 1 || adc < 1023) {
+  if (adc >= 1 && adc <= 1023) {
     b = 10.0 * exp(- log((rpd / r10) * (1024.0 / adc - 1.0)) / sens);
     bs = b < 100.0 ? String(b, 2) : String(b, 0);
   } else {
