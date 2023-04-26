@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             im_institut.h
    Created:           2022-03-26
-   Last modification: 2022-06-22
+   Last modification: 2023-04-19
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -60,6 +60,7 @@ URL auf uh2ulnmpc54: http://192.168.1.1:8081/
 
  * ***************************************************************************/
   // ***** My Sensor definition
+  #define DHTTYPE DHT11       // define the type of sensor (DHT11 or DHT22)
   sensor_type sensor[] = {
     #ifdef TEST_MODE
       {"Feinstaub [Test-Mode]", "0", "µg/m³", 0, 0,

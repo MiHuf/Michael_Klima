@@ -1,7 +1,7 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2022-06-22
+   Last modification: 2023-04-05
    Program size:      Sketch 436465 Bytes (41%), Global Vars 33924 Bytes (41%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -56,10 +56,10 @@ constexpr static const uint8_t ADC0 = A0;           // = Analog input, Pin 17
 // ***** General Settings
 #define MY_TZ "CET-1CEST,M3.5.0/02,M10.5.0/03"
 const String wotag[] = {"So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"};
-const uint8_t BLINK_COUNT = 3;  // Default Anzahl Lichtblitze
+const uint8_t BLINK_COUNT = 5;  // Default Anzahl Lichtblitze
 const uint16_t PUNKT = 200;     // Punktlaenge (Norm = 100 ms bei 60 BpM)
-const uint16_t ABSTAND = 200;   // Punkt-Strich Abstand (Norm = 100 ms)
-const uint16_t ZEICHEN = 1000;  // Buchstaben-Abstand im Wort (Norm = 3x Punkt)
+const uint16_t ABSTAND = 500;   // Punkt-Strich Abstand (Norm = 100 ms)
+const uint16_t ZEICHEN = 1500;  // Buchstaben-Abstand im Wort (Norm = 3x Punkt)
 //* Set these to your desired credentials. */
 const char *extSsid = WIFI_SSID;
 const char *extPassword = WIFI_PASS;
@@ -114,15 +114,18 @@ DallasTemperature ds(&oneWire);
 
 // ***** General Functions
 void blink(const uint8_t count = BLINK_COUNT) {
+  pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, AUS);
   delay(ZEICHEN);
   for (uint8_t i = 0; i < count; i++) {
+//    Serial.printf("\nBlink #%d", i);
     digitalWrite(LED_BUILTIN, AN);
     delay(ABSTAND);
     digitalWrite(LED_BUILTIN, AUS);
     delay(ABSTAND);
   }
   delay(ZEICHEN);
+  pinMode(LED_BUILTIN, INPUT_PULLUP);
 } // blink()
 
 String deviceAddressToString(DeviceAddress a) {
@@ -636,7 +639,7 @@ void setup() {                                      // setup code, to run once
       Serial.println("No NTP-Server");
     #endif
   } // wlanOK
-  blink();                             // when setup finished
+  blink();                                          // when setup finished
 }  // setup()
 
 void loop() {                                       // main code, repeatedly
@@ -656,7 +659,7 @@ void loop() {                                       // main code, repeatedly
 //    } // mqttOK
 //    client.loop();
 #ifdef DO_BLINK
-    blink(5);
+    blink();
 #endif
   }  // currentMillis < ...
 } // loop()
