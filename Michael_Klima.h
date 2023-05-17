@@ -42,7 +42,7 @@
   // include only one of
   // "privat.h", "im_institut.h", "_michael.h", "_test.h", "_andreas.h", "_annika.h", ...
   // files "_xxx.h" will not be included in the github repository.
-  #include "privat.h"     
+  #include "_test.h"     
   #define MSG_BUFFER_SIZE (127)
   // #define DHTTYPE DHT11       // define the type of sensor (DHT11 or DHT22)
   // #define DO_BLINK         // Comment out to suppress LED blinking
