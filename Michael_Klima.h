@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             Michael_Klima.h
    Created:           2021-12-21
-   Last modification: 2023-04-26
+   Last modification: 2023-05-18
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -40,8 +40,8 @@
   // ***** Lines below may need modification
   // #define DHTTYPE xxx // moved to individual header files
   // include only one of
-  // "privat.h", "im_institut.h", "_michael.h", "_test.h", "_andreas.h", "_annika.h", ...
-  // files "_xxx.h" will not be included in the github repository.
+  // "privat.h", "_michael.h" (1), "im_institut.h" (2), "_test.h" (3), "_andreas.h" (4), "_neu.h" (5), ...
+  // (x) is the number of the controller, files "_xxx.h" will not be included in the github repository.
   #include "_test.h"     
   #define MSG_BUFFER_SIZE (127)
   // #define DHTTYPE DHT11       // define the type of sensor (DHT11 or DHT22)
