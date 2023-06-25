@@ -1,8 +1,8 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2023-04-05
-   Program size:      Sketch 436465 Bytes (41%), Global Vars 33924 Bytes (41%)
+   Last modification: 2023-06-25
+   Program size:      Sketch 398988 Bytes (38%), Global Vars 33924 Bytes (41%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
@@ -69,6 +69,15 @@ const char *myPassword = APPSK;
 const char* mqtt_server = MQTT_BROKER;
 const char* mqtt_user = MQTT_USER;
 const char* mqtt_password = MQTT_PASS;
+const String mq_client = "ESP8266_" + String(APSSID) ;
+#define MQTT_CLIENT mq_client.c_str();
+#ifdef MQTT_CLIENT
+  const char* mqtt_client_id = MQTT_CLIENT;
+#else 
+  // Create a random client ID
+  String client_id = "ESP8266Client-" + String(random(0xffff), HEX);
+  const char* mqtt_client_id = client_id.c_str()
+#endif
 
 
 // ***** Variables
@@ -430,7 +439,8 @@ String buildHtml() {
   }
   if (mqttOK) {
     page += "<p>MQTT Broker = " + String(mqtt_server) +
-            "<br>MQTT Client id = " + clientId + "</p> \r\n";
+            "<br>MQTT User = " + String(mqtt_user) + 
+            "<br>MQTT Client id = " + String(mqtt_client_id) + "</p> \r\n";
   } else {
     page += "<p> MQTT Timeout after " + String(mqttTimeout) + " s</p> \r\n";
   }
@@ -481,15 +491,11 @@ void reconnect() {
   // Loop until we're reconnected
   while (!mqttOK && (millis() < until)) {
     Serial.println("Attempting MQTT connection ...");
-    // Create a random client ID
-    // clientId = "ESP8266Client-";
-    // clientId += String(random(0xffff), HEX);
-    clientId = "ESP8266_";
-    clientId += String(mySsid);
     // Attempt to connect
-    if (client.connect(clientId.c_str()), mqtt_user, mqtt_password ) {
+    if (mqtt_client_id, mqtt_user, mqtt_password ) {
       Serial.println("MQTT Broker = " + String(mqtt_server));
-      Serial.println("MQTT Client id = " + clientId);
+      Serial.println("MQTT User = " + String(mqtt_user));
+      Serial.println("MQTT Client id = " + String(mqtt_client_id));
       // Once connected, publish an announcement...
       client.publish("outTopic", "hello world");
       // ... and resubscribe
