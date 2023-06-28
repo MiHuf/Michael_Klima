@@ -1,7 +1,7 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2023-06-25
+   Last modification: 2023-06-28
    Program size:      Sketch 398988 Bytes (38%), Global Vars 33924 Bytes (41%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -26,6 +26,7 @@
 #include <DHT.h>
 #include <time.h>
 #include <TZ.h>
+// https://github.com/knolleary/pubsubclient
 #include <PubSubClient.h>
 #include <CertStoreBearSSL.h>
 #include <functional>
@@ -454,6 +455,35 @@ String buildHtml() {
 
 // ***** MQTT Functions
 
+void reconnect() { 
+  unsigned long until = millis() + 1000 * mqttTimeout;
+  mqttOK = client.connected();
+  if (mqttOK) return;
+  // Loop until we're reconnected
+  while (!mqttOK && (millis() < until)) {
+    Serial.println("Attempting MQTT connection ...");
+    // Attempt to connect
+    if (mqtt_client_id, mqtt_user, mqtt_password ) {
+      Serial.println("MQTT Broker = " + String(mqtt_server));
+      Serial.println("MQTT User = " + String(mqtt_user));
+      Serial.println("MQTT Client id = " + String(mqtt_client_id));
+      // Once connected, publish an announcement...
+      client.publish("outTopic", "hello world");
+      // ... and resubscribe
+      client.subscribe("inTopic");
+      mqttOK = true;
+    } else {
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");
+      // Wait 5 seconds before retrying
+      delay(5000);
+    }
+  } // while
+  if (!mqttOK) Serial.printf("MQTT Timeout after %d s", mqttTimeout);
+} // reconnect()
+
+
 void publishSensorData() {
     snprintf (msg, MSG_BUFFER_SIZE, "hello world #%ld", runID);
     Serial.print("Publish message: ");
@@ -483,34 +513,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
     digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
   }
 }  // callback(..)
-
-void reconnect() { 
-  unsigned long until = millis() + 1000 * mqttTimeout;
-  mqttOK = client.connected();
-  if (mqttOK) return;
-  // Loop until we're reconnected
-  while (!mqttOK && (millis() < until)) {
-    Serial.println("Attempting MQTT connection ...");
-    // Attempt to connect
-    if (mqtt_client_id, mqtt_user, mqtt_password ) {
-      Serial.println("MQTT Broker = " + String(mqtt_server));
-      Serial.println("MQTT User = " + String(mqtt_user));
-      Serial.println("MQTT Client id = " + String(mqtt_client_id));
-      // Once connected, publish an announcement...
-      client.publish("outTopic", "hello world");
-      // ... and resubscribe
-      client.subscribe("inTopic");
-      mqttOK = true;
-    } else {
-      Serial.print("failed, rc=");
-      Serial.print(client.state());
-      Serial.println(" try again in 5 seconds");
-      // Wait 5 seconds before retrying
-      delay(5000);
-    }
-  } // while
-  if (!mqttOK) Serial.printf("MQTT Timeout after %d s", mqttTimeout);
-} // reconnect()
 
 
 // ***** Main Functions
