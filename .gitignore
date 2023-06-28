@@ -1,6 +1,9 @@
 # private files
 _*.h
 
+# Arduino libraries
+libraries/*
+
 # Object files
 *.o
 *.ko
