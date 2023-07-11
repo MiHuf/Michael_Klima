@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.05" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
@@ -4907,7 +4907,7 @@ ESP8266 module</description>
 <part name="+3V3" library="solpad" library_urn="urn:adsk.eagle:library:364" deviceset="SE13" device="" package3d_urn="urn:adsk.eagle:package:26505/1"/>
 <part name="GND2" library="solpad" library_urn="urn:adsk.eagle:library:364" deviceset="SE13" device="" package3d_urn="urn:adsk.eagle:package:26505/1"/>
 <part name="FRAME1" library="frames" library_urn="urn:adsk.eagle:library:229" deviceset="DINA5_L" device=""/>
-<part name="WEMOS1" library="esp8266modules" deviceset="WEMOS-D1-MINI" device="" value="D1 Mini"/>
+<part name="WEMOS" library="esp8266modules" deviceset="WEMOS-D1-MINI" device="" value="D1 Mini"/>
 <part name="GND1" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="SCL" library="solpad" library_urn="urn:adsk.eagle:library:364" deviceset="SE13" device="" package3d_urn="urn:adsk.eagle:package:26505/1"/>
 <part name="SDA" library="solpad" library_urn="urn:adsk.eagle:library:364" deviceset="SE13" device="" package3d_urn="urn:adsk.eagle:package:26505/1"/>
@@ -4918,9 +4918,9 @@ ESP8266 module</description>
 <part name="R7" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="0207/10" package3d_urn="urn:adsk.eagle:package:23491/2" value="10k"/>
 <part name="RES1" library="solpad" library_urn="urn:adsk.eagle:library:364" deviceset="SE13" device="" package3d_urn="urn:adsk.eagle:package:26505/1"/>
 <part name="RES2" library="solpad" library_urn="urn:adsk.eagle:library:364" deviceset="SE13" device="" package3d_urn="urn:adsk.eagle:package:26505/1"/>
-<part name="RPD" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="0207/10" package3d_urn="urn:adsk.eagle:package:23491/2" value="4k7"/>
-<part name="LDR1" library="solpad" library_urn="urn:adsk.eagle:library:364" deviceset="SE13" device="" package3d_urn="urn:adsk.eagle:package:26505/1"/>
-<part name="LDR2" library="solpad" library_urn="urn:adsk.eagle:library:364" deviceset="SE13" device="" package3d_urn="urn:adsk.eagle:package:26505/1"/>
+<part name="RPD" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="0207/10" package3d_urn="urn:adsk.eagle:package:23491/2" value="10k"/>
+<part name="LDR-" library="solpad" library_urn="urn:adsk.eagle:library:364" deviceset="SE13" device="" package3d_urn="urn:adsk.eagle:package:26505/1"/>
+<part name="LDR+" library="solpad" library_urn="urn:adsk.eagle:library:364" deviceset="SE13" device="" package3d_urn="urn:adsk.eagle:package:26505/1"/>
 <part name="U$1" library="DHT11" deviceset="DHT11-PION." device=""/>
 <part name="C1" library="Michaels_Lib" deviceset="C-EU" device="025_050-045X075" package3d_urn="urn:adsk.eagle:package:23635/1" value="100n"/>
 <part name="C2" library="Michaels_Lib" deviceset="C-EU" device="025_050-045X075" package3d_urn="urn:adsk.eagle:package:23635/1" value="100n"/>
@@ -4931,16 +4931,16 @@ ESP8266 module</description>
 <text x="163.83" y="53.34" size="1.778" layer="91" rot="R90">--- IKEA ---</text>
 <text x="163.83" y="67.31" size="1.778" layer="91" rot="R90">Ext. I2C</text>
 <text x="163.83" y="78.74" size="1.778" layer="91" rot="R90">Ext. 1 Wire</text>
-<text x="140.97" y="15.24" size="2.54" layer="91">Vers. 3.1</text>
+<text x="140.97" y="15.24" size="2.54" layer="91">Vers. 3.2</text>
 </plain>
 <instances>
 <instance part="R2" gate="G$1" x="22.86" y="68.58" smashed="yes" rot="R90">
 <attribute name="NAME" x="21.3614" y="71.12" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="21.717" y="67.31" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="R3" gate="G$1" x="53.34" y="99.06" smashed="yes" rot="R90">
-<attribute name="NAME" x="51.8414" y="101.6" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="52.197" y="97.79" size="1.778" layer="96" rot="R180"/>
+<instance part="R3" gate="G$1" x="53.34" y="104.14" smashed="yes" rot="R90">
+<attribute name="NAME" x="51.8414" y="106.68" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="52.197" y="102.87" size="1.778" layer="96" rot="R180"/>
 </instance>
 <instance part="+5V" gate="1" x="152.4" y="53.34" smashed="yes" rot="MR90">
 <attribute name="NAME" x="155.321" y="54.61" size="1.778" layer="95" rot="MR180"/>
@@ -4968,8 +4968,8 @@ ESP8266 module</description>
 <attribute name="LAST_DATE_TIME" x="140.97" y="10.16" size="2.286" layer="94"/>
 <attribute name="SHEET" x="154.305" y="5.08" size="2.54" layer="94"/>
 </instance>
-<instance part="WEMOS1" gate="D1" x="73.66" y="60.96" smashed="yes">
-<attribute name="NAME" x="63.5" y="73.66" size="1.778" layer="95"/>
+<instance part="WEMOS" gate="D1" x="73.66" y="60.96" smashed="yes">
+<attribute name="NAME" x="63.5" y="74.93" size="1.778" layer="95"/>
 <attribute name="VALUE" x="71.12" y="50.8" size="1.778" layer="96"/>
 </instance>
 <instance part="GND1" gate="1" x="22.86" y="30.48" smashed="yes">
@@ -4985,37 +4985,37 @@ ESP8266 module</description>
 <attribute name="NAME" x="21.3614" y="45.085" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="21.717" y="41.91" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="R4" gate="G$1" x="134.62" y="99.06" smashed="yes" rot="R90">
-<attribute name="NAME" x="133.1214" y="101.6" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="133.477" y="97.79" size="1.778" layer="96" rot="R180"/>
+<instance part="R4" gate="G$1" x="134.62" y="104.14" smashed="yes" rot="R90">
+<attribute name="NAME" x="133.1214" y="106.68" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="133.477" y="102.87" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="R5" gate="G$1" x="142.24" y="99.06" smashed="yes" rot="R90">
-<attribute name="NAME" x="140.7414" y="101.6" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="141.097" y="97.79" size="1.778" layer="96" rot="R180"/>
+<instance part="R5" gate="G$1" x="142.24" y="104.14" smashed="yes" rot="R90">
+<attribute name="NAME" x="140.7414" y="106.68" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="141.097" y="102.87" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="R6" gate="G$1" x="63.5" y="99.06" smashed="yes" rot="R90">
-<attribute name="NAME" x="62.0014" y="101.6" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="62.357" y="97.79" size="1.778" layer="96" rot="R180"/>
+<instance part="R6" gate="G$1" x="63.5" y="104.14" smashed="yes" rot="R90">
+<attribute name="NAME" x="62.0014" y="106.68" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="62.357" y="102.87" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="R7" gate="G$1" x="73.66" y="99.06" smashed="yes" rot="R90">
-<attribute name="NAME" x="72.1614" y="101.6" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="72.517" y="97.79" size="1.778" layer="96" rot="R180"/>
+<instance part="R7" gate="G$1" x="73.66" y="104.14" smashed="yes" rot="R90">
+<attribute name="NAME" x="72.1614" y="106.68" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="72.517" y="102.87" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="RES1" gate="1" x="63.5" y="91.44" smashed="yes" rot="MR180">
-<attribute name="NAME" x="67.31" y="87.249" size="1.778" layer="95" rot="MR0"/>
+<instance part="RES1" gate="1" x="63.5" y="96.52" smashed="yes" rot="MR180">
+<attribute name="NAME" x="67.31" y="92.329" size="1.778" layer="95" rot="MR0"/>
 </instance>
-<instance part="RES2" gate="1" x="73.66" y="91.44" smashed="yes" rot="MR180">
-<attribute name="NAME" x="76.2" y="87.249" size="1.778" layer="95" rot="MR0"/>
+<instance part="RES2" gate="1" x="73.66" y="96.52" smashed="yes" rot="MR180">
+<attribute name="NAME" x="76.2" y="92.329" size="1.778" layer="95" rot="MR0"/>
 </instance>
 <instance part="RPD" gate="G$1" x="33.02" y="43.18" smashed="yes" rot="R90">
 <attribute name="NAME" x="31.5214" y="45.085" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="31.877" y="41.91" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="LDR1" gate="1" x="27.94" y="91.44" smashed="yes" rot="MR180">
-<attribute name="NAME" x="30.48" y="87.249" size="1.778" layer="95" rot="MR0"/>
+<instance part="LDR-" gate="1" x="33.02" y="83.82" smashed="yes" rot="MR0">
+<attribute name="NAME" x="30.48" y="88.011" size="1.778" layer="95" rot="MR180"/>
 </instance>
-<instance part="LDR2" gate="1" x="38.1" y="91.44" smashed="yes" rot="MR180">
-<attribute name="NAME" x="40.64" y="87.249" size="1.778" layer="95" rot="MR0"/>
+<instance part="LDR+" gate="1" x="33.02" y="96.52" smashed="yes" rot="MR180">
+<attribute name="NAME" x="35.56" y="92.329" size="1.778" layer="95" rot="MR0"/>
 </instance>
 <instance part="U$1" gate="G$1" x="119.38" y="104.14" smashed="yes"/>
 <instance part="C1" gate="G$1" x="111.76" y="45.72" smashed="yes">
@@ -5033,13 +5033,13 @@ ESP8266 module</description>
 <net name="N$12" class="0">
 <segment>
 <pinref part="R3" gate="G$1" pin="1"/>
-<pinref part="WEMOS1" gate="D1" pin="D6"/>
+<pinref part="WEMOS" gate="D1" pin="D6"/>
 <junction x="58.42" y="60.96"/>
 <wire x1="58.42" y1="60.96" x2="53.34" y2="60.96" width="0.1524" layer="91"/>
 <wire x1="53.34" y1="60.96" x2="53.34" y2="83.82" width="0.1524" layer="91"/>
 <pinref part="DQ" gate="1" pin="MP"/>
 <junction x="149.86" y="83.82"/>
-<wire x1="53.34" y1="83.82" x2="53.34" y2="93.98" width="0.1524" layer="91"/>
+<wire x1="53.34" y1="83.82" x2="53.34" y2="99.06" width="0.1524" layer="91"/>
 <wire x1="119.38" y1="83.82" x2="149.86" y2="83.82" width="0.1524" layer="91"/>
 <wire x1="119.38" y1="91.44" x2="119.38" y2="83.82" width="0.1524" layer="91"/>
 <junction x="119.38" y="83.82"/>
@@ -5060,7 +5060,7 @@ ESP8266 module</description>
 <wire x1="22.86" y1="48.26" x2="22.86" y2="63.5" width="0.1524" layer="91"/>
 <junction x="22.86" y="63.5"/>
 <junction x="22.86" y="48.26"/>
-<pinref part="WEMOS1" gate="D1" pin="D5"/>
+<pinref part="WEMOS" gate="D1" pin="D5"/>
 <junction x="58.42" y="63.5"/>
 <wire x1="22.86" y1="63.5" x2="58.42" y2="63.5" width="0.1524" layer="91"/>
 </segment>
@@ -5092,7 +5092,7 @@ ESP8266 module</description>
 <wire x1="96.52" y1="55.88" x2="96.52" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="124.46" y1="91.44" x2="124.46" y2="35.56" width="0.1524" layer="91"/>
 <junction x="124.46" y="35.56"/>
-<pinref part="WEMOS1" gate="D1" pin="GND"/>
+<pinref part="WEMOS" gate="D1" pin="GND"/>
 <junction x="91.44" y="55.88"/>
 <wire x1="91.44" y1="55.88" x2="96.52" y2="55.88" width="0.1524" layer="91"/>
 <pinref part="GND2" gate="1" pin="MP"/>
@@ -5134,7 +5134,7 @@ ESP8266 module</description>
 <net name="SDA" class="0">
 <segment>
 <pinref part="R4" gate="G$1" pin="1"/>
-<pinref part="WEMOS1" gate="D1" pin="D2"/>
+<pinref part="WEMOS" gate="D1" pin="D2"/>
 <junction x="91.44" y="63.5"/>
 <wire x1="91.44" y1="63.5" x2="106.68" y2="63.5" width="0.1524" layer="91"/>
 <wire x1="106.68" y1="63.5" x2="106.68" y2="68.58" width="0.1524" layer="91"/>
@@ -5142,14 +5142,14 @@ ESP8266 module</description>
 <junction x="149.86" y="68.58"/>
 <wire x1="106.68" y1="68.58" x2="134.62" y2="68.58" width="0.1524" layer="91"/>
 <wire x1="134.62" y1="68.58" x2="149.86" y2="68.58" width="0.1524" layer="91"/>
-<wire x1="134.62" y1="93.98" x2="134.62" y2="68.58" width="0.1524" layer="91"/>
+<wire x1="134.62" y1="99.06" x2="134.62" y2="68.58" width="0.1524" layer="91"/>
 <junction x="134.62" y="68.58"/>
-<junction x="134.62" y="93.98"/>
+<junction x="134.62" y="99.06"/>
 </segment>
 </net>
 <net name="+5V" class="0">
 <segment>
-<pinref part="WEMOS1" gate="D1" pin="5V"/>
+<pinref part="WEMOS" gate="D1" pin="5V"/>
 <junction x="91.44" y="53.34"/>
 <pinref part="+5V" gate="1" pin="MP"/>
 <junction x="149.86" y="53.34"/>
@@ -5168,52 +5168,52 @@ ESP8266 module</description>
 <wire x1="106.68" y1="93.98" x2="106.68" y2="86.36" width="0.1524" layer="91"/>
 <wire x1="106.68" y1="86.36" x2="111.76" y2="86.36" width="0.1524" layer="91"/>
 <pinref part="R3" gate="G$1" pin="2"/>
-<junction x="53.34" y="104.14"/>
+<junction x="53.34" y="109.22"/>
 <wire x1="50.8" y1="114.3" x2="53.34" y2="114.3" width="0.1524" layer="91"/>
 <pinref part="+3V3" gate="1" pin="MP"/>
 <junction x="149.86" y="88.9"/>
 <wire x1="53.34" y1="114.3" x2="73.66" y2="114.3" width="0.1524" layer="91"/>
-<wire x1="43.18" y1="114.3" x2="111.76" y2="114.3" width="0.1524" layer="91"/>
+<wire x1="40.64" y1="114.3" x2="111.76" y2="114.3" width="0.1524" layer="91"/>
 <wire x1="111.76" y1="114.3" x2="142.24" y2="114.3" width="0.1524" layer="91"/>
 <wire x1="142.24" y1="114.3" x2="134.62" y2="114.3" width="0.1524" layer="91"/>
 <wire x1="134.62" y1="114.3" x2="147.32" y2="114.3" width="0.1524" layer="91"/>
 <wire x1="147.32" y1="88.9" x2="149.86" y2="88.9" width="0.1524" layer="91"/>
 <wire x1="147.32" y1="114.3" x2="147.32" y2="88.9" width="0.1524" layer="91"/>
-<wire x1="53.34" y1="104.14" x2="53.34" y2="114.3" width="0.1524" layer="91"/>
+<wire x1="53.34" y1="109.22" x2="53.34" y2="114.3" width="0.1524" layer="91"/>
 <junction x="53.34" y="114.3"/>
 <wire x1="111.76" y1="86.36" x2="111.76" y2="114.3" width="0.1524" layer="91"/>
 <junction x="111.76" y="114.3"/>
-<wire x1="142.24" y1="104.14" x2="142.24" y2="114.3" width="0.1524" layer="91"/>
+<wire x1="142.24" y1="109.22" x2="142.24" y2="114.3" width="0.1524" layer="91"/>
 <junction x="142.24" y="114.3"/>
-<wire x1="134.62" y1="104.14" x2="134.62" y2="114.3" width="0.1524" layer="91"/>
+<wire x1="134.62" y1="109.22" x2="134.62" y2="114.3" width="0.1524" layer="91"/>
 <junction x="134.62" y="114.3"/>
 <junction x="111.76" y="86.36"/>
 <wire x1="111.76" y1="86.36" x2="116.84" y2="86.36" width="0.1524" layer="91"/>
 <wire x1="116.84" y1="86.36" x2="116.84" y2="91.44" width="0.1524" layer="91"/>
-<pinref part="WEMOS1" gate="D1" pin="3V3"/>
-<wire x1="58.42" y1="53.34" x2="43.18" y2="53.34" width="0.1524" layer="91"/>
-<wire x1="43.18" y1="53.34" x2="43.18" y2="114.3" width="0.1524" layer="91"/>
-<wire x1="43.18" y1="114.3" x2="53.34" y2="114.3" width="0.1524" layer="91"/>
+<pinref part="WEMOS" gate="D1" pin="3V3"/>
+<wire x1="58.42" y1="53.34" x2="40.64" y2="53.34" width="0.1524" layer="91"/>
+<wire x1="40.64" y1="53.34" x2="40.64" y2="114.3" width="0.1524" layer="91"/>
+<wire x1="40.64" y1="114.3" x2="53.34" y2="114.3" width="0.1524" layer="91"/>
 <pinref part="R5" gate="G$1" pin="2"/>
-<junction x="134.62" y="104.14"/>
-<junction x="142.24" y="104.14"/>
+<junction x="134.62" y="109.22"/>
+<junction x="142.24" y="109.22"/>
 <wire x1="134.62" y1="114.3" x2="111.76" y2="114.3" width="0.1524" layer="91"/>
 <pinref part="R6" gate="G$1" pin="2"/>
-<junction x="63.5" y="104.14"/>
-<wire x1="38.1" y1="114.3" x2="43.18" y2="114.3" width="0.1524" layer="91"/>
-<wire x1="43.18" y1="114.3" x2="73.66" y2="114.3" width="0.1524" layer="91"/>
-<wire x1="63.5" y1="114.3" x2="63.5" y2="104.14" width="0.1524" layer="91"/>
+<junction x="63.5" y="109.22"/>
+<wire x1="33.02" y1="114.3" x2="40.64" y2="114.3" width="0.1524" layer="91"/>
+<wire x1="40.64" y1="114.3" x2="73.66" y2="114.3" width="0.1524" layer="91"/>
+<wire x1="63.5" y1="114.3" x2="63.5" y2="109.22" width="0.1524" layer="91"/>
 <wire x1="63.5" y1="114.3" x2="73.66" y2="114.3" width="0.1524" layer="91"/>
 <junction x="63.5" y="114.3"/>
 <pinref part="R7" gate="G$1" pin="2"/>
-<junction x="73.66" y="104.14"/>
-<wire x1="73.66" y1="114.3" x2="73.66" y2="104.14" width="0.1524" layer="91"/>
+<junction x="73.66" y="109.22"/>
+<wire x1="73.66" y1="114.3" x2="73.66" y2="109.22" width="0.1524" layer="91"/>
 <junction x="73.66" y="114.3"/>
-<pinref part="LDR2" gate="1" pin="MP"/>
-<junction x="38.1" y="93.98"/>
-<wire x1="38.1" y1="93.98" x2="38.1" y2="114.3" width="0.1524" layer="91"/>
-<junction x="38.1" y="114.3"/>
-<junction x="43.18" y="114.3"/>
+<pinref part="LDR+" gate="1" pin="MP"/>
+<junction x="33.02" y="99.06"/>
+<wire x1="33.02" y1="99.06" x2="33.02" y2="114.3" width="0.1524" layer="91"/>
+<junction x="33.02" y="114.3"/>
+<junction x="40.64" y="114.3"/>
 <wire x1="111.76" y1="48.26" x2="111.76" y2="86.36" width="0.1524" layer="91"/>
 <pinref part="U$1" gate="G$1" pin="VCC"/>
 <junction x="116.84" y="91.44"/>
@@ -5223,7 +5223,7 @@ ESP8266 module</description>
 </net>
 <net name="SCL" class="0">
 <segment>
-<pinref part="WEMOS1" gate="D1" pin="D1"/>
+<pinref part="WEMOS" gate="D1" pin="D1"/>
 <junction x="91.44" y="66.04"/>
 <wire x1="91.44" y1="66.04" x2="101.6" y2="66.04" width="0.1524" layer="91"/>
 <wire x1="101.6" y1="66.04" x2="101.6" y2="73.66" width="0.1524" layer="91"/>
@@ -5231,39 +5231,39 @@ ESP8266 module</description>
 <junction x="149.86" y="73.66"/>
 <wire x1="101.6" y1="73.66" x2="142.24" y2="73.66" width="0.1524" layer="91"/>
 <wire x1="142.24" y1="73.66" x2="149.86" y2="73.66" width="0.1524" layer="91"/>
-<wire x1="142.24" y1="93.98" x2="142.24" y2="73.66" width="0.1524" layer="91"/>
+<wire x1="142.24" y1="99.06" x2="142.24" y2="73.66" width="0.1524" layer="91"/>
 <junction x="142.24" y="73.66"/>
 <pinref part="R5" gate="G$1" pin="1"/>
-<junction x="142.24" y="93.98"/>
+<junction x="142.24" y="99.06"/>
 </segment>
 </net>
 <net name="N$4" class="0">
 <segment>
 <pinref part="R6" gate="G$1" pin="1"/>
-<junction x="63.5" y="93.98"/>
+<junction x="63.5" y="99.06"/>
 <pinref part="RES1" gate="1" pin="MP"/>
 </segment>
 </net>
 <net name="N$5" class="0">
 <segment>
 <pinref part="R7" gate="G$1" pin="1"/>
-<junction x="73.66" y="93.98"/>
+<junction x="73.66" y="99.06"/>
 <pinref part="RES2" gate="1" pin="MP"/>
 </segment>
 </net>
 <net name="N$3" class="0">
 <segment>
-<pinref part="LDR1" gate="1" pin="MP"/>
-<junction x="27.94" y="93.98"/>
-<wire x1="27.94" y1="93.98" x2="33.02" y2="93.98" width="0.1524" layer="91"/>
 <pinref part="RPD" gate="G$1" pin="2"/>
 <junction x="33.02" y="48.26"/>
-<wire x1="33.02" y1="93.98" x2="33.02" y2="68.58" width="0.1524" layer="91"/>
+<wire x1="33.02" y1="86.36" x2="33.02" y2="81.28" width="0.1524" layer="91"/>
 <junction x="33.02" y="68.58"/>
+<wire x1="33.02" y1="81.28" x2="33.02" y2="68.58" width="0.1524" layer="91"/>
 <wire x1="33.02" y1="68.58" x2="33.02" y2="48.26" width="0.1524" layer="91"/>
-<pinref part="WEMOS1" gate="D1" pin="A0"/>
+<pinref part="WEMOS" gate="D1" pin="A0"/>
 <junction x="58.42" y="68.58"/>
 <wire x1="33.02" y1="68.58" x2="58.42" y2="68.58" width="0.1524" layer="91"/>
+<pinref part="LDR-" gate="1" pin="MP"/>
+<junction x="33.02" y="81.28"/>
 </segment>
 </net>
 </nets>
