@@ -18,32 +18,36 @@
  *  
  * ***************************************************************************/
   // ***** My Sensor definition
-  #define DHTTYPE DHT11       // define the type of sensor (DHT11 or DHT22)
-  sensor_type sensor[] = {
-    #ifdef TEST_MODE
-      {"Feinstaub [Test-Mode]", "0", "µg/m³", 0, 0,
-       "Privat/Wohnzimmer/Feinstaub", true, getRandom},
-    #else
-      {"Feinstaub [Vindriktning]", "0", "µg/m³", 0, 0,
-       "Privat/Wohnzimmer/Feinstaub", true, getIkeaData},
-    #endif
-    {"Luftfeuchte [DHT 11]", "0.0", "%", 0, 0,
-     "Privat/Wohnzimmer/Luftfeuchte", true, getDHT_Humidity},
-    {"Temperatur [DHT 11]", "0.0", "°C", 0, 0,
-     "Privat/Wohnzimmer/Temperatur_int", true, getDHT_Temperature},
-    {"Temperatur [DS 18x20 #0]", "0.0", "°C", 0, 0,
-     "Privat/Wohnzimmer/Temperatur_ext", true, getDS1820_0},
-    {"Temperatur [DS 18x20 #1]", "0.0", "°C", 0, 0,
-     "Privat/Wohnzimmer/Temperatur_int", true, getDS1820_1},
-    {"CO₂ - Gehalt [SCD 30]", "0.0", "ppm", 0, 0, "", true, getDummy},
-    {"Schalter SW0", "open (High)", "", 0, 0, "", true, getSwitch_0},
-    {"Schalter SW1", "open (High)", "", 0, 0, "", true, getSwitch_1},
-    {"Schalter SW2", "open (High)", "", 0, 0, "", true, getSwitch_2},
-    {"Schalter SW3", "open (High)", "", 0, 0, "", true, getSwitch_3},
-    {"Analog Input", "0", "/ 1024", 0, 0, "", false, getADC0},
-    {"Helligkeit [LDR]", "0", "Lux", 0, 0, "", true, getLDR}
-  };
-
+#define DHTTYPE DHT11       // define the type of sensor (DHT11 or DHT22)
+sensor_type sensor[] = {
+  { "Feinstaub [Vindriktning]", "0", "µg/m³", 0, 0,
+    "ZuHause/Wohnzimmer/Feinstaub", true, getIkeaData },
+  { "Luftfeuchte [DHT11]", "0.0", "%", 0, 0,
+    "ZuHause/Wohnzimmer/Luftfeuchte", false, getDHTHumidity },
+  { "Temperatur [DHT11]", "0.0", "°C", 0, 0,
+    "ZuHause/Wohnzimmer/Temperatur_int", false, getDHTTemperature },
+  { "Temperatur [DS18x20 #0]", "0.0", "°C", 0, 0,
+    "ZuHause/Wohnzimmer/Temperatur_ext", false, getDS1820_0 },
+  { "Temperatur [DS18x20 #1]", "0.0", "°C", 0, 0,
+    "ZuHause/Wohnzimmer/Temperatur_int", false, getDS1820_1 },
+  { "Temperatur [BME280]", "0.0", "°C", 0, 0,
+    "ZuHause/Wohnzimmer/Temperatur", false, myBME280Temperature },
+  { "Luftfeuchte [BME280]", "0.0", "%", 0, 0,
+    "ZuHause/Wohnzimmer/Luftfeuchte", false, myBME280Humidity },
+  { "Luftdruck [BME280]", "0.0", "hPa", 0, 0,
+    "ZuHause/Wohnzimmer/Luftdruck", false, myBME280Pressure },
+  { "Temperatur [SCD30]", "0.0", "°C", 0, 0,
+    "ZuHause/Wohnzimmer/Temperatur", false, mySCD30Temperature },
+  { "Luftfeuchte [SCD30]", "0.0", "%", 0, 0,
+    "ZuHause/Wohnzimmer/Luftfeuchte", false, mySCD30Humidity },
+  { "CO₂ - Gehalt [SCD30]", "0.0", "ppm", 0, 0,
+    "ZuHause/Wohnzimmer/CO2", false, mySCD30CO2 },
+  { "Schalter SW0", "open (High)", "", 0, 0, "", true, getSwitch_0 },
+  { "Schalter SW1", "open (High)", "", 0, 0, "", false, getSwitch_1 },
+  { "Schalter SW2", "open (High)", "", 0, 0, "", false, getSwitch_2 },
+  { "Schalter SW3", "open (High)", "", 0, 0, "", false, getSwitch_3 },
+  { "Helligkeit [LDR GL5539]", "0", "Lux", 0, 0, "", true, getLDR }
+};  
   // ***** My Settings
   // #define MY_TITLE "Raumklima Monitor"  // uncomment for own title
   #define WIFI_SSID "xxx"
@@ -59,7 +63,7 @@
   #define HAS_INTERNET        // comment out if not
   #define MY_NTP_SERVER "at.pool.ntp.org"
   // LDR Parameters for Type = GL 5539:
-  #define RPD 4.7e3       // LDR Pull-Down Resistor
+  #define RPD 10.0e3      // LDR Pull-Down Resistor
   #define R10 75.0e3      // LDR R(10 Lux)
   #define GAMMA 0.8       // LDR Gamma-Value / Sensitivity 
   

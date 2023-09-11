@@ -18,7 +18,7 @@ Vorher müssen einige Dateien noch angepasst werden:
 
  1. Datei privat.h, / im_institut.h / ..., Sektion "***** My Settings": Zugangsdaten anpassen.
 
- 2. Datei Michael_Klima.h, ab Zeile 38 anpassen
+ 2. Datei Michael_Klima.h, ab Zeile 51 anpassen
 
 Anschließend mit der Arduino IDE kompiliern und auf den D1 Mini hochladen.
 
@@ -29,10 +29,6 @@ Klicke hier: <http://hufschmidt.ddns.krude.de:8080/>
 ## TODO
 
   * Geeigneten MQTT Broker / Server auswählen und evtl. Code anpassen
-
-  * Erweiterung mit CO₂ Sensor SCD-30 <https://www.arduino.cc/reference/en/libraries/sparkfun-scd30-arduino-library/>
-
-  * Erweiterung mit Luftdruck Sensor
 
 ## Setup März 2022:
 
@@ -54,6 +50,9 @@ Und hier die Adapter-Platine (35mm x 42mm):
 |DS18B20:|<https://github.com/milesburton/Arduino-Temperature-Control-Library/blob/master/DallasTemperature.h>|
 |DHT11:  |<https://cdn-learn.adafruit.com/downloads/pdf/dht.pdf>|
 |        |<https://github.com/adafruit/DHT-sensor-library>|
+|BME280: |<https://www.az-delivery.de/products/gy-bme280>|
+|SCD-30: |<https://www.adafruit.com/product/4867>|
+|        |<https://learn.adafruit.com/adafruit-scd30/arduino>|
 |MQTT Client:|<https://github.com/knolleary/pubsubclient>|
 |MQTT HiveMQ:| <https://github.com/hivemq/hivemq-mqtt-web-client>|
 | |<https://www.hivemq.com/blog/full-featured-mqtt-client-browser/>|

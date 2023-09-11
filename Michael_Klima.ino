@@ -1,9 +1,10 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2023-06-28
-   Program size:      Sketch 398988 Bytes (38%), Global Vars 33924 Bytes (41%)
+   Last modification: 2023-09-11
+   Program size:      Sketch 409400 Bytes (39%), Global Vars 35504 Bytes (44%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
+   Projekt:           https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
 /* Michaels Raumklima-Monitor. Inspiriert durch den Artikel "IKEA Vindiktning
@@ -30,6 +31,14 @@
 #include <PubSubClient.h>
 #include <CertStoreBearSSL.h>
 #include <functional>
+// ***** For BME280 and SCD-30
+// https://www.az-delivery.de/products/gy-bme280 (BME280)
+#include <Wire.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BME280.h>
+// https://www.adafruit.com/product/4867  (SCD-30)
+// https://learn.adafruit.com/adafruit-scd30/arduino
+#include <Adafruit_SCD30.h>
 // ***** External definitions, constants and variables
 #include "Michael_Klima.h"
 
@@ -48,11 +57,14 @@
 constexpr static const uint8_t PIN_UART_RX = D5;    // =GPIO14 am Wemos D1 Mini
 constexpr static const uint8_t PIN_UART_TX = D7;    // =GPIO13 UNUNSED
 constexpr static const uint8_t ONE_WIRE_BUS = D6;   // =GPIO12 am Wemos D1 Mini
-constexpr static const uint8_t SW0 = SCL;           // =GPIO5 / D1 / SCL
-constexpr static const uint8_t SW1 = SDA;           // =GPIO4 / D2 / SDA
-constexpr static const uint8_t SW2 = D3;            // =GPIO0
-constexpr static const uint8_t SW3 = D4;            // =GPIO2 =LED_BUILTIN
-// ***** Warning! Will not boot if D4 / LED_BUILTIN is LOW !!!
+// default I2C Pins defined in Aruino.h:
+// constexpr static const uint8_t SCL = D1;         // Default I2C Pins
+// constexpr static const uint8_t SDA = D2;         // Default I2C Pins
+constexpr static const uint8_t SW0 = D7;            // =GPIO13 / D7
+// ***** Warning! Boot fails if D3 or D4 are pulled LOW !!!
+constexpr static const uint8_t SW1 = D3;            // =GPIO0, *** Warning !
+constexpr static const uint8_t SW2 = D3;            // =GPIO0, *** Warning !
+constexpr static const uint8_t SW3 = D4;            // =GPIO2 =LED_BUILTIN ***
 constexpr static const uint8_t ADC0 = A0;           // = Analog input, Pin 17
 
 // ***** General Settings
@@ -121,6 +133,8 @@ PubSubClient client(espClient);
 OneWire oneWire(ONE_WIRE_BUS);
 DHT dht(ONE_WIRE_BUS, DHTTYPE, 6);
 DallasTemperature ds(&oneWire);
+Adafruit_BME280 bme;                // I2C Communication
+Adafruit_SCD30 scd30;               //
 
 
 // ***** General Functions
@@ -226,7 +240,6 @@ String runInfo() {
 String getDummy() {
   return "???";
 }
-
 String getRandom() {
   return String(random(20, 50));
 }
@@ -256,10 +269,10 @@ String getIkeaData() {  // from the Make Magazin
   return String(data);
 } // getIkeaData()
 
-String getDHT_Temperature() {
+String getDHTTemperature() {
   return String(dht.readTemperature(), 1);
 }
-String getDHT_Humidity() {
+String getDHTHumidity() {
   return String(dht.readHumidity(), 1);
 }
 
@@ -307,6 +320,26 @@ String readDS1820Temperature(DeviceAddress addr) {
     return "disconnected";
   }
 } // readDS1820Temperature
+
+String myBME280Temperature() {
+  return String(bme.readTemperature(), 1);
+}  // myBME280Temperature
+String myBME280Humidity() {
+  return String(bme.readHumidity(), 0);
+}  // myBME280Humidity
+String myBME280Pressure() {
+  return String(bme.readPressure() / 100.0F, 1);
+}  // getBME280Pressure
+
+String mySCD30Temperature() {
+  return String(scd30.temperature, 1);
+}
+String mySCD30Humidity() {
+  return String(scd30.relative_humidity, 0);
+}
+String mySCD30CO2() {
+  return String(scd30.CO2, 3);
+}
 
 String getSwitch_0() {
   return readSwitch(SW0);
@@ -598,10 +631,6 @@ void setup() {                                      // setup code, to run once
   digitalWrite(SW1, HIGH);
   digitalWrite(SW2, HIGH);
   digitalWrite(SW3, HIGH);
-  // pinMode(SW0, INPUT);               // only with external pullup
-  // pinMode(SW1, INPUT);               // only with external pullup
-  // pinMode(SW2, INPUT);               // only with external pullup
-  // pinMode(SW3, INPUT);               // only with external pullup
   pinMode(SW0, INPUT_PULLUP);           // no external pullup needed
   pinMode(SW1, INPUT_PULLUP);           // no external pullup needed
   pinMode(SW2, INPUT_PULLUP);           // no external pullup needed
@@ -648,6 +677,27 @@ void setup() {                                      // setup code, to run once
       Serial.println("No NTP-Server");
     #endif
   } // wlanOK
+  // Communication to BME280
+  bool communication = bme.begin(0x76);
+  if (!communication) {
+    Serial.println("Could not find a valid BME280 sensor");
+    Serial.println("check wiring, address, sensor ID!");
+    Serial.print("SensorID was: 0x");
+    Serial.println(bme.sensorID(), 16);
+    Serial.println("ID of 0xFF probably means a bad address\n");
+    while (true) {};
+    delay(10);
+  } else {
+    Serial.println("Communication to BME280 established!\n");
+  }  // End Communication to BME280
+// Try to initialize Communication to SCD30
+/*
+  if (!scd30.begin()) {
+    Serial.println("Failed to find SCD30 chip");
+    while (1) { delay(10); }
+  }
+  Serial.println("SCD30 Found!");
+*/
   blink();                                          // when setup finished
 }  // setup()
 
