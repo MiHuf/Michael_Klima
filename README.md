@@ -16,7 +16,7 @@ Der Mircocontroller "Wemos D1 Mini ESP8266" wird programmiert mit der Arduino ID
 
 Vorher müssen einige Dateien noch angepasst werden:
 
- 1. Datei privat.h, / im_institut.h / ..., Sektion "***** My Settings": Zugangsdaten anpassen.
+ 1. Datei privat.h, _xxx, ..., Sektion "***** My Settings": Zugangsdaten anpassen.
 
  2. Datei Michael_Klima.h, ab Zeile 51 anpassen
 
