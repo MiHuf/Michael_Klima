@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             privat.h
    Created:           2022-04-05
-   Last modification: 2023-09-11
+   Last modification: 2023-09-12
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -42,11 +42,11 @@ sensor_type sensor[] = {
     "ZuHause/Wohnzimmer/Luftfeuchte", false, mySCD30Humidity },
   { "CO₂ - Gehalt [SCD30]", "0.0", "ppm", 0, 0,
     "ZuHause/Wohnzimmer/CO2", false, mySCD30CO2 },
+  { "Helligkeit [LDR GL5539]", "0", "Lux", 0, 0, "", true, getLDR },
   { "Schalter SW0", "open (High)", "", 0, 0, "", true, getSwitch_0 },
   { "Schalter SW1", "open (High)", "", 0, 0, "", false, getSwitch_1 },
   { "Schalter SW2", "open (High)", "", 0, 0, "", false, getSwitch_2 },
-  { "Schalter SW3", "open (High)", "", 0, 0, "", false, getSwitch_3 },
-  { "Helligkeit [LDR GL5539]", "0", "Lux", 0, 0, "", true, getLDR }
+  { "Schalter SW3", "open (High)", "", 0, 0, "", false, getSwitch_3 }
 };  
   // ***** My Settings
   // #define MY_TITLE "Raumklima Monitor"  // uncomment for own title

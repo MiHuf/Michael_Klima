@@ -50,17 +50,18 @@
   // (x) is the number of the controller, files "_xxx.h" will not be included in the github repository.
   #include "privat.h"
   #define MSG_BUFFER_SIZE (255)
-  // #define DO_BLINK         // Comment out to suppress LED blinking
+  // #define DO_BLINK           // Comment out to suppress LED blinking
   // Default LDR Parameters for Type = GL 5539
   #ifndef RPD
-    #define RPD 10.0e3        // LDR Pull-Down Resistor
+    #define RPD 10.0e3          // LDR Pull-Down Resistor
   #endif
   #ifndef R10
-    #define R10 75.0e3      // LDR R(10 Lux)
+    #define R10 75.0e3          // LDR R(10 Lux)
   #endif
   #ifndef GAMMA
-    #define GAMMA 0.8       // LDR Gamma-Value / Sensitivity 
+    #define GAMMA 0.8           // LDR Gamma-Value / Sensitivity 
   #endif
+  #define MAX_TRIES 10          // Max. tries to connect a sensor
   const unsigned long wlanTimeout = 60;     // timeout in seconds
   const unsigned long mqttTimeout = 30;     // timeout in seconds
   const unsigned long processInterval = 30; // process interval in seconds
