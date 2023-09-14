@@ -48,7 +48,7 @@
   // include only one of
   // "privat.h", "im_institut_h" (2), _test.h" (3), "_andreas.h" (4), "_neu.h" (5), "_michael.h" (6),  ...
   // (x) is the number of the controller, files "_xxx.h" will not be included in the github repository.
-  #include "_test.h"
+  #include "privat.h"
   #define MSG_BUFFER_SIZE (255)
   // #define DO_BLINK           // Comment out to suppress LED blinking
   // Default LDR Parameters for Type = GL 5539
