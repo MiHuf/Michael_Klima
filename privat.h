@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             privat.h
    Created:           2022-04-05
-   Last modification: 2023-09-12
+   Last modification: 2023-09-14
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -25,7 +25,7 @@ sensor_type sensor[] = {
   { "Luftfeuchte [DHT11]", "0.0", "%", 0, 0,
     "ZuHause/Wohnzimmer/Luftfeuchte", false, getDHTHumidity },
   { "Temperatur [DHT11]", "0.0", "°C", 0, 0,
-    "ZuHause/Wohnzimmer/Temperatur_int", false, getDHTTemperature },
+    "ZuHause/Wohnzimmer/Temperatur", false, getDHTTemperature },
   { "Temperatur [DS18x20 #0]", "0.0", "°C", 0, 0,
     "ZuHause/Wohnzimmer/Temperatur_ext", false, getDS1820_0 },
   { "Temperatur [DS18x20 #1]", "0.0", "°C", 0, 0,

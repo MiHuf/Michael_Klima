@@ -1,7 +1,7 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2023-09-12
+   Last modification: 2023-09-14
    Program size:      Sketch 409848 Bytes (39%), Global Vars 35684 Bytes (44%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
@@ -273,7 +273,11 @@ String getDHTHumidity() {
 }
 
 String getDS1820_0() {
-  return readDS1820Temperature(ds_0);
+  if (dallasCount > 0) {
+    return readDS1820Temperature(ds_0);
+  } else {
+    return "disconnected";
+  }
 }
 String getDS1820_1() {
   if (dallasCount > 1) {
@@ -284,10 +288,10 @@ String getDS1820_1() {
 }
 String readDS1820Temperature(DeviceAddress addr) {
   bool addrOK;
-  bool ok = true;
+  bool ok = false;
   String out = "";
   float temperature = 0.0;
-  addrOK = (deviceAddressToString(addr) != "0 0 0 0  0 0 0 0");
+  addrOK = addr[0] != 0;
   if (addrOK) {
     //  ds.setWaitForConversion(false);  // makes it async
     ds.requestTemperatures();
@@ -298,6 +302,8 @@ String readDS1820Temperature(DeviceAddress addr) {
     Serial.print("\nNew conversion for Device "
                 + deviceAddressToString(addr));
     ok = ds.requestTemperaturesByAddress(addr);
+  } else {
+    return "disconnected";
   }  // if (addrOK)
   if (ok) {
     temperature = ds.getTempC(addr);
