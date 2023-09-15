@@ -1,8 +1,8 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2023-09-14
-   Program size:      Sketch 409848 Bytes (39%), Global Vars 35684 Bytes (44%)
+   Last modification: 2023-09-15
+   Program size:      Sketch 409784 Bytes (39%), Global Vars 35576 Bytes (44%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -27,6 +27,7 @@
 #include <time.h>
 #include <TZ.h>
 // https://github.com/knolleary/pubsubclient
+// https://www.hivemq.com/article/mqtt-on-arduino-nodemcu-esp8266-hivemq-cloud/
 #include <PubSubClient.h>
 #include <CertStoreBearSSL.h>
 #include <functional>
@@ -113,7 +114,6 @@ uint8_t serialRxBuf[80];
 uint8_t rxBufIdx = 0;
 unsigned long runID = 0;
 unsigned long previousMillis = 0;
-String clientId = "ESP8266Client-";
 char msg[MSG_BUFFER_SIZE];
 String startTime = "";
 double rpd = RPD;     // LDR Pull-Down Resistor
@@ -467,7 +467,8 @@ String buildHtml() {
     page += ", Timeout after " + String(wlanTimeout) + " s</p> \r\n";
   }
   if (mqttOK) {
-    page += "<p>MQTT Broker = " + String(mqtt_server) + "<br>MQTT User = " + String(mqtt_user) + "<br>MQTT Client id = " + String(mqtt_client_id) + "</p> \r\n";
+    page += "<p>MQTT Broker = " + String(mqtt_server) + "<br>MQTT User = " + String(mqtt_user) + "<br>MQTT Client id = " + mq_client + "<br> \r\n";
+    page += "Web-Interface = <a href=\"https://console.hivemq.cloud/\" target=\"_blank\">https://console.hivemq.cloud</a></p> \r\n";
   } else {
     page += "<p> MQTT Timeout after " + String(mqttTimeout) + " s</p> \r\n";
   }
@@ -492,7 +493,7 @@ void reconnect() {
     if (mqtt_client_id, mqtt_user, mqtt_password) {
       Serial.println("MQTT Broker = " + String(mqtt_server));
       Serial.println("MQTT User = " + String(mqtt_user));
-      Serial.println("MQTT Client id = " + String(mqtt_client_id));
+      Serial.println("MQTT Client id = " + mq_client);
       // Once connected, publish an announcement...
       client.publish("outTopic", "hello world");
       // ... and resubscribe
@@ -510,17 +511,17 @@ void reconnect() {
 }  // reconnect()
 
 void publishSensorData() {
-  snprintf(msg, MSG_BUFFER_SIZE, "hello world #%ld", runID);
-  Serial.print("Publish message: ");
-  Serial.println(msg);
-  client.publish("outTopic", msg);
-  //  for (uint8_t i = 0; i < sensorCount; i++) {
-  //    if (sensor[i].topic.length() > 0) {
-  //      ;  // **** TODO: Publish via MQTT
-  //    }  // if
-  //  }  // for
+  for (uint8_t i = 0; i < sensorCount; i++) {
+    if ((sensor[i].topic[0] > 0) & (sensor[i].active)) {
+      snprintf(msg, MSG_BUFFER_SIZE, sensor[i].topic, sensor[i].value);
+      Serial.print("Publish message: ");
+      Serial.println(msg);
+      client.publish("outTopic", msg, true);
+    }  // if
+  }  // for
 }  // publishSensorData()
 
+// callback not used
 void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived [");
   Serial.print(topic);
@@ -538,7 +539,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
     digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
   }
 }  // callback(..)
-
 
 // ***** Main Functions
 

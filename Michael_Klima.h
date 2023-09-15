@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             Michael_Klima.h
    Created:           2021-12-21
-   Last modification: 2023-09-14
+   Last modification: 2023-09-15
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -38,7 +38,7 @@
     String unit;
     unsigned long measurement;
     unsigned long runID;
-    String topic;
+    const char * topic;
     bool active;
     std::function<String(void)> sensor_read;
   } sensor_type;
@@ -46,7 +46,7 @@
   // ***** Lines below may need modification
   // #define DHTTYPE xxx // moved to individual header files
   // include only one of
-  // "privat.h", "im_institut_h" (2), _test.h" (3), "_andreas.h" (4), "_neu.h" (5), "_michael.h" (6),  ...
+  // "privat.h", "_institut.h" (2), _test.h" (3), "_andreas.h" (4), "_neu.h" (5), "_michael.h" (6),  ...
   // (x) is the number of the controller, files "_xxx.h" will not be included in the github repository.
   #include "privat.h"
   #define MSG_BUFFER_SIZE (255)
