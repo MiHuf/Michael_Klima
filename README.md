@@ -6,7 +6,9 @@ Michaels Raumklima-Monitor. Inspiriert durch den Artikel
 Der Code ist vorbereitet für den Anschluß weiterer Sensoren.
 Im Original: VINDRIKTNING Ikea Luftgüte Sensor -> AdafruitIO
 
-Neueste Ergänzung: Absolute (aber ungenaue) Helligkeitsmessung mit einem LDR Photowiderstand. Parameter müssen in der jeweiligen Zugangsdaten-Datei xxx.h angepasst werden. Siehe LDR-Photometer.pdf.
+Mai 2022: Absolute (aber ungenaue) Helligkeitsmessung mit einem LDR Photowiderstand. Parameter müssen in der jeweiligen Zugangsdaten-Datei xxx.h angepasst werden. Siehe LDR-Photometer.pdf.
+
+Sept. 2023: Luftdruck-Sensor BME280 eingebaut, CO2-Sensor SCD-30 vorbereitet.
 
 ## Installation und Konfiguration
 
@@ -24,7 +26,7 @@ Anschließend mit der Arduino IDE kompiliern und auf den D1 Mini hochladen.
 
 ## Life Demo
 
-Klicke hier: <http://hufschmidt.ddns.krude.de:8080/>
+Klicke hier: <http://hufschmidt.ddns.krude.de:8086/> oder <http://hufschmidt.ddns.krude.de:8083/>
 
 ## TODO
 
