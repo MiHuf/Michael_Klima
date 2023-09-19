@@ -1,8 +1,8 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2023-09-15
-   Program size:      Sketch 409784 Bytes (39%), Global Vars 35576 Bytes (44%)
+   Last modification: 2023-09-19
+   Program size:      Sketch 409244 Bytes (39%), Global Vars 35324 Bytes (44%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -43,13 +43,13 @@
 #include "Michael_Klima.h"
 
 // ***** Pin definitions
-#ifdef LED_BUILTIN     // true for D1 Mini, =D4
-#define AN LOW
-#define AUS HIGH
-#else                  // not a D1 Mini
-#define LED_BUILTIN 1  // LED for Digistump
-#define AN HIGH
-#define AUS LOW
+#ifdef LED_BUILTIN  // true for D1 Mini, =D4
+  #define AN LOW
+  #define AUS HIGH
+#else                    // not a D1 Mini
+  #define LED_BUILTIN 1  // LED for Digistump
+  #define AN HIGH
+  #define AUS LOW
 #endif
 // Original-Version aus Make 05/21:
 // constexpr static const uint8_t PIN_UART_RX = D2; // =GPIO4 am Wemos D1 Mini
@@ -60,7 +60,7 @@ constexpr static const uint8_t ONE_WIRE_BUS = D6;  // =GPIO12 am Wemos D1 Mini
 // default I2C Pins defined in Aruino.h:
 // constexpr static const uint8_t SCL = D1;         // Default I2C Pins
 // constexpr static const uint8_t SDA = D2;         // Default I2C Pins
-constexpr static const uint8_t SW0 = D7;   // =GPIO13 / D7
+constexpr static const uint8_t SW0 = D7;  // =GPIO13 / D7
 // ***** Warning! Boot fails if D3 or D4 are pulled LOW !!!
 constexpr static const uint8_t SW1 = D3;   // =GPIO0, *** Warning !
 constexpr static const uint8_t SW2 = D3;   // =GPIO0, *** Warning !
@@ -79,7 +79,8 @@ const char* extSsid = WIFI_SSID;
 const char* extPassword = WIFI_PASS;
 const char* mySsid = APSSID;
 const char* myPassword = APPSK;
-const char* mqtt_server = MQTT_BROKER;
+const String mqtt_broker_s = String(MQTT_BROKER) + ".s1.eu.hivemq.cloud";
+const char* mqtt_broker = mqtt_broker_s.c_str();
 const char* mqtt_user = MQTT_USER;
 const char* mqtt_password = MQTT_PASS;
 const String mq_client = "ESP8266_" + String(APSSID);
@@ -89,8 +90,10 @@ const String mq_client = "ESP8266_" + String(APSSID);
 #else
   // Create a random client ID
   String client_id = "ESP8266Client-" + String(random(0xffff), HEX);
-  const char *mqtt_client_id = client_id.c_str()
+  const char* mqtt_client_id = client_id.c_str()
 #endif
+const char* topic = TOPIC;
+const uint8_t msg_buffer_size = MSG_BUFFER_SIZE;
 
 
 // ***** Variables
@@ -114,7 +117,7 @@ uint8_t serialRxBuf[80];
 uint8_t rxBufIdx = 0;
 unsigned long runID = 0;
 unsigned long previousMillis = 0;
-char msg[MSG_BUFFER_SIZE];
+char msg[msg_buffer_size];
 String startTime = "";
 double rpd = RPD;     // LDR Pull-Down Resistor
 double r10 = R10;     // LDR R(10 Lux)
@@ -300,7 +303,7 @@ String readDS1820Temperature(DeviceAddress addr) {
       delay(1000);
     }
     Serial.print("\nNew conversion for Device "
-                + deviceAddressToString(addr));
+                 + deviceAddressToString(addr));
     ok = ds.requestTemperaturesByAddress(addr);
   } else {
     return "disconnected";
@@ -310,7 +313,7 @@ String readDS1820Temperature(DeviceAddress addr) {
   } else {
     Serial.println("\nError: requestTemperaturesByAddress");
     return "disconnected";
-  } // if(ok)
+  }                                            // if(ok)
   if (temperature != DEVICE_DISCONNECTED_C) {  // DallasTemperature.h line 36
     return String(temperature, 1);
   } else {
@@ -373,7 +376,7 @@ String getLDR() {
   } else {
     bs = "overflow";
   }
-  out = "ADC = " + String(adc) + " » = " + bs;  // », →, ≡ oder ⇔
+  out = "ADC = " + String(adc) + " => " + bs;  // », →, ≡ oder ⇔
   return out;
 }  // getLDR()
 
@@ -467,8 +470,10 @@ String buildHtml() {
     page += ", Timeout after " + String(wlanTimeout) + " s</p> \r\n";
   }
   if (mqttOK) {
-    page += "<p>MQTT Broker = " + String(mqtt_server) + "<br>MQTT User = " + String(mqtt_user) + "<br>MQTT Client id = " + mq_client + "<br> \r\n";
-    page += "Web-Interface = <a href=\"https://console.hivemq.cloud/\" target=\"_blank\">https://console.hivemq.cloud</a></p> \r\n";
+    page += "<p>MQTT Broker = " + mqtt_broker_s + "<br>MQTT User = " + String(mqtt_user) + "<br>MQTT Client id = " + mq_client + "<br>\r\n";
+    page += "Web-Interface = <a href=\"https://console.hivemq.cloud/\" target=\"_blank\">HiveMQ Console</a>\r\n";
+    page += " or <a href=\"https://console.hivemq.cloud/clusters/free/" + String(mqtt_broker) + "/web-client\" target=\"_blank\">HiveMQ Web-Client</a></p></p>\r\n";
+
   } else {
     page += "<p> MQTT Timeout after " + String(mqttTimeout) + " s</p> \r\n";
   }
@@ -491,16 +496,18 @@ void reconnect() {
     Serial.println("Attempting MQTT connection ...");
     // Attempt to connect
     if (mqtt_client_id, mqtt_user, mqtt_password) {
-      Serial.println("MQTT Broker = " + String(mqtt_server));
+      Serial.println("MQTT Broker = " + String(mqtt_broker));
       Serial.println("MQTT User = " + String(mqtt_user));
       Serial.println("MQTT Client id = " + mq_client);
       // Once connected, publish an announcement...
-      client.publish("outTopic", "hello world");
+      // client.publish(topic, "hello world");
       // ... and resubscribe
       client.subscribe("inTopic");
+      client.loop();
+      Serial.println("MQTT client connected.");
       mqttOK = true;
     } else {
-      Serial.print("failed, rc=");
+      Serial.print("MQTT client failed, rc=");
       Serial.print(client.state());
       Serial.println(" try again in 5 seconds");
       // Wait 5 seconds before retrying
@@ -511,14 +518,19 @@ void reconnect() {
 }  // reconnect()
 
 void publishSensorData() {
+  bool publishOK;
+  if (!wlanOK) {
+    return;
+  }
   for (uint8_t i = 0; i < sensorCount; i++) {
     if ((sensor[i].topic[0] > 0) & (sensor[i].active)) {
       snprintf(msg, MSG_BUFFER_SIZE, sensor[i].topic, sensor[i].value);
       Serial.print("Publish message: ");
-      Serial.println(msg);
-      client.publish("outTopic", msg, true);
+      Serial.print(msg);
+      publishOK = client.publish(topic, msg, true);
+      if (publishOK) Serial.println(" - success"); else Serial.println(" - fail");
     }  // if
-  }  // for
+  }    // for
 }  // publishSensorData()
 
 // callback not used
@@ -588,61 +600,6 @@ void setup() {  // setup code, to run once
     // ds.setResolution(ds_1, 11);     // resolutuion for this sensor
   }  // ds.getAddress(...)
   Serial.printf("Found %d DS18x00 Sensor(s) \n", dallasCount);
-  // Setting extension switches
-  pinMode(SW0, OUTPUT);
-  pinMode(SW1, OUTPUT);
-  pinMode(SW2, OUTPUT);
-  pinMode(SW3, OUTPUT);
-  digitalWrite(SW0, HIGH);
-  digitalWrite(SW1, HIGH);
-  digitalWrite(SW2, HIGH);
-  digitalWrite(SW3, HIGH);
-  pinMode(SW0, INPUT_PULLUP);  // no external pullup needed
-  pinMode(SW1, INPUT_PULLUP);  // no external pullup needed
-  pinMode(SW2, INPUT_PULLUP);  // no external pullup needed
-  pinMode(SW3, INPUT_PULLUP);  // no external pullup needed
-  Serial.printf("Switch 0 on Pin %d\n", SW0);
-  Serial.printf("Switch 1 on Pin %d\n", SW1);
-  Serial.printf("Switch 2 on Pin %d\n", SW2);
-  Serial.printf("Switch 3 on Pin %d\n", SW3);
-  Serial.printf("ADC 0 on Pin %d\n", ADC0);
-  Serial.printf("LDR-Params: Rpd = %f, R10 = %f, gamma = %f\n",
-                rpd, r10, sens);
-
-  Serial.println("Configuring local access point...");
-//    if (! WiFi.softAPConfig(localIP, localGateway, localNetmask)) {
-//    Serial.println("AP Config Failed");
-//  }
-#ifdef OPEN_WIFI
-  WiFi.softAP(mySsid);  // AP will be open - or -
-#else
-  WiFi.softAP(mySsid, myPassword);  // AP will be password protected
-#endif
-#ifdef OPEN_WIFI
-  Serial.printf("Local Access Point SSID = %s\n", mySsid);
-#else
-  Serial.printf("Local Access Point SSID = %s, Password = %s\n",
-                mySsid, myPassword);
-#endif
-  localIP_s = WiFi.softAPIP().toString();
-  Serial.printf("Local IP address = %s\n", localIP_s.c_str());
-  macAddress_s = WiFi.softAPmacAddress();
-  Serial.printf("MAC address = %s\n", macAddress_s.c_str());
-  connectWiFi();  // connect to external WLAN
-  webServer.on("/", handle_OnConnect);
-  webServer.begin();
-  Serial.println("HTTP server started.");
-  if (wlanOK) {
-    reconnect();
-#ifdef HAS_INTERNET
-    configTime(MY_TZ, MY_NTP_SERVER);  // Here is the IMPORTANT ONE LINER
-    Serial.println("NTP-Server = " + String(MY_NTP_SERVER));
-    timeOK = true;
-#else
-    Serial.println("No NTP-Server");
-#endif
-  }  // wlanOK
-
   // Try to initialize Communication to BME280
   retry = true;
   connect_tries = 0;
@@ -681,6 +638,57 @@ void setup() {  // setup code, to run once
     Serial.println("Could not find a valid SCD30 sensor after " + String(connect_tries) + " tries.");
   }
   // End Communication to SCD30
+  // Setting extension switches
+  pinMode(SW0, OUTPUT);
+  pinMode(SW1, OUTPUT);
+  pinMode(SW2, OUTPUT);
+  pinMode(SW3, OUTPUT);
+  digitalWrite(SW0, HIGH);
+  digitalWrite(SW1, HIGH);
+  digitalWrite(SW2, HIGH);
+  digitalWrite(SW3, HIGH);
+  pinMode(SW0, INPUT_PULLUP);  // no external pullup needed
+  pinMode(SW1, INPUT_PULLUP);  // no external pullup needed
+  pinMode(SW2, INPUT_PULLUP);  // no external pullup needed
+  pinMode(SW3, INPUT_PULLUP);  // no external pullup needed
+  Serial.printf("Switch 0 on Pin %d\n", SW0);
+  Serial.printf("Switch 1 on Pin %d\n", SW1);
+  Serial.printf("Switch 2 on Pin %d\n", SW2);
+  Serial.printf("Switch 3 on Pin %d\n", SW3);
+  Serial.printf("ADC 0 on Pin %d\n", ADC0);
+  Serial.printf("LDR-Params: Rpd = %f, R10 = %f, gamma = %f\n",
+                rpd, r10, sens);
+
+  Serial.println("Configuring local access point...");
+//    if (! WiFi.softAPConfig(localIP, localGateway, localNetmask)) {
+//    Serial.println("AP Config Failed");
+//  }
+#ifdef OPEN_WIFI
+  WiFi.softAP(mySsid);  // AP will be open - or -
+  Serial.printf("Local Access Point SSID = %s\n", mySsid);
+#else
+  WiFi.softAP(mySsid, myPassword);  // AP will be password protected
+  Serial.printf("Local Access Point SSID = %s, Password = %s\n",
+                mySsid, myPassword);
+#endif
+  localIP_s = WiFi.softAPIP().toString();
+  Serial.printf("Local IP address = %s\n", localIP_s.c_str());
+  macAddress_s = WiFi.softAPmacAddress();
+  Serial.printf("MAC address = %s\n", macAddress_s.c_str());
+  connectWiFi();  // connect to external WLAN
+  webServer.on("/", handle_OnConnect);
+  webServer.begin();
+  Serial.println("HTTP server started.");
+  if (wlanOK) {
+    reconnect();   // commect MQTT
+#ifdef HAS_INTERNET
+    configTime(MY_TZ, MY_NTP_SERVER);  // Here is the IMPORTANT ONE LINER
+    Serial.println("NTP-Server = " + String(MY_NTP_SERVER));
+    timeOK = true;
+#else
+    Serial.println("No NTP-Server");
+#endif
+  }  // wlanOK
   blink();  // when setup finished
 }  // setup()
 
@@ -695,13 +703,11 @@ void loop() {  // main code, repeatedly
     printSensorData();
     if (mqttOK) {
       publishSensorData();
-    }
-//    if (!mqttOK) {
-//      reconnect();
-//    } // mqttOK
-//    client.loop();
+    } else {
+      reconnect();
+    } // mqttOK
+  }  // if
 #ifdef DO_BLINK
-    blink();
+  blink();
 #endif
-  }  // currentMillis < ...
 }  // loop()
