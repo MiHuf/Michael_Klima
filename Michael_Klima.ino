@@ -1,23 +1,24 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2023-09-19
-   Program size:      Sketch 409244 Bytes (39%), Global Vars 35324 Bytes (44%)
+   Last modification: 2023-09-20
+   Program size:      Sketch 409416 Bytes (39%), Global Vars 35384 Bytes (44%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
+const String version = "2023-09-20";
 /* Michaels Raumklima-Monitor. Inspiriert durch den Artikel "IKEA Vindiktning
    hacken", siehe Make 5/2021, Seite 14 ff und hier:
    https://techtest.org/anleitung-wlan-feinstaub-und-temperatur-sensor-ikea-vindriktning-hack/
    
    Im Original: VINDRIKTNING Ikea Luftguete Sensor -> AdafruitIO
    Siehe https://github.com/MiHuf/Michael_Klima#readme
-
+   in the IDE: Include board
+          https://arduino.esp8266.com/stable/package_esp8266com_index.json
  * ***************************************************************************/
 
 // ***** Includes
-// include board https://arduino.esp8266.com/stable/package_esp8266com_index.json
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <SoftwareSerial.h>
@@ -79,7 +80,11 @@ const char* extSsid = WIFI_SSID;
 const char* extPassword = WIFI_PASS;
 const char* mySsid = APSSID;
 const char* myPassword = APPSK;
-const String mqtt_broker_s = String(MQTT_BROKER) + ".s1.eu.hivemq.cloud";
+#ifdef IS_HIVEMQ
+  const String mqtt_broker_s = String(MQTT_BROKER) + ".s1.eu.hivemq.cloud";
+#else
+  const String mqtt_broker_s = String(MQTT_BROKER);
+#endif
 const char* mqtt_broker = mqtt_broker_s.c_str();
 const char* mqtt_user = MQTT_USER;
 const char* mqtt_password = MQTT_PASS;
@@ -161,33 +166,6 @@ String deviceAddressToString(DeviceAddress a) {
   return String(buffer);
 }  // deviceAddressToString(...)
 
-void connectWiFi() {
-  unsigned long until = millis() + 1000 * wlanTimeout;
-  if (wlanOK) return;
-  // connecting to  external WLAN network
-  // https://arduino-esp8266.readthedocs.io/en/3.0.2/esp8266wifi/readme.html
-  Serial.printf("Connecting to external WLAN SSID %s with Password %s\n",
-                extSsid, extPassword);
-  WiFi.mode(WIFI_AP_STA);  // this is the default
-  WiFi.begin(extSsid, extPassword);
-  // check wi-fi staus until connected
-  while (WiFi.status() != WL_CONNECTED && millis() < until) {
-    delay(1000);
-    Serial.print(".");
-  }
-  if (millis() < until) {
-    wlanOK = true;
-    externalIP_s = WiFi.localIP().toString();
-    Serial.printf("\nExternal WLAN SSID %s connected, ext. IP address = %s\n",
-                  extSsid, externalIP_s.c_str());
-    // WiFi.printDiag(Serial);  // for Diagnosticts
-  } else {
-    // softAPdisconnect(wifioff);
-    Serial.printf("\nExternal WLAN SSID %s, Timeout after %d s\n",
-                  extSsid, wlanTimeout);
-  }
-  return;
-}  // connectWiFi()
 
 String lz(int num) {
   // add leading zero
@@ -234,6 +212,106 @@ String runInfo() {
   info += String(s % 60) + " s ";
   return info;
 }  // runInfo()
+
+
+// ***** Setup Sensors
+
+void setupSensors() {
+  bool retry;
+  int connect_tries;
+  String type;
+  // Software Serial für IKEA Sensor
+  Serial.printf("Software UART (Ikea) on Pin %d\n", PIN_UART_RX);
+  sensorSerial.begin(9600);
+  pinMode(ONE_WIRE_BUS, INPUT);
+  oneWire.begin(ONE_WIRE_BUS);
+  if (oneWire.reset()) {
+    Serial.printf("oneWire Bus on Pin %d\n", ONE_WIRE_BUS);
+  } else {
+    Serial.printf("No devices found on Pin %d\n", ONE_WIRE_BUS);
+  }
+  oneWire.begin(ONE_WIRE_BUS);
+  dht.begin();
+  ds.begin();
+  Serial.print("Parasite power is: ");
+  if (ds.isParasitePowerMode())
+    Serial.println("ON (2 wire)");
+  else Serial.println("OFF (3 wire)");
+  //  ds.setResolution(9);            // global resulution, default 9
+  if (ds.getAddress(ds_0, 0)) {
+    type = ds_0[0] == DS18B20MODEL ? "DS18B20" : "DS18S20 / DS1820";
+    Serial.println("Found Device " + type + " #0, ROM-Address = "
+                   + deviceAddressToString(ds_0));
+    dallasCount += 1;
+    // ds.setResolution(ds_0, 11);     // resolutuion for this sensor
+  }  // ds.getAddress(...)
+  if (ds.getAddress(ds_1, 1)) {
+    type = ds_0[0] == DS18B20MODEL ? "DS18B20" : "DS18S20 / DS1820";
+    Serial.println("Found Device " + type + " #1, ROM-Address = "
+                   + deviceAddressToString(ds_1));
+    dallasCount += 1;
+    // ds.setResolution(ds_1, 11);     // resolutuion for this sensor
+  }  // ds.getAddress(...)
+  Serial.printf("Found %d DS18x00 Sensor(s) \n", dallasCount);
+  // Try to initialize Communication to BME280
+  retry = true;
+  connect_tries = 0;
+  while (retry) {
+    connect_tries += 1;
+    retry = connect_tries < MAX_TRIES;
+    if (bme.begin(0x76)) {
+      retry = false;
+      Serial.println("Communication to BME280 established after " + String(connect_tries) + " tries.");
+    } else {
+      delay(200);
+    }
+  }  // End while
+  if (connect_tries >= MAX_TRIES) {
+    Serial.println("Could not find a valid BME280 sensor after " + String(connect_tries) + " tries.");
+    Serial.println("check wiring, address, sensor ID!");
+    Serial.print("SensorID was: 0x");
+    Serial.println(bme.sensorID(), 16);
+    Serial.println("ID of 0xFF probably means a bad address");
+  }
+  // End Communication to BME280
+  // Try to initialize Communication to SCD30
+  retry = true;
+  connect_tries = 0;
+  while (retry) {
+    connect_tries += 1;
+    retry = connect_tries < MAX_TRIES;
+    if (scd30.begin()) {
+      retry = false;
+      Serial.println("Communication to SCD30 established after " + String(connect_tries) + " tries.");
+    } else {
+      delay(200);
+    }
+  }  // End while
+  if (connect_tries >= MAX_TRIES) {
+    Serial.println("Could not find a valid SCD30 sensor after " + String(connect_tries) + " tries.");
+  }
+  // End Communication to SCD30
+  // Setting extension switches and LDR
+  pinMode(SW0, OUTPUT);
+  pinMode(SW1, OUTPUT);
+  pinMode(SW2, OUTPUT);
+  pinMode(SW3, OUTPUT);
+  digitalWrite(SW0, HIGH);
+  digitalWrite(SW1, HIGH);
+  digitalWrite(SW2, HIGH);
+  digitalWrite(SW3, HIGH);
+  pinMode(SW0, INPUT_PULLUP);  // no external pullup needed
+  pinMode(SW1, INPUT_PULLUP);  // no external pullup needed
+  pinMode(SW2, INPUT_PULLUP);  // no external pullup needed
+  pinMode(SW3, INPUT_PULLUP);  // no external pullup needed
+  Serial.printf("Switch 0 on Pin %d\n", SW0);
+  Serial.printf("Switch 1 on Pin %d\n", SW1);
+  Serial.printf("Switch 2 on Pin %d\n", SW2);
+  Serial.printf("Switch 3 on Pin %d\n", SW3);
+  Serial.printf("ADC 0 on Pin %d\n", ADC0);
+  Serial.printf("LDR-Params: Rpd = %f, R10 = %f, gamma = %f\n",
+                rpd, r10, sens);
+}  // setupSensors()
 
 
 // ***** Get Sensor Data Functions
@@ -414,6 +492,7 @@ String formatSensorData(bool html = false) {
   return out;
 }  // formatSensorData()
 
+
 // ***** Output Functions
 
 void printSensorData() {
@@ -460,6 +539,7 @@ String buildHtml() {
   page += "<body>\r\n";
   page += "<div id=\"webpage\">\r\n";
   page += "<h1>" + title + "</h1> \r\n";
+  page += "<h2> Version: " + version + "</h2> \r\n";
   page += "<p>Siehe <a href=\"https://github.com/MiHuf/Michael_Klima\" \
           target=\"_blank\">github.com/MiHuf/Michael_Klima</a></p>\r\n";
   page += "<p>Local Access Point SSID = " + String(mySsid) + ", IP address = " + localIP_s + ", MAC address = " + macAddress_s + "</p> \r\n";
@@ -552,6 +632,37 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
 }  // callback(..)
 
+// ***** Communication Functions
+
+void connectWiFi() {
+  unsigned long until = millis() + 1000 * wlanTimeout;
+  if (wlanOK) return;
+  // connecting to  external WLAN network
+  // https://arduino-esp8266.readthedocs.io/en/3.0.2/esp8266wifi/readme.html
+  Serial.printf("Connecting to external WLAN SSID %s with Password %s\n",
+                extSsid, extPassword);
+  WiFi.mode(WIFI_AP_STA);  // this is the default
+  WiFi.begin(extSsid, extPassword);
+  // check wi-fi staus until connected
+  while (WiFi.status() != WL_CONNECTED && millis() < until) {
+    delay(1000);
+    Serial.print(".");
+  }
+  if (millis() < until) {
+    wlanOK = true;
+    externalIP_s = WiFi.localIP().toString();
+    Serial.printf("\nExternal WLAN SSID %s connected, ext. IP address = %s\n",
+                  extSsid, externalIP_s.c_str());
+    // WiFi.printDiag(Serial);  // for Diagnosticts
+  } else {
+    // softAPdisconnect(wifioff);
+    Serial.printf("\nExternal WLAN SSID %s, Timeout after %d s\n",
+                  extSsid, wlanTimeout);
+  }
+  return;
+}  // connectWiFi()
+
+
 // ***** Main Functions
 
 void setup() {  // setup code, to run once
@@ -566,99 +677,9 @@ void setup() {  // setup code, to run once
   pinMode(LED_BUILTIN, OUTPUT);
   Serial.println();
   Serial.println(title);
+  Serial.println("Version " + version);
+  setupSensors();
   Serial.printf("Defined %d sensors in the Software\n", sensorCount);
-  // Software Serial für IKEA Sensor
-  Serial.printf("Software UART (Ikea) on Pin %d\n", PIN_UART_RX);
-  sensorSerial.begin(9600);
-  pinMode(ONE_WIRE_BUS, INPUT);
-  oneWire.begin(ONE_WIRE_BUS);
-  if (oneWire.reset()) {
-    Serial.printf("oneWire Bus on Pin %d\n", ONE_WIRE_BUS);
-  } else {
-    Serial.printf("No devices found on Pin %d\n", ONE_WIRE_BUS);
-  }
-  oneWire.begin(ONE_WIRE_BUS);
-  dht.begin();
-  ds.begin();
-  Serial.print("Parasite power is: ");
-  if (ds.isParasitePowerMode())
-    Serial.println("ON (2 wire)");
-  else Serial.println("OFF (3 wire)");
-  //  ds.setResolution(9);            // global resulution, default 9
-  if (ds.getAddress(ds_0, 0)) {
-    type = ds_0[0] == DS18B20MODEL ? "DS18B20" : "DS18S20 / DS1820";
-    Serial.println("Found Device " + type + " #0, ROM-Address = "
-                   + deviceAddressToString(ds_0));
-    dallasCount += 1;
-    // ds.setResolution(ds_0, 11);     // resolutuion for this sensor
-  }  // ds.getAddress(...)
-  if (ds.getAddress(ds_1, 1)) {
-    type = ds_0[0] == DS18B20MODEL ? "DS18B20" : "DS18S20 / DS1820";
-    Serial.println("Found Device " + type + " #1, ROM-Address = "
-                   + deviceAddressToString(ds_1));
-    dallasCount += 1;
-    // ds.setResolution(ds_1, 11);     // resolutuion for this sensor
-  }  // ds.getAddress(...)
-  Serial.printf("Found %d DS18x00 Sensor(s) \n", dallasCount);
-  // Try to initialize Communication to BME280
-  retry = true;
-  connect_tries = 0;
-  while (retry) {
-    connect_tries += 1;
-    retry = connect_tries < MAX_TRIES;
-    if (bme.begin(0x76)) {
-      retry = false;
-      Serial.println("Communication to BME280 established after " + String(connect_tries) + " tries.");
-    } else {
-      delay(200);
-    }
-  }  // End while
-  if (connect_tries >= MAX_TRIES) {
-    Serial.println("Could not find a valid BME280 sensor after " + String(connect_tries) + " tries.");
-    Serial.println("check wiring, address, sensor ID!");
-    Serial.print("SensorID was: 0x");
-    Serial.println(bme.sensorID(), 16);
-    Serial.println("ID of 0xFF probably means a bad address");
-  }
-  // End Communication to BME280
-  // Try to initialize Communication to SCD30
-  retry = true;
-  connect_tries = 0;
-  while (retry) {
-    connect_tries += 1;
-    retry = connect_tries < MAX_TRIES;
-    if (scd30.begin()) {
-      retry = false;
-      Serial.println("Communication to SCD30 established after " + String(connect_tries) + " tries.");
-    } else {
-      delay(200);
-    }
-  }  // End while
-  if (connect_tries >= MAX_TRIES) {
-    Serial.println("Could not find a valid SCD30 sensor after " + String(connect_tries) + " tries.");
-  }
-  // End Communication to SCD30
-  // Setting extension switches
-  pinMode(SW0, OUTPUT);
-  pinMode(SW1, OUTPUT);
-  pinMode(SW2, OUTPUT);
-  pinMode(SW3, OUTPUT);
-  digitalWrite(SW0, HIGH);
-  digitalWrite(SW1, HIGH);
-  digitalWrite(SW2, HIGH);
-  digitalWrite(SW3, HIGH);
-  pinMode(SW0, INPUT_PULLUP);  // no external pullup needed
-  pinMode(SW1, INPUT_PULLUP);  // no external pullup needed
-  pinMode(SW2, INPUT_PULLUP);  // no external pullup needed
-  pinMode(SW3, INPUT_PULLUP);  // no external pullup needed
-  Serial.printf("Switch 0 on Pin %d\n", SW0);
-  Serial.printf("Switch 1 on Pin %d\n", SW1);
-  Serial.printf("Switch 2 on Pin %d\n", SW2);
-  Serial.printf("Switch 3 on Pin %d\n", SW3);
-  Serial.printf("ADC 0 on Pin %d\n", ADC0);
-  Serial.printf("LDR-Params: Rpd = %f, R10 = %f, gamma = %f\n",
-                rpd, r10, sens);
-
   Serial.println("Configuring local access point...");
 //    if (! WiFi.softAPConfig(localIP, localGateway, localNetmask)) {
 //    Serial.println("AP Config Failed");

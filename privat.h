@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             privat.h
    Created:           2022-04-05
-   Last modification: 2023-09-14
+   Last modification: 2023-09-20
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -57,6 +57,7 @@ sensor_type sensor[] = {
   #define OPEN_WIFI            // comment out for protected WiFi with APSSK
   #define APPSK  "geheim123"   // Min. 8 characters
   #define MQTT_BROKER "broker.mqtt-dashboard.com"
+  // #define IS_HIVEMQ
   // #define MQTT_BROKER "192.168.0.2"
   #define MQTT_USER "myUser"
   #define MQTT_PASS "myPassword"
