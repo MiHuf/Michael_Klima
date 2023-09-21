@@ -29,13 +29,13 @@ set xlabel "ADC - Wert" font "Arial,16"
 set ylabel "B / lx" font "Arial,16"
 set terminal png
 set output "ADC.png"
-rpd = 4.7
-plot b(x, rpd, 8.0, 0.5) lw 3   title "R_{pd} = 4.7 kOhm, R_{10} = 8 kOhm, gamma = 0.5" ,\
-     b(x, rpd, 15.0, 0.6) lw 3   title "R_{pd} = 4.7 kOhm, R_{10} = 15 kOhm, gamma = 0.6" ,\
-     b(x, rpd, 25.0, 0.6) lw 3   title "R_{pd} = 4.7 kOhm, R_{10} = 25 kOhm, gamma = 0.6" ,\
-     b(x, rpd, 40.0, 0.7) lw 3   title "R_{pd} = 4.7 kOhm, R_{10} = 40 kOhm, gamma = 0.7" ,\
-     b(x, rpd, 75.0, 0.8) lw 3   title "R_{pd} = 4.7 kOhm, R_{10} = 75 kOhm, gamma = 0.8" ,\
-     b(x, rpd, 150.0, 0.9) lw 3   title "R_{pd} = 4.7 kOhm, R_{10} = 150 kOhm, gamma = 0.9"
+rpd = 10.0
+plot b(x, rpd, 8.0, 0.5) lw 3   title "R_{pd} = 10 kOhm, R_{10} = 8 kOhm, gamma = 0.5" ,\
+     b(x, rpd, 15.0, 0.6) lw 3   title "R_{pd} = 10 kOhm, R_{10} = 15 kOhm, gamma = 0.6" ,\
+     b(x, rpd, 25.0, 0.6) lw 3   title "R_{pd} = 10 kOhm, R_{10} = 25 kOhm, gamma = 0.6" ,\
+     b(x, rpd, 40.0, 0.7) lw 3   title "R_{pd} = 10 kOhm, R_{10} = 40 kOhm, gamma = 0.7" ,\
+     b(x, rpd, 75.0, 0.8) lw 3   title "R_{pd} = 10 kOhm, R_{10} = 75 kOhm, gamma = 0.8" ,\
+     b(x, rpd, 150.0, 0.9) lw 3   title "R_{pd} = 10 kOhm, R_{10} = 150 kOhm, gamma = 0.9"
 
 set terminal x11
 replot
