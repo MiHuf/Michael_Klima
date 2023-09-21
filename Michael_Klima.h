@@ -46,9 +46,9 @@
   // ***** Lines below may need modification
   // #define DHTTYPE xxx // moved to individual header files
   // include only one of
-  // "privat.h", "_institut.h" (2), _test.h" (3), "_andreas.h" (4), "_neu.h" (5), "_michael.h" (6),  ...
+  // "privat.h", "_institut.h" (2), _test.h" (3), "_andreas.h" (4), "_neu.h" (5), "_michael.h" (6), _test2.h" (7), ...
   // (x) is the number of the controller, files "_xxx.h" will not be included in the github repository.
-  #include "_test.h"
+  #include "_test2.h"
   #ifndef TOPIC
     #define TOPIC "zuHause"
   #endif

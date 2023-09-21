@@ -1,13 +1,13 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2023-09-20
-   Program size:      Sketch 409416 Bytes (39%), Global Vars 35384 Bytes (44%)
+   Last modification: 2023-09-21
+   Program size:      Sketch 410088 Bytes (39%), Global Vars 35424 Bytes (44%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
-const String version = "2023-09-20";
+const String version = "2023-09-21";
 /* Michaels Raumklima-Monitor. Inspiriert durch den Artikel "IKEA Vindiktning
    hacken", siehe Make 5/2021, Seite 14 ff und hier:
    https://techtest.org/anleitung-wlan-feinstaub-und-temperatur-sensor-ikea-vindriktning-hack/
@@ -105,6 +105,7 @@ const uint8_t msg_buffer_size = MSG_BUFFER_SIZE;
 String localIP_s, macAddress_s, externalIP_s;
 bool wlanOK = false;
 bool mqttOK = false;
+int mqttState = -1;
 bool timeOK = false;
 time_t now;  // this is the epoch
 tm tm;       // time information in a structure
@@ -549,14 +550,15 @@ String buildHtml() {
   } else {
     page += ", Timeout after " + String(wlanTimeout) + " s</p> \r\n";
   }
-  if (mqttOK) {
+  #ifdef MQTT_BROKER
     page += "<p>MQTT Broker = " + mqtt_broker_s + "<br>MQTT User = " + String(mqtt_user) + "<br>MQTT Client id = " + mq_client + "<br>\r\n";
     page += "Web-Interface = <a href=\"https://console.hivemq.cloud/\" target=\"_blank\">HiveMQ Console</a>\r\n";
-    page += " or <a href=\"https://console.hivemq.cloud/clusters/free/" + String(mqtt_broker) + "/web-client\" target=\"_blank\">HiveMQ Web-Client</a></p></p>\r\n";
-
-  } else {
-    page += "<p> MQTT Timeout after " + String(mqttTimeout) + " s</p> \r\n";
-  }
+    page += " or <a href=\"https://console.hivemq.cloud/clusters/free/" + String(mqtt_broker) + "/web-client\" target=\"_blank\">HiveMQ Web-Client</a><br>\r\n";
+    page += "MQTT Connection State = " + String(mqttState) + "</p></p>\r\n";
+    if (!mqttOK) {
+      page += "<p> MQTT Timeout after " + String(mqttTimeout) + " s</p> \r\n";
+    }
+  #endif
   page += formatSensorData(true);
   page += "</div>\r\n";
   page += "</body>\r\n";
@@ -568,14 +570,19 @@ String buildHtml() {
 // ***** MQTT Functions
 
 void reconnect() {
+  bool connectOK = true;
   unsigned long until = millis() + 1000 * mqttTimeout;
+  mqttState = client.state();
   mqttOK = client.connected();
   if (mqttOK) return;
   // Loop until we're reconnected
   while (!mqttOK && (millis() < until)) {
     Serial.println("Attempting MQTT connection ...");
     // Attempt to connect
-    if (mqtt_client_id, mqtt_user, mqtt_password) {
+    connectOK = client.connect(mqtt_client_id, mqtt_user, mqtt_password);
+    mqttState = client.state();
+    mqttOK = client.connected();
+    if (connectOK) {
       Serial.println("MQTT Broker = " + String(mqtt_broker));
       Serial.println("MQTT User = " + String(mqtt_user));
       Serial.println("MQTT Client id = " + mq_client);
@@ -587,14 +594,12 @@ void reconnect() {
       Serial.println("MQTT client connected.");
       mqttOK = true;
     } else {
-      Serial.print("MQTT client failed, rc=");
-      Serial.print(client.state());
-      Serial.println(" try again in 5 seconds");
+      Serial.printf("MQTT client failed, state = %d, try again in 5 seconds\n", mqttState);
       // Wait 5 seconds before retrying
       delay(5000);
     }
   }  // while
-  if (!mqttOK) Serial.printf("MQTT Timeout after %d s", mqttTimeout);
+  if (millis() > until) Serial.printf("MQTT Timeout after %d s\n", mqttTimeout);
 }  // reconnect()
 
 void publishSensorData() {
