@@ -63,5 +63,7 @@ Und hier die Adapter-Platine (35mm x 42mm):
 |MQTT Broker Mosquitto:|<http://www.steves-internet-guide.com/install-mosquitto-linux/>|
 |MQTT Broker sensatio:|<https://www.sensatio.io/>|
 |MQTT Arduino Cloud:|<https://www.cloudino.io/>|
+|InfluxDB:|<https://www.ionos.de/digitalguide/hosting/hosting-technik/was-ist-influxdb/>|
+|Grafana: |<https://grafana.com/>|
 
 
