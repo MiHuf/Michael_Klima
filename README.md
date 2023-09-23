@@ -26,7 +26,7 @@ Anschließend mit der Arduino IDE kompiliern und auf den D1 Mini hochladen.
 
 ## Life Demo
 
-Klicke hier: <http://hufschmidt.ddns.krude.de:8086/> oder <http://hufschmidt.ddns.krude.de:8083/>
+Klicke hier: <http://hufschmidt.ddns.krude.de:8086/> oder <http://hufschmidt.ddns.krude.de:8087/>
 
 ## TODO
 
