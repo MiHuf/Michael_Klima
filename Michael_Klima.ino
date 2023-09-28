@@ -2,7 +2,7 @@
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
    Last modification: 2023-09-28
-   Program size:      Sketch 410232 Bytes (39%), Global Vars 35468 Bytes (44%)
+   Program size:      Sketch 410216 Bytes (39%), Global Vars 35388 Bytes (44%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -516,10 +516,8 @@ void handle_NotFound() {
 }  // handle_NotFound()
 
 String buildHtml() {
-  String page = "<!DOCTYPE HTML PUBLIC ";
-  page += "\"-//W3C//DTD HTML 4.01 Transitional//EN\" ";
-  page += "\"http://www.w3.org/TR/html4/loose.dtd\"> \r\n";
-  page += "<html>\r\n";
+  String page = "<!DOCTYPE html> \r\n";
+  page += "<html lang=\"de\">\r\n";
   page += "<head>\r\n";
   page += "<title>" + title + "</title>\r\n";
   page += "<meta name=\"viewport\"";
@@ -731,12 +729,23 @@ void loop() {  // main code, repeatedly
     previousMillis = currentMillis;
     getSensorData();
     printSensorData();
-    if (mqttOK) {
+  #ifdef MQTT_IF_LOW
+    if (!digitalRead(SW0)) {  // No MQTT tries if SW0 is open
+      if (mqttOK) {
+        publishSensorData();
+      } else {
+        reconnect(1);
+        publishSensorData();
+      } // mqttOK
+    }
+  #else
+    if (mqttOK) {         // aleays try MQTT, SW0 used elswehere
       publishSensorData();
     } else {
       reconnect(1);
       publishSensorData();
     } // mqttOK
+  #endif
   }  // if
 #ifdef DO_BLINK
   blink();

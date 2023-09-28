@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             privat.h
    Created:           2022-04-05
-   Last modification: 2023-09-20
+   Last modification: 2023-09-28
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -61,6 +61,7 @@ sensor_type sensor[] = {
   // #define MQTT_BROKER "192.168.0.2"
   #define MQTT_USER "myUser"
   #define MQTT_PASS "myPassword"
+  #define MQTT_IF_LOW         // comment out to always try MQTT 
   #define HAS_INTERNET        // comment out if not
   #define MY_NTP_SERVER "at.pool.ntp.org"
   // LDR Parameters for Type = GL 5539:
