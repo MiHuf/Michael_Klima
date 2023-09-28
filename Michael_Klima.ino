@@ -1,13 +1,13 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2023-09-24
-   Program size:      Sketch 410216 Bytes (39%), Global Vars 35472 Bytes (44%)
+   Last modification: 2023-09-28
+   Program size:      Sketch 410232 Bytes (39%), Global Vars 35468 Bytes (44%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
-const String version = "2023-09-24";
+const String version = "2023-09-28";
 /* Michaels Raumklima-Monitor. Inspiriert durch den Artikel "IKEA Vindiktning
    hacken", siehe Make 5/2021, Seite 14 ff und hier:
    https://techtest.org/anleitung-wlan-feinstaub-und-temperatur-sensor-ikea-vindriktning-hack/
@@ -554,7 +554,7 @@ String buildHtml() {
     page += "<p>MQTT Broker = " + mqtt_broker_s + "<br>MQTT User = " + String(mqtt_user) + "<br>MQTT Client id = " + mq_client + "<br>\r\n";
     page += "Web-Interface = <a href=\"https://console.hivemq.cloud/\" target=\"_blank\">HiveMQ Console</a>\r\n";
     page += " or <a href=\"https://console.hivemq.cloud/clusters/free/" + String(mqtt_broker) + "/web-client\" target=\"_blank\">HiveMQ Web-Client</a><br>\r\n";
-    page += "MQTT Connection State = " + String(mqttState) + "</p></p>\r\n";
+    page += "MQTT Connection State = " + String(mqttState) + "</p>\r\n";
     if (!mqttOK) {
       page += "<p> MQTT Timeout after " + String(mqttTimeout) + " s</p> \r\n";
     }
