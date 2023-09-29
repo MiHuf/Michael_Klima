@@ -38,9 +38,9 @@ Klicke hier: <http://hufschmidt.ddns.krude.de:8086/> oder <http://hufschmidt.ddn
 
 Und hier die Adapter-Platine (35mm x 42mm):
 
-![pdf Adapter Schematic](D1-Mini_Adapter_sch.png "Schaltplan")
+![pdf Adapter Schematic](D1-Mini_Adapter_V4_sch.png "Schaltplan")
 
-![pdf Adapter PCB](D1-Mini_Adapter_pcb_Eurocircuits.png "Platine")
+![pdf Adapter PCB](D1-Mini_Adapter_V4_pcb.png "Platine")
 
 ## Quellen für den Arduino Code und für Broker
 |Was     |URL|
