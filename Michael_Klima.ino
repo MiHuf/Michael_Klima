@@ -1,13 +1,13 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2023-09-28
-   Program size:      Sketch 410216 Bytes (39%), Global Vars 35388 Bytes (44%)
+   Last modification: 2024-09-09
+   Program size:      Sketch 412328 Bytes (39%), Global Vars 35828 Bytes (44%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
-const String version = "2023-09-28";
+const String version = "2024-09-09";
 /* Michaels Raumklima-Monitor. Inspiriert durch den Artikel "IKEA Vindiktning
    hacken", siehe Make 5/2021, Seite 14 ff und hier:
    https://techtest.org/anleitung-wlan-feinstaub-und-temperatur-sensor-ikea-vindriktning-hack/
@@ -203,7 +203,7 @@ String runInfo() {
   m = s / 60;
   h = m / 60;
   d = h / 24;
-  info += "Run #";
+  info += "\nRun #";
   info += String(runID);
   if (timeOK) {
     info += " vom " + getTime();
@@ -381,8 +381,8 @@ String readDS1820Temperature(DeviceAddress addr) {
     if (!ds.isConversionComplete()) {
       delay(1000);
     }
-    Serial.print("\nNew conversion for Device "
-                 + deviceAddressToString(addr));
+    // Serial.println("New conversion for Device "
+    //              + deviceAddressToString(addr));
     ok = ds.requestTemperaturesByAddress(addr);
   } else {
     return "disconnected";
@@ -390,8 +390,8 @@ String readDS1820Temperature(DeviceAddress addr) {
   if (ok) {
     temperature = ds.getTempC(addr);
   } else {
-    Serial.println("\nError: requestTemperaturesByAddress");
-    return "disconnected";
+    Serial.println("Error: requestTemperaturesByAddress");
+    return "disconnected\n";
   }                                            // if(ok)
   if (temperature != DEVICE_DISCONNECTED_C) {  // DallasTemperature.h line 36
     return String(temperature, 1);
@@ -478,7 +478,7 @@ String formatSensorData(bool html = false) {
   String out = "";
   out += html ? "<p>" : "\n";
   out += String(APSSID) + " gestartet" + startTime;
-  out += html ? "</p>\r\n<p>" : "\n";
+  out += html ? "</p>\r\n<p>" : "";
   out += runInfo();
   out += html ? "</p>\r\n" : "\n";
   for (uint8_t i = 0; i < sensorCount; i++) {

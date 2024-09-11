@@ -1,5 +1,15 @@
+# .gitignore, Status of 2024-09-11
+
 # private files
 _*.h
+
+# Preliminary, not yet working
+generalFunctions.h
+getSensorData.h
+mqttFunctions.h
+outputFunctions.h
+setupCommunication.h
+setupSensors.h
 
 # Arduino libraries
 libraries/*
@@ -37,6 +47,7 @@ __pycache__
 
 # Documentation
 latex/*
+D1-Mini_Adapter.odt
 LDR.png
 ADC.png
 
