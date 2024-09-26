@@ -1,13 +1,13 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2024-09-09
+   Last modification: 2024-09-26
    Program size:      Sketch 412328 Bytes (39%), Global Vars 35828 Bytes (44%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
-const String version = "2024-09-09";
+const String version = "2024-09-26";
 /* Michaels Raumklima-Monitor. Inspiriert durch den Artikel "IKEA Vindiktning
    hacken", siehe Make 5/2021, Seite 14 ff und hier:
    https://techtest.org/anleitung-wlan-feinstaub-und-temperatur-sensor-ikea-vindriktning-hack/
@@ -68,7 +68,7 @@ constexpr static const uint8_t SW2 = D3;   // =GPIO0, *** Warning !
 constexpr static const uint8_t SW3 = D4;   // =GPIO2 =LED_BUILTIN ***
 constexpr static const uint8_t ADC0 = A0;  // = Analog input, Pin 17
 
-// ***** General Settings
+// ***** Global Settings
 #define MY_TZ "CET-1CEST,M3.5.0/02,M10.5.0/03"
 const String wotag[] = { "So", "Mo", "Di", "Mi", "Do", "Fr", "Sa" };
 const uint8_t BLINK_COUNT = 5;  // Default Anzahl Lichtblitze
@@ -101,8 +101,8 @@ const char* topic = TOPIC;
 const uint8_t msg_buffer_size = MSG_BUFFER_SIZE;
 
 
-// ***** Variables
-String localIP_s, macAddress_s, externalIP_s;
+// ***** Global Variables
+String localIP_s, macAddress_s, hostname_s, externalIP_s;
 bool wlanOK = false;
 bool mqttOK = false;
 int mqttState = -1;
@@ -648,6 +648,15 @@ void connectWiFi() {
   // https://arduino-esp8266.readthedocs.io/en/3.0.2/esp8266wifi/readme.html
   Serial.printf("Connecting to external WLAN SSID %s with Password %s\n",
                 extSsid, extPassword);
+  #ifndef MY_SERVERNAME
+    String mac_s = macAddress_s;
+    mac_s.replace(":", ""); 
+    hostname_s = "Raumklima-" + mac_s.substring(mac_s.length() - 6);
+  #else
+    hostname_s = MY_SERVERNAME;
+  #endif
+  WiFi.hostname(hostname_s.c_str());
+  Serial.printf("Hostname on Router = %s\n", hostname_s.c_str());             
   WiFi.mode(WIFI_AP_STA);  // this is the default
   WiFi.begin(extSsid, extPassword);
   // check wi-fi staus until connected
@@ -700,8 +709,8 @@ void setup() {  // setup code, to run once
                 mySsid, myPassword);
 #endif
   localIP_s = WiFi.softAPIP().toString();
-  Serial.printf("Local IP address = %s\n", localIP_s.c_str());
   macAddress_s = WiFi.softAPmacAddress();
+  Serial.printf("Local IP address = %s\n", localIP_s.c_str());
   Serial.printf("MAC address = %s\n", macAddress_s.c_str());
   connectWiFi();  // connect to external WLAN
   webServer.on("/", handle_OnConnect);

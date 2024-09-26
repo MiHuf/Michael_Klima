@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             privat.h
    Created:           2022-04-05
-   Last modification: 2023-09-28
+   Last modification: 2024-09-26
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -54,6 +54,10 @@ sensor_type sensor[] = {
   #define WIFI_PASS "yyy"
   // Local Access Point Parameters, Michael Hufschmidt, 2022-01-12
   #define APSSID "zzz"
+  // Servername for the DHCP-Server in the Router. Make sure that it is
+  // uniqe within the LAN. Comment out to automatically set a name
+  // based on the last hex digits of the macAddress.
+  // #define MY_SERVERNAME "Raumklima-zzz"  
   #define OPEN_WIFI            // comment out for protected WiFi with APSSK
   #define APPSK  "geheim123"   // Min. 8 characters
   #define MQTT_BROKER "broker.mqtt-dashboard.com"
