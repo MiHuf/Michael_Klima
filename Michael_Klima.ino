@@ -1,8 +1,8 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2024-09-26
-   Program size:      Sketch 412328 Bytes (39%), Global Vars 35828 Bytes (44%)
+   Last modification: 2024-10-03
+   Program size:      Sketch 412696 Bytes (39%), Global Vars 35828 Bytes (44%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -545,6 +545,7 @@ String buildHtml() {
   page += "<p>External WLAN SSID = " + String(extSsid);
   if (wlanOK) {
     page += ", IP address = " + externalIP_s + "</p> \r\n";
+    page += "<p>Hostname on Router = " + hostname_s  + "</p> \r\n"; 
   } else {
     page += ", Timeout after " + String(wlanTimeout) + " s</p> \r\n";
   }
