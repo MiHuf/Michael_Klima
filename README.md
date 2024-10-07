@@ -20,13 +20,16 @@ Okt. 2024: Doku ergänzt.
     Vorher müssen noch einige Dateien angepasst werden:
 
   3. ***Datei "Michael_Klima.h", Zeile 51:***  
+
         #include "privat.h"  
+
     Die Datei "privat.h" enthält persönliche Zugangsdaten. Am besten nimmt man
 die als Gerüst und kopiert sie in eine neue Datei, z.B. "_mein_privat.h".
 Alle Dateien mit einem Unterstrich am Anfang des Namens werden von git nicht
 im öffentlichen Repository gespeichert.
 
     Anschließend muss die Zeile 51 entsprechend angepasst werden:  
+
       #include "_mein_privat.h"
 
 
@@ -35,13 +38,17 @@ im öffentlichen Repository gespeichert.
     4.1. In den Zeilen 23 bis 49 sind die aktuell vorhandenden Sensoren definiert, die Zeilen können gelöscht oder umgeordnet werden.
 
     4.2. In die Sektion "\***** My Settings" kommen dann die privaten Zugangsdaten:  
+
          #define WIFI_SSID "xxx"  
          #define WIFI_PASS "yyy"  
+
     Das sind die Zugangsdaten zum lokalen WLAN des Routers und ggf. zum Internet.
 
     4.3 Der Wemos D1 Mini ESP8266 in dem Modul spannt eigenes WLAN auf, das wird konfiguriert in den Zeilen  
+
             #define APSSID "zzz"  
             #define OPEN_WIFI  
+
     Das sind die Zugangsdaten zum internen WLAN des ESP8266 (ohne Passwort).
 
 5. ***Anschließend mit der Arduino IDE kompiliern,*** das Modul mit einem Mirco-USB Kabel an den PC anschließen und den Binär-Code auf den D1 Mini hochladen.
