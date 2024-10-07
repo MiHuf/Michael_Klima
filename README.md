@@ -24,10 +24,7 @@ Okt. 2024: Doku ergänzt.
 
         #include "privat.h"
 
-    Die Datei "privat.h" enthält persönliche Zugangsdaten. Am besten nimmt man
-die als Gerüst und kopiert sie in eine neue Datei, z.B. "_mein_privat.h".
-Alle Dateien mit einem Unterstrich am Anfang des Namens werden von git nicht
-im öffentlichen Repository gespeichert.
+    Die Datei "privat.h" enthält persönliche Zugangsdaten. Am besten nimmt man die als Gerüst und kopiert sie in eine neue Datei, z.B. "_mein_privat.h". Alle Dateien mit einem Unterstrich am Anfang des Namens werden von git nicht im öffentlichen Repository gespeichert.
 
     Anschließend muss die Zeile 51 entsprechend angepasst werden:
 
