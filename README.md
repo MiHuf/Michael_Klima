@@ -13,22 +13,23 @@ Sept. 2023: Luftdruck-Sensor BME280 eingebaut, CO2-Sensor SCD-30 vorbereitet.
 Okt. 2024: Doku ergänzt.
 
 ## Konfiguration und Installation
+
   1. Den Projekt-Ordner "Michael_Klima" von github klonen.
 
   2. Der Mircocontroller "Wemos D1 Mini ESP8266" wird programmiert mit der Arduino IDE <https://www.heise.de/ct/artikel/Arduino-IDE-installieren-und-fit-machen-fuer-ESP8266-und-ESP32-4130814.html>. Die Sprache ist im Wesentlichen C++.
 
     Vorher müssen noch einige Dateien angepasst werden:
 
-  3. ***Datei "Michael_Klima.h", Zeile 51:***  
+  3. ***Datei "Michael_Klima.h", Zeile 51:***
 
-        #include "privat.h"  
+        #include "privat.h"
 
     Die Datei "privat.h" enthält persönliche Zugangsdaten. Am besten nimmt man
 die als Gerüst und kopiert sie in eine neue Datei, z.B. "_mein_privat.h".
 Alle Dateien mit einem Unterstrich am Anfang des Namens werden von git nicht
 im öffentlichen Repository gespeichert.
 
-    Anschließend muss die Zeile 51 entsprechend angepasst werden:  
+    Anschließend muss die Zeile 51 entsprechend angepasst werden:
 
       #include "_mein_privat.h"
 
@@ -37,14 +38,14 @@ im öffentlichen Repository gespeichert.
 
     4.1. In den Zeilen 23 bis 49 sind die aktuell vorhandenden Sensoren definiert, die Zeilen können gelöscht oder umgeordnet werden.
 
-    4.2. In die Sektion "\***** My Settings" kommen dann die privaten Zugangsdaten:  
+    4.2. In die Sektion "\***** My Settings" kommen dann die privaten Zugangsdaten:
 
          #define WIFI_SSID "xxx"  
          #define WIFI_PASS "yyy"  
 
     Das sind die Zugangsdaten zum lokalen WLAN des Routers und ggf. zum Internet.
 
-    4.3 Der Wemos D1 Mini ESP8266 in dem Modul spannt eigenes WLAN auf, das wird konfiguriert in den Zeilen  
+    4.3 Der Wemos D1 Mini ESP8266 in dem Modul spannt eigenes WLAN auf, das wird konfiguriert in den Zeilen
 
             #define APSSID "zzz"  
             #define OPEN_WIFI  
@@ -65,10 +66,10 @@ im öffentlichen Repository gespeichert.
 
     6.2 Gehe auf die Administrations-Seite des Routers, lass dir im Abschnitt "WLAN > Funknetz" die verbundenen Geräte anzeigen. Der ESP8266 sollte unter dem Namen Raumklima-XXX sichtbar sein, wobei XXX die letzten 6 Hex-Ziffern der MAC Addresse ist. Merke dir die zughörige IP-Adresse.
 
-7. ***Geschafft!***  
+7. ***Geschafft!***
   Ab jetzt sollte der Raumklima Monitor von überall im LAN mit einem Browser sichtbar sein, entweder über die obige IP-Adresse oder über die URL `"http://raumklima-xxx"`.
 
-8. ***Optional:***  
+8. ***Optional:***
   Um einen Zugriff von außen übers Internet einzurichten, muss man im Router einen DDNS-Client installieren und konfigurieren und ferner für raumklima-xxx eine Port-Weiterleitung zur <IP-Adresse des Moduls>:80 erstellen.
 
 
