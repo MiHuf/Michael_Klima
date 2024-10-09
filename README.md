@@ -18,15 +18,14 @@ Okt. 2024: Doku ergänzt.
   1. Den Projekt-Ordner "Michael_Klima" von github.com/MiHuf/ klonen.
 
   2. Der Mircocontroller "Wemos D1 Mini ESP8266" wird programmiert mit der Arduino IDE <https://www.heise.de/ct/artikel/Arduino-IDE-installieren-und-fit-machen-fuer-ESP8266-und-ESP32-4130814.html>. Die Sprache ist im Wesentlichen C++.  
- Vorher müssen noch einige Dateien angepasst werden:
+Vorher müssen noch einige Dateien angepasst werden:
 
   3. ***Datei "Michael_Klima.h", Zeile 51:***
 
       #include "privat.h"   
-Die Datei "privat.h" enthält persönliche Zugangsdaten. Am besten nimmt man die als Gerüst und kopiert sie in eine neue Datei, z.B. "_mein_privat.h". Alle Dateien mit einem Unterstrich am Anfang des Namens werden von git nicht im öffentlichen Repository gespeichert.
-
-   Anschließend muss die Zeile 51 entsprechend angepasst werden:   
-#include "_mein_privat.h"
+Die Datei "privat.h" enthält persönliche Zugangsdaten. Am besten nimmt man die als Gerüst und kopiert sie in eine neue Datei, z.B. "_mein_privat.h". Alle Dateien mit einem Unterstrich am Anfang des Namens werden von git nicht im öffentlichen Repository gespeichert.  
+Anschließend muss die Zeile 51 entsprechend angepasst werden:   
+#include "_mein_privat.h"  
 
 
   4. ***Datei "_mein_privat.h":*** 
