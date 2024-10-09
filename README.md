@@ -1,3 +1,4 @@
+[Zu bearbeiten mit keenwrite.bin,  File README.md, Version 2024-10-09]: #
 # Michael_Klima
 
 Michaels Raumklima-Monitor. Inspiriert durch den Artikel
@@ -14,46 +15,39 @@ Okt. 2024: Doku ergänzt.
 
 ## Konfiguration und Installation
 
-  1. Den Projekt-Ordner "Michael_Klima" von github klonen.
+  1. Den Projekt-Ordner "Michael_Klima" von github.com/MiHuf/ klonen.
 
-  2. Der Mircocontroller "Wemos D1 Mini ESP8266" wird programmiert mit der Arduino IDE <https://www.heise.de/ct/artikel/Arduino-IDE-installieren-und-fit-machen-fuer-ESP8266-und-ESP32-4130814.html>. Die Sprache ist im Wesentlichen C++.
-
-    Vorher müssen noch einige Dateien angepasst werden:
+  2. Der Mircocontroller "Wemos D1 Mini ESP8266" wird programmiert mit der Arduino IDE <https://www.heise.de/ct/artikel/Arduino-IDE-installieren-und-fit-machen-fuer-ESP8266-und-ESP32-4130814.html>. Die Sprache ist im Wesentlichen C++.  
+ Vorher müssen noch einige Dateien angepasst werden:
 
   3. ***Datei "Michael_Klima.h", Zeile 51:***
 
-        #include "privat.h"
+      #include "privat.h"   
+Die Datei "privat.h" enthält persönliche Zugangsdaten. Am besten nimmt man die als Gerüst und kopiert sie in eine neue Datei, z.B. "_mein_privat.h". Alle Dateien mit einem Unterstrich am Anfang des Namens werden von git nicht im öffentlichen Repository gespeichert.
 
-    Die Datei "privat.h" enthält persönliche Zugangsdaten. Am besten nimmt man die als Gerüst und kopiert sie in eine neue Datei, z.B. "_mein_privat.h". Alle Dateien mit einem Unterstrich am Anfang des Namens werden von git nicht im öffentlichen Repository gespeichert.
-
-    Anschließend muss die Zeile 51 entsprechend angepasst werden:
-
-      #include "_mein_privat.h"
+   Anschließend muss die Zeile 51 entsprechend angepasst werden:   
+#include "_mein_privat.h"
 
 
-  4. ***Datei "_mein_privat.h":***
+  4. ***Datei "_mein_privat.h":*** 
+  
+      4.1. In den Zeilen 23 bis 49 sind die aktuell vorhandenden Sensoren definiert, die Zeilen können gelöscht oder umgeordnet werden. 
+ 
+      4.2. In die Sektion "\***** My Settings" kommen dann die privaten Zugangsdaten:  
+   #define WIFI_SSID "xxx"  
+   #define WIFI_PASS "yyy"  
+Das sind die Zugangsdaten zum lokalen WLAN des Routers und ggf. zum Internet.
 
-    4.1. In den Zeilen 23 bis 49 sind die aktuell vorhandenden Sensoren definiert, die Zeilen können gelöscht oder umgeordnet werden.
-
-    4.2. In die Sektion "\***** My Settings" kommen dann die privaten Zugangsdaten:
-
-         #define WIFI_SSID "xxx"  
-         #define WIFI_PASS "yyy"  
-
-    Das sind die Zugangsdaten zum lokalen WLAN des Routers und ggf. zum Internet.
-
-    4.3 Der Wemos D1 Mini ESP8266 in dem Modul spannt eigenes WLAN auf, das wird konfiguriert in den Zeilen
-
-            #define APSSID "zzz"  
-            #define OPEN_WIFI  
-
-    Das sind die Zugangsdaten zum internen WLAN des ESP8266 (ohne Passwort).
+      4.3 Der Wemos D1 Mini ESP8266 in dem Modul spannt eigenes WLAN auf, das wird konfiguriert in den Zeilen  
+   #define APSSID "zzz"  
+   #define OPEN_WIFI  
+Das sind die Zugangsdaten zum internen WLAN des ESP8266 (ohne Passwort).
 
 5. ***Anschließend mit der Arduino IDE kompiliern,*** das Modul mit einem Mirco-USB Kabel an den PC anschließen und den Binär-Code auf den D1 Mini hochladen.
 
     Der ESP8266 konfiguriert sich dann und startet das Programm. Das kann bis zu 2 Minuten dauern, am Ende wird die eingebaute LED fünf mal blinken.
 
-6. ***Für den nächsten Schritt gibt es 2 Möglichkeien:***
+6. ***Für den nächsten Schritt gibt es 2 Möglichkeiten:***
 
     6.1 Mit einem anderen PC / Touchpad / Handy das WLAN Netzwerk scannen und mit dem in Abschnitt 2.3 definierten WLAN (z.B. "zzz") verbinden.
 
