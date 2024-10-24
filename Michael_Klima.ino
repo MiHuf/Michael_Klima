@@ -1,7 +1,7 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2024-10-03
+   Last modification: 2024-10-23
    Program size:      Sketch 412696 Bytes (39%), Global Vars 35828 Bytes (44%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
@@ -16,6 +16,9 @@ const String version = "2024-10-03";
    Siehe https://github.com/MiHuf/Michael_Klima#readme
    in the IDE: Include board
           https://arduino.esp8266.com/stable/package_esp8266com_index.json
+
+  Additional board managger URLs: https://arduino.esp8266
+  Boaard: LOLIN(WEMOS) D1 R2 & mini
  * ***************************************************************************/
 
 // ***** Includes
@@ -134,9 +137,9 @@ double sens = GAMMA;  // LDR Gamma-Value / Sensitivity
 // ***** Objects
 SoftwareSerial sensorSerial(PIN_UART_RX, PIN_UART_TX);
 ESP8266WebServer webServer(80);
-// WiFiClient espClient;
-WiFiClientSecure espClient;
+WiFiClient espClient;
 PubSubClient client(espClient);
+// WiFiClientSecure espClient;
 // BearSSL::CertStore certStore;
 OneWire oneWire(ONE_WIRE_BUS);
 DHT dht(ONE_WIRE_BUS, DHTTYPE, 6);
@@ -572,6 +575,7 @@ void reconnect(uint8_t maxTries) {
   connect_tries = 0;
   bool connectOK = true;
   unsigned long until = millis() + 1000 * mqttTimeout;
+  client.setServer(MQTT_BROKER, MQTT_PORT);
   mqttState = client.state();
   mqttOK = client.connected();
   if (mqttOK) return;
