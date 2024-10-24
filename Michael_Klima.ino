@@ -1,13 +1,13 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2024-10-23
-   Program size:      Sketch 412696 Bytes (39%), Global Vars 35828 Bytes (44%)
+   Last modification: 2024-10-24
+   Program size:      Sketch 312160 Bytes (29%), Global Vars 35556 Bytes (44%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
-const String version = "2024-10-03";
+const String version = "2024-10-24";
 /* Michaels Raumklima-Monitor. Inspiriert durch den Artikel "IKEA Vindiktning
    hacken", siehe Make 5/2021, Seite 14 ff und hier:
    https://techtest.org/anleitung-wlan-feinstaub-und-temperatur-sensor-ikea-vindriktning-hack/
@@ -33,7 +33,7 @@ const String version = "2024-10-03";
 // https://github.com/knolleary/pubsubclient
 // https://www.hivemq.com/article/mqtt-on-arduino-nodemcu-esp8266-hivemq-cloud/
 #include <PubSubClient.h>
-#include <CertStoreBearSSL.h>
+// #include <CertStoreBearSSL.h>  // only needed for WiFiClientSecure
 #include <functional>
 // ***** For BME280 and SCD-30
 // https://www.az-delivery.de/products/gy-bme280 (BME280)
@@ -89,8 +89,13 @@ const char* myPassword = APPSK;
   const String mqtt_broker_s = String(MQTT_BROKER);
 #endif
 const char* mqtt_broker = mqtt_broker_s.c_str();
-const char* mqtt_user = MQTT_USER;
-const char* mqtt_password = MQTT_PASS;
+#ifdef MQTT_USER
+  const char* mqtt_user = MQTT_USER;
+  const char* mqtt_password = MQTT_PASS;
+#else
+  const char* mqtt_user = "";
+  const char* mqtt_password = "";
+#endif
 const String mq_client = "ESP8266_" + String(APSSID);
 #define MQTT_CLIENT mq_client.c_str();
 #ifdef MQTT_CLIENT

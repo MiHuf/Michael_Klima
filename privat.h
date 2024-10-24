@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             privat.h
    Created:           2022-04-05
-   Last modification: 2024-09-26
+   Last modification: 2024-10-24
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -20,6 +20,7 @@
   // ***** My Sensor definition
 #define DHTTYPE DHT11       // define the type of sensor (DHT11 or DHT22)
 sensor_type sensor[] = {
+  {"Random-Test [Zahl]", "0", "(20 ... 50)", 0, 0, "test/Zahl", true, getRandom},
   { "Feinstaub [Vindriktning]", "0", "µg/m³", 0, 0,
     "ZuHause/Wohnzimmer/Feinstaub", true, getIkeaData },
   { "Luftfeuchte [DHT11]", "0.0", "%", 0, 0,
@@ -60,11 +61,12 @@ sensor_type sensor[] = {
   // #define MY_SERVERNAME "Raumklima-zzz"  
   #define OPEN_WIFI            // comment out for protected WiFi with APSSK
   #define APPSK  "geheim123"   // Min. 8 characters
-  #define MQTT_BROKER "broker.mqtt-dashboard.com"
-  // #define IS_HIVEMQ
-  // #define MQTT_BROKER "192.168.0.2"
-  #define MQTT_USER "myUser"
-  #define MQTT_PASS "myPassword"
+  #define MQTT_BROKER "broker.hivemq.com"
+  #define MQTT_PORT 1883
+  #define IS_HIVEMQ
+  // comment for anonymous
+  // #define MQTT_USER "myUser"
+  // #define MQTT_PASS "myPassword"
   #define MQTT_IF_LOW         // comment out to always try MQTT 
   #define HAS_INTERNET        // comment out if not
   #define MY_NTP_SERVER "at.pool.ntp.org"
