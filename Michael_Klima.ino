@@ -1,13 +1,13 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2024-10-24
-   Program size:      Sketch 312160 Bytes (29%), Global Vars 35556 Bytes (44%)
+   Last modification: 2024-10-28
+   Program size:      Sketch 312272 Bytes (29%), Global Vars 35316 Bytes (44%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
-const String version = "2024-10-24";
+const String version = " 2024-10-28";
 /* Michaels Raumklima-Monitor. Inspiriert durch den Artikel "IKEA Vindiktning
    hacken", siehe Make 5/2021, Seite 14 ff und hier:
    https://techtest.org/anleitung-wlan-feinstaub-und-temperatur-sensor-ikea-vindriktning-hack/
@@ -105,14 +105,14 @@ const String mq_client = "ESP8266_" + String(APSSID);
   String client_id = "ESP8266Client-" + String(random(0xffff), HEX);
   const char* mqtt_client_id = client_id.c_str()
 #endif
-const char* topic = TOPIC;
+const String topic = TOPIC;
 const uint8_t msg_buffer_size = MSG_BUFFER_SIZE;
 
 
 // ***** Global Variables
 String localIP_s, macAddress_s, hostname_s, externalIP_s;
 bool wlanOK = false;
-bool mqttOK = false;
+bool mqttConnectOK = false;
 int mqttState = -1;
 bool timeOK = false;
 uint8_t connect_tries = 0;
@@ -562,7 +562,7 @@ String buildHtml() {
     page += "Web-Interface = <a href=\"https://console.hivemq.cloud/\" target=\"_blank\">HiveMQ Console</a>\r\n";
     page += " or <a href=\"https://console.hivemq.cloud/clusters/free/" + String(mqtt_broker) + "/web-client\" target=\"_blank\">HiveMQ Web-Client</a><br>\r\n";
     page += "MQTT Connection State = " + String(mqttState) + "</p>\r\n";
-    if (!mqttOK) {
+    if (!mqttConnectOK) {
       page += "<p> MQTT Timeout after " + String(mqttTimeout) + " s</p> \r\n";
     }
   #endif
@@ -576,35 +576,34 @@ String buildHtml() {
 
 // ***** MQTT Functions
 
-void reconnect(uint8_t maxTries) {
+void reconnectMQTT(uint8_t maxTries) {
   connect_tries = 0;
-  bool connectOK = true;
   unsigned long until = millis() + 1000 * mqttTimeout;
   client.setServer(MQTT_BROKER, MQTT_PORT);
   mqttState = client.state();
-  mqttOK = client.connected();
-  if (mqttOK) return;
+  mqttConnectOK = client.connected();
+  if (mqttConnectOK) return;
   // Loop until we're reconnected
-  while (!mqttOK && (millis() < until) && connect_tries < maxTries) {
+  while (!mqttConnectOK && (millis() < until) && connect_tries < maxTries) {
     connect_tries +=1;
     Serial.printf("Attempting MQTT connection #%d ...\n", connect_tries);
     // Attempt to connect
     // connectOK = client.connect(mqtt_client_id);
     // connectOK = client.connect(mqtt_user);
-    connectOK = client.connect(mqtt_client_id, mqtt_user, mqtt_password); // none of the above works
+    // mqttConnectOK = client.connected();
+    mqttConnectOK = client.connect(mqtt_client_id, mqtt_user, mqtt_password); // none of the above works
     mqttState = client.state();
-    mqttOK = client.connected();
-    if (connectOK) {
+    if (mqttConnectOK) {
       Serial.println("MQTT Broker = " + String(mqtt_broker));
       Serial.println("MQTT User = " + String(mqtt_user));
       Serial.println("MQTT Client id = " + mq_client);
       // Once connected, publish an announcement...
-      // client.publish(topic, "hello world");
+      // client.publish(topic.c_str(), "hello world");
       // ... and resubscribe
-      client.subscribe("inTopic");
+      client.subscribe("topic.c_str()");
       client.loop();
       Serial.printf("MQTT client connected after %d tries.\n", connect_tries);
-      mqttOK = true;
+      mqttConnectOK = true;
     } else {
       Serial.printf("MQTT client failed, state = %d, try again in 5 seconds\n", mqttState);
       // Wait 5 seconds before retrying
@@ -616,17 +615,27 @@ void reconnect(uint8_t maxTries) {
 
 void publishSensorData() {
   bool publishOK;
+  String msg;
+  // return;
   if (!wlanOK) {
     return;
   }
+  mqttConnectOK = client.connected();
+  mqttState = client.state();
+  if ((mqttState != 0) || !(mqttConnectOK)) {  // Make sure you are connected
+    reconnectMQTT(1);
+  }
   for (uint8_t i = 0; i < sensorCount; i++) {
-    if ((sensor[i].topic[0] > 0) & (sensor[i].active)) {
-      snprintf(msg, MSG_BUFFER_SIZE, sensor[i].topic, sensor[i].value);
-      Serial.print("Publish message: ");
-      Serial.print(msg);
-      publishOK = client.publish(topic, msg, true);
+    if ((sensor[i].topic != "") && (sensor[i].active)) {
+    // if (true) {
+      msg = topic + "/" + sensor[i].topic + sensor[i].value;
+      // snprintf(msg, MSG_BUFFER_SIZE, sensor[i].topic, sensor[i].value);
+      Serial.print("Publish message: " + msg);
+      // Serial.print(msg);
+      publishOK = client.publish(topic.c_str(), msg.c_str(), true);
       if (publishOK) Serial.println(" - success"); else Serial.println(" - fail");
     }  // if
+    client.subscribe("topic.c_str()");  // resubscribe
   }    // for
 }  // publishSensorData()
 
@@ -727,7 +736,7 @@ void setup() {  // setup code, to run once
   webServer.begin();
   Serial.println("HTTP server started.");
   if (wlanOK) {
-    reconnect(5);   // commect MQTT
+    reconnectMQTT(3);   // connect MQTT
 #ifdef HAS_INTERNET
     configTime(MY_TZ, MY_NTP_SERVER);  // Here is the IMPORTANT ONE LINER
     Serial.println("NTP-Server = " + String(MY_NTP_SERVER));
@@ -744,28 +753,12 @@ void loop() {  // main code, repeatedly
   randomSeed(micros());
   webServer.handleClient();
   if (currentMillis - previousMillis >= 1000 * processInterval) {
-    if (startTime == "" & timeOK) startTime = ": " + getTime();
+    if (startTime == "" && timeOK) startTime = ": " + getTime();
     previousMillis = currentMillis;
     getSensorData();
     printSensorData();
-  #ifdef MQTT_IF_LOW
-    if (!digitalRead(SW0)) {  // No MQTT tries if SW0 is open
-      if (mqttOK) {
-        publishSensorData();
-      } else {
-        reconnect(1);
-        publishSensorData();
-      } // mqttOK
-    }
-  #else
-    if (mqttOK) {         // aleays try MQTT, SW0 used elswehere
-      publishSensorData();
-    } else {
-      reconnect(1);
-      publishSensorData();
-    } // mqttOK
-  #endif
-  }  // if
+    publishSensorData();
+  }  // if (currentMillis ...
 #ifdef DO_BLINK
   blink();
 #endif

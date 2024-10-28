@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             Michael_Klima.h
    Created:           2021-12-21
-   Last modification: 2024-10-24
+   Last modification: 2024-10-28
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -66,7 +66,7 @@
   #endif
   #define MAX_TRIES 10          // Max. tries to connect a sensor
   const unsigned long wlanTimeout = 60;     // timeout in seconds
-  const unsigned long mqttTimeout = 10;     // timeout in seconds
+  const unsigned long mqttTimeout = 30;     // timeout in seconds
   const unsigned long processInterval = 30; // process interval in seconds
   const unsigned long refreshInterval = 60; // HTML refresh in seconds
 #endif // MICHAEL_KLIMA_H
