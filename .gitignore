@@ -1,15 +1,14 @@
-# .gitignore, Status of 2024-09-11
+# .gitignore, Status of 2024-10-30
 
 # private files
 _*.h
 
 # Preliminary, not yet working
-generalFunctions.h
-getSensorData.h
-mqttFunctions.h
-outputFunctions.h
-setupCommunication.h
-setupSensors.h
+libraries/*
+D1-Mini*
+MQTT-Links*
+Platine*
+
 
 # Arduino libraries
 libraries/*
