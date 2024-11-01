@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             Michael_Klima.h
    Created:           2021-12-21
-   Last modification: 2024-10-28
+   Last modification: 2024-11-01
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/

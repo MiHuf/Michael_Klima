@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             privat.h
    Created:           2022-04-05
-   Last modification: 2024-10-24
+   Last modification: 2024-11-01
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -61,13 +61,26 @@ sensor_type sensor[] = {
   // #define MY_SERVERNAME "Raumklima-zzz"  
   #define OPEN_WIFI            // comment out for protected WiFi with APSSK
   #define APPSK  "geheim123"   // Min. 8 characters
+
+  // MQTT Stuff
+  #define TOPIC "MyTest"
+  #define MQTT_CLIENT "Raumklima_xxx"
+ // Assume using Adafruit IO
+  #define IS_ADAFRUIT
+  // Adafruit IO account:
+  // Name of the Adafriut IO Feed, Michael Hufschmidt, 2021-11-19
+  // see https://io.adafruit.com/huefer/feeds/
+  // #define IO_USERNAME "aaa"
+  // #define IO_KEY "ccc"
+  // #define ADAFRUIT_FEED "Wohnzimmer"
+// Assume using HIVEMQ
+  #define IS_HIVEMQ
   #define MQTT_BROKER "broker.hivemq.com"
   #define MQTT_PORT 1883
-  #define IS_HIVEMQ
   // comment for anonymous
-  // #define MQTT_USER "myUser"
-  // #define MQTT_PASS "myPassword"
-  #define MQTT_IF_LOW         // comment out to always try MQTT 
+  #define MQTT_USER "aaa"
+  #define MQTT_PASS "ccc"
+
   #define HAS_INTERNET        // comment out if not
   #define MY_NTP_SERVER "at.pool.ntp.org"
   // LDR Parameters for Type = GL 5539:

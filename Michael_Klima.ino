@@ -1,13 +1,13 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2024-10-28
-   Program size:      Sketch 312272 Bytes (29%), Global Vars 35316 Bytes (44%)
+   Last modification: 2024-11-01
+   Program size:      Sketch 312288 Bytes (29%), Global Vars 35364 Bytes (44%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
-const String version = " 2024-10-28";
+const String version = "2024-11-01";
 /* Michaels Raumklima-Monitor. Inspiriert durch den Artikel "IKEA Vindiktning
    hacken", siehe Make 5/2021, Seite 14 ff und hier:
    https://techtest.org/anleitung-wlan-feinstaub-und-temperatur-sensor-ikea-vindriktning-hack/
@@ -17,7 +17,7 @@ const String version = " 2024-10-28";
    in the IDE: Include board
           https://arduino.esp8266.com/stable/package_esp8266com_index.json
 
-  Additional board managger URLs: https://arduino.esp8266
+  Additional board manager URLs: https://arduino.esp8266
   Boaard: LOLIN(WEMOS) D1 R2 & mini
  * ***************************************************************************/
 
@@ -83,11 +83,7 @@ const char* extSsid = WIFI_SSID;
 const char* extPassword = WIFI_PASS;
 const char* mySsid = APSSID;
 const char* myPassword = APPSK;
-#ifdef IS_HIVEMQ
-  const String mqtt_broker_s = String(MQTT_BROKER) + ".s1.eu.hivemq.cloud";
-#else
-  const String mqtt_broker_s = String(MQTT_BROKER);
-#endif
+const String mqtt_broker_s = String(MQTT_BROKER);
 const char* mqtt_broker = mqtt_broker_s.c_str();
 #ifdef MQTT_USER
   const char* mqtt_user = MQTT_USER;
@@ -96,15 +92,13 @@ const char* mqtt_broker = mqtt_broker_s.c_str();
   const char* mqtt_user = "";
   const char* mqtt_password = "";
 #endif
-const String mq_client = "ESP8266_" + String(APSSID);
-#define MQTT_CLIENT mq_client.c_str();
-#ifdef MQTT_CLIENT
-  const char* mqtt_client_id = MQTT_CLIENT;
-#else
+#ifndef MQTT_CLIENT
   // Create a random client ID
-  String client_id = "ESP8266Client-" + String(random(0xffff), HEX);
-  const char* mqtt_client_id = client_id.c_str()
+  String mqtt_client_id_s = "ESP8266Client-" + String(random(0xffff), HEX);
+#else 
+  String mqtt_client_id_s = MQTT_CLIENT;
 #endif
+const char* mqtt_client_id = mqtt_client_id_s.c_str();
 const String topic = TOPIC;
 const uint8_t msg_buffer_size = MSG_BUFFER_SIZE;
 
@@ -558,7 +552,7 @@ String buildHtml() {
     page += ", Timeout after " + String(wlanTimeout) + " s</p> \r\n";
   }
   #ifdef MQTT_BROKER
-    page += "<p>MQTT Broker = " + mqtt_broker_s + "<br>MQTT User = " + String(mqtt_user) + "<br>MQTT Client id = " + mq_client + "<br>\r\n";
+    page += "<p>MQTT Broker = <a href=\"http://" + mqtt_broker_s + "\"  target=\"_blank\">" + mqtt_broker_s + "</a><br>\r\nMQTT User = " + String(mqtt_user) + "<br>MQTT Client id = " + mqtt_client_id_s + "<br>\r\n";
     page += "Web-Interface = <a href=\"https://console.hivemq.cloud/\" target=\"_blank\">HiveMQ Console</a>\r\n";
     page += " or <a href=\"https://console.hivemq.cloud/clusters/free/" + String(mqtt_broker) + "/web-client\" target=\"_blank\">HiveMQ Web-Client</a><br>\r\n";
     page += "MQTT Connection State = " + String(mqttState) + "</p>\r\n";
@@ -596,7 +590,7 @@ void reconnectMQTT(uint8_t maxTries) {
     if (mqttConnectOK) {
       Serial.println("MQTT Broker = " + String(mqtt_broker));
       Serial.println("MQTT User = " + String(mqtt_user));
-      Serial.println("MQTT Client id = " + mq_client);
+      Serial.println("MQTT Client id = " + mqtt_client_id_s);
       // Once connected, publish an announcement...
       // client.publish(topic.c_str(), "hello world");
       // ... and resubscribe
