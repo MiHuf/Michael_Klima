@@ -2,7 +2,7 @@
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
    Last modification: 2024-11-01
-   Program size:      Sketch 312288 Bytes (29%), Global Vars 35364 Bytes (44%)
+   Program size:      Sketch 312272 Bytes (29%), Global Vars 35284 Bytes (44%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -522,14 +522,14 @@ String buildHtml() {
   page += "<html lang=\"de\">\r\n";
   page += "<head>\r\n";
   page += "<title>" + title + "</title>\r\n";
-  page += "<meta name=\"viewport\"";
-  page += " content=\"width=device-width, initial-scale=1.0,";
-  page += " user-scalable=no\">\r\n";
+  // page += "<meta name=\"viewport\"";
+  // page += " content=\"width=device-width, initial-scale=1.0,";
+  // page += " user-scalable=no\">\r\n";
   page += "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"> \r\n";
   page += "<meta name=\"language\" content=\"de\"> \r\n";
   page += "<meta http-equiv=\"refresh\" content=\"";
   page += String(refreshInterval) + "\">\r\n";
-  page += "<style type=\"text/css\">\r\n";
+  page += "<style>\r\n";
   page += "  html {font-family: Helvetica; display: inline-block; ";
   page += "margin: 0px auto; text-align: left;}\r\n";
   page += "  body {background-color: #FFC; margin-top: 50px; margin-left: 20px;}\r\n";
@@ -541,20 +541,20 @@ String buildHtml() {
   page += "<div id=\"webpage\">\r\n";
   page += "<h1>" + title + "</h1> \r\n";
   page += "<h2> Version: " + version + "</h2> \r\n";
-  page += "<p>Siehe <a href=\"https://github.com/MiHuf/Michael_Klima\" \
-          target=\"_blank\">github.com/MiHuf/Michael_Klima</a></p>\r\n";
+  page += "<p>Siehe <a href=\"https://github.com/MiHuf/Michael_Klima\" target=\"_blank\">github.com/MiHuf/Michael_Klima</a></p>\r\n";
   page += "<p>Local Access Point SSID = " + String(mySsid) + ", IP address = " + localIP_s + ", MAC address = " + macAddress_s + "</p> \r\n";
-  page += "<p>External WLAN SSID = " + String(extSsid);
+  page += "<p>Router's WLAN SSID = " + String(extSsid);
   if (wlanOK) {
-    page += ", IP address = " + externalIP_s + "</p> \r\n";
-    page += "<p>Hostname on Router = " + hostname_s  + "</p> \r\n"; 
+    page += ", IP address = " + externalIP_s + "<br> \r\n";
+    page += "Hostname on Router = " + hostname_s  + "<p> \r\n"; 
   } else {
     page += ", Timeout after " + String(wlanTimeout) + " s</p> \r\n";
   }
   #ifdef MQTT_BROKER
     page += "<p>MQTT Broker = <a href=\"http://" + mqtt_broker_s + "\"  target=\"_blank\">" + mqtt_broker_s + "</a><br>\r\nMQTT User = " + String(mqtt_user) + "<br>MQTT Client id = " + mqtt_client_id_s + "<br>\r\n";
-    page += "Web-Interface = <a href=\"https://console.hivemq.cloud/\" target=\"_blank\">HiveMQ Console</a>\r\n";
-    page += " or <a href=\"https://console.hivemq.cloud/clusters/free/" + String(mqtt_broker) + "/web-client\" target=\"_blank\">HiveMQ Web-Client</a><br>\r\n";
+    page += "MQTT Topic = " +  topic + "/#<br>\r\n";
+    page += "MQTT Web-Interface = <a href=\"https://console.hivemq.cloud/\" target=\"_blank\">HiveMQ Console</a><br>\r\n";
+    // page += " or <a href=\"https://console.hivemq.cloud/clusters/free/" + String(mqtt_broker) + "/web-client\" target=\"_blank\">HiveMQ Web-Client</a><br>\r\n";
     page += "MQTT Connection State = " + String(mqttState) + "</p>\r\n";
     if (!mqttConnectOK) {
       page += "<p> MQTT Timeout after " + String(mqttTimeout) + " s</p> \r\n";
