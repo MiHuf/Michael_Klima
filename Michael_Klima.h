@@ -48,7 +48,7 @@
   // include only one of
   // "privat.h" (zzz), "_test1.h" (1), "_institut.h" (2), "_test3.h" (3), "_andreas.h" (4), "_test5.h" (5), "_wohnzimmer.h" (6), "_dach.h" (7), ...
   // (x) is the number of the controller, files "_xxx.h" will not be included in the github repository.
-  #include "privat.h"
+  #include "_dach.h"
   #ifndef TOPIC
     #define TOPIC "zuHause"
   #endif

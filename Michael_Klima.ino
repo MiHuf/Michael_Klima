@@ -1,13 +1,13 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2024-11-01
+   Last modification: 2024-11-02
    Program size:      Sketch 312272 Bytes (29%), Global Vars 35284 Bytes (44%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
-const String version = "2024-11-01";
+const String version = "2024-11-02";
 /* Michaels Raumklima-Monitor. Inspiriert durch den Artikel "IKEA Vindiktning
    hacken", siehe Make 5/2021, Seite 14 ff und hier:
    https://techtest.org/anleitung-wlan-feinstaub-und-temperatur-sensor-ikea-vindriktning-hack/
@@ -104,7 +104,7 @@ const uint8_t msg_buffer_size = MSG_BUFFER_SIZE;
 
 
 // ***** Global Variables
-String localIP_s, macAddress_s, hostname_s, externalIP_s;
+String localIP_s, macAddress_s, hostname_s, externalIP_s, mqttWeb_s = MQTT_WEB;
 bool wlanOK = false;
 bool mqttConnectOK = false;
 int mqttState = -1;
@@ -269,6 +269,7 @@ void setupSensors() {
       delay(200);
     }
   }  // End while
+  /*
   if (connect_tries >= MAX_TRIES) {
     Serial.println("Could not find a valid BME280 sensor after " + String(connect_tries) + " tries.");
     Serial.println("check wiring, address, sensor ID!");
@@ -276,6 +277,7 @@ void setupSensors() {
     Serial.println(bme.sensorID(), 16);
     Serial.println("ID of 0xFF probably means a bad address");
   }
+  */
   // End Communication to BME280
   // Try to initialize Communication to SCD30
   retry = true;
@@ -291,7 +293,7 @@ void setupSensors() {
     }
   }  // End while
   if (connect_tries >= MAX_TRIES) {
-    Serial.println("Could not find a valid SCD30 sensor after " + String(connect_tries) + " tries.");
+    // Serial.println("Could not find a valid SCD30 sensor after " + String(connect_tries) + " tries.");
   }
   // End Communication to SCD30
   // Setting extension switches and LDR
@@ -553,7 +555,7 @@ String buildHtml() {
   #ifdef MQTT_BROKER
     page += "<p>MQTT Broker = <a href=\"http://" + mqtt_broker_s + "\"  target=\"_blank\">" + mqtt_broker_s + "</a><br>\r\nMQTT User = " + String(mqtt_user) + "<br>MQTT Client id = " + mqtt_client_id_s + "<br>\r\n";
     page += "MQTT Topic = " +  topic + "/#<br>\r\n";
-    page += "MQTT Web-Interface = <a href=\"https://console.hivemq.cloud/\" target=\"_blank\">HiveMQ Console</a><br>\r\n";
+    page += "MQTT Web-Interface = <a href=\"" + mqttWeb_s + "\" target=\"_blank\">" + mqttWeb_s + "</a><br>\r\n";
     // page += " or <a href=\"https://console.hivemq.cloud/clusters/free/" + String(mqtt_broker) + "/web-client\" target=\"_blank\">HiveMQ Web-Client</a><br>\r\n";
     page += "MQTT Connection State = " + String(mqttState) + "</p>\r\n";
     if (!mqttConnectOK) {
@@ -609,7 +611,7 @@ void reconnectMQTT(uint8_t maxTries) {
 
 void publishSensorData() {
   bool publishOK;
-  String msg;
+  String fullTopic, msg;
   // return;
   if (!wlanOK) {
     return;
@@ -622,10 +624,10 @@ void publishSensorData() {
   for (uint8_t i = 0; i < sensorCount; i++) {
     if ((sensor[i].topic != "") && (sensor[i].active)) {
     // if (true) {
-      msg = topic + "/" + sensor[i].topic + sensor[i].value;
+      fullTopic = topic + "/" + sensor[i].topic;
+      msg = sensor[i].value;
       // snprintf(msg, MSG_BUFFER_SIZE, sensor[i].topic, sensor[i].value);
-      Serial.print("Publish message: " + msg);
-      // Serial.print(msg);
+      Serial.print("Publish message in " + fullTopic + ": " + msg);
       publishOK = client.publish(topic.c_str(), msg.c_str(), true);
       if (publishOK) Serial.println(" - success"); else Serial.println(" - fail");
     }  // if
