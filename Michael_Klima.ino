@@ -1,7 +1,7 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2024-11-02
+   Last modification: 2024-11-04
    Program size:      Sketch 312272 Bytes (29%), Global Vars 35284 Bytes (44%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
@@ -621,6 +621,11 @@ void publishSensorData() {
   if ((mqttState != 0) || !(mqttConnectOK)) {  // Make sure you are connected
     reconnectMQTT(1);
   }
+  fullTopic = topic + "/timestamp";
+  msg = getTime();
+  Serial.print("Publish message in " + fullTopic + ": " + msg);
+  publishOK = client.publish(fullTopic.c_str(), msg.c_str(), true);
+  if (publishOK) Serial.println(" - success"); else Serial.println(" - fail");
   for (uint8_t i = 0; i < sensorCount; i++) {
     if ((sensor[i].topic != "") && (sensor[i].active)) {
     // if (true) {
@@ -628,7 +633,7 @@ void publishSensorData() {
       msg = sensor[i].value;
       // snprintf(msg, MSG_BUFFER_SIZE, sensor[i].topic, sensor[i].value);
       Serial.print("Publish message in " + fullTopic + ": " + msg);
-      publishOK = client.publish(topic.c_str(), msg.c_str(), true);
+      publishOK = client.publish(fullTopic.c_str(), msg.c_str(), true);
       if (publishOK) Serial.println(" - success"); else Serial.println(" - fail");
     }  // if
     client.subscribe("topic.c_str()");  // resubscribe
