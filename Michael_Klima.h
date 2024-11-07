@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             Michael_Klima.h
    Created:           2021-12-21
-   Last modification: 2024-11-04
+   Last modification: 2024-11-07
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -28,6 +28,10 @@
   String getSwitch_1();
   String getSwitch_2();
   String getSwitch_3();
+  String getSwitchNum_0();
+  String getSwitchNum_1();
+  String getSwitchNum_2();
+  String getSwitchNum_3();
   String getADC0();
   String getLDR();
 
@@ -48,7 +52,7 @@
   // include only one of
   // "privat.h" (zzz), "_test1.h" (1), "_institut.h" (2), "_test3.h" (3), "_andreas.h" (4), "_test5.h" (5), "_wohnzimmer.h" (6), "_dach.h" (7), ...
   // (x) is the number of the controller, files "_xxx.h" will not be included in the github repository.
-  #include "privat.h"
+  #include "_dach.h"
   #ifndef TOPIC
     #define TOPIC "zuHause"
   #endif

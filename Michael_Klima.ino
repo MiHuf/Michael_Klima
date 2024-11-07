@@ -1,13 +1,13 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2024-11-04
+   Last modification: 2024-11-07
    Program size:      Sketch 312272 Bytes (29%), Global Vars 35284 Bytes (44%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
-const String version = "2024-11-04";
+const String version = "2024-11-07";
 /* Michaels Raumklima-Monitor. Inspiriert durch den Artikel "IKEA Vindiktning
    hacken", siehe Make 5/2021, Seite 14 ff und hier:
    https://techtest.org/anleitung-wlan-feinstaub-und-temperatur-sensor-ikea-vindriktning-hack/
@@ -445,6 +445,28 @@ String readSwitch(uint8_t pin) {
   }
   return out;
 }  // readSwitch
+String getSwitchNum_0() {
+  return readSwitchNum(SW0);
+}
+String getSwitchNum_1() {
+  return readSwitchNum(SW1);
+}
+String getSwitchNum_2() {
+  return readSwitchNum(SW2);
+}
+String getSwitchNum_3() {
+  return readSwitchNum(SW3);
+}
+String readSwitchNum(uint8_t pin) {
+  String out;
+  if (digitalRead(pin)) {
+    out = "1";
+  } else {
+    out = "0";
+  }
+  return out;
+}  // readSwitch
+
 
 String getADC0() {
   return String(analogRead(ADC0));
