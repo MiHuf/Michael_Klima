@@ -1,13 +1,13 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2024-11-07
-   Program size:      Sketch 312272 Bytes (29%), Global Vars 35284 Bytes (44%)
+   Last modification: 2024-11-08
+   Program size:      Sketch 312400 Bytes (29%), Global Vars 35000 Bytes (43%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
-const String version = "2024-11-07";
+const String version = "2024-11-08";
 /* Michaels Raumklima-Monitor. Inspiriert durch den Artikel "IKEA Vindiktning
    hacken", siehe Make 5/2021, Seite 14 ff und hier:
    https://techtest.org/anleitung-wlan-feinstaub-und-temperatur-sensor-ikea-vindriktning-hack/
@@ -475,7 +475,7 @@ String getLDR() {
   int adc = analogRead(ADC0);
   double b = 0.0;
   String out = "", bs = "";
-  if (adc >= 1 && adc <= 1023) {
+  if (adc > 1 && adc <= 1023) {
     b = 10.0 * exp(-log((rpd / r10) * (1024.0 / adc - 1.0)) / sens);
     bs = b < 100.0 ? String(b, 2) : String(b, 0);
   } else {
@@ -483,6 +483,18 @@ String getLDR() {
   }
   out = "ADC = " + String(adc) + " => " + bs;  // », →, ≡ oder ⇔
   return out;
+}  // getLDR()
+String getLDRNumLog() {
+  int adc = analogRead(ADC0);
+  double b = 0.0;
+  String bs = "";
+  if (adc > 1 && adc <= 1023) {
+    b = 10.0 * exp(-log((rpd / r10) * (1024.0 / adc - 1.0)) / sens);
+    bs = String(log10(b), 3);
+  } else {
+    bs = "overflow";
+  }
+  return bs;
 }  // getLDR()
 
 void getSensorData() {
@@ -577,7 +589,7 @@ String buildHtml() {
   #ifdef MQTT_BROKER
     page += "<p>MQTT Broker = <a href=\"http://" + mqtt_broker_s + "\"  target=\"_blank\">" + mqtt_broker_s + "</a><br>\r\nMQTT User = " + String(mqtt_user) + "<br>MQTT Client id = " + mqtt_client_id_s + "<br>\r\n";
     page += "MQTT Topic = " +  topic + "/#<br>\r\n";
-    page += "MQTT Web-Interface = <a href=\"" + mqttWeb_s + "\" target=\"_blank\">" + mqttWeb_s + "</a><br>\r\n";
+    page += "MQTT Monitor = <a href=\"" + mqttWeb_s + "\" target=\"_blank\">" + mqttWeb_s + "</a><br>\r\n";
     // page += " or <a href=\"https://console.hivemq.cloud/clusters/free/" + String(mqtt_broker) + "/web-client\" target=\"_blank\">HiveMQ Web-Client</a><br>\r\n";
     page += "MQTT Connection State = " + String(mqttState) + "</p>\r\n";
     if (!mqttConnectOK) {
@@ -644,7 +656,7 @@ void publishSensorData() {
     reconnectMQTT(1);
   }
   fullTopic = topic + "/timestamp";
-  msg = getTime();
+  msg = "Run #" + String(runID) + " vom " + getTime();
   Serial.print("Publish message in " + fullTopic + ": " + msg);
   publishOK = client.publish(fullTopic.c_str(), msg.c_str(), true);
   if (publishOK) Serial.println(" - success"); else Serial.println(" - fail");

@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             privat.h
    Created:           2022-04-05
-   Last modification: 2024-11-02
+   Last modification: 2024-11-08
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -65,23 +65,15 @@ sensor_type sensor[] = {
   // MQTT Stuff
   #define TOPIC "MyTest"
   #define MQTT_CLIENT "Raumklima_xxx"
- // Assume using Adafruit IO
-  #define IS_ADAFRUIT
-  // Adafruit IO account:
-  // Name of the Adafriut IO Feed, Michael Hufschmidt, 2021-11-19
-  // see https://io.adafruit.com/huefer/feeds/
-  // #define IO_USERNAME "aaa"
-  // #define IO_KEY "ccc"
-  // #define ADAFRUIT_FEED "Wohnzimmer"
-// Assume using HIVEMQ
   #define IS_HIVEMQ
-  #define MQTT_BROKER "broker.hivemq.com"
-  #define MQTT_PORT 1883
-  #define MQTT_WEB "https://console.hivemq.cloud/"
-
-  // comment for anonymous
-  #define MQTT_USER "aaa"
-  #define MQTT_PASS "ccc"
+  // Assume using HIVEMQ
+    #ifdef IS_HIVEMQ
+    #define MQTT_BROKER "broker.hivemq.com"
+    #define MQTT_PORT 1883
+    #define MQTT_WEB "https://console.hivemq.cloud/"
+    #define MQTT_USER "aaa"
+    #define MQTT_PASS "bbb"
+  #endif  // IS_HIVEMQ
 
   #define HAS_INTERNET        // comment out if not
   #define MY_NTP_SERVER "at.pool.ntp.org"

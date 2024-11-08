@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             Michael_Klima.h
    Created:           2021-12-21
-   Last modification: 2024-11-07
+   Last modification: 2024-11-08
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -34,6 +34,7 @@
   String getSwitchNum_3();
   String getADC0();
   String getLDR();
+  String getLDRNumLog();
 
   // ***** Sensor definition
   typedef struct {
@@ -52,7 +53,7 @@
   // include only one of
   // "privat.h" (zzz), "_test1.h" (1), "_institut.h" (2), "_test3.h" (3), "_andreas.h" (4), "_test5.h" (5), "_wohnzimmer.h" (6), "_dach.h" (7), ...
   // (x) is the number of the controller, files "_xxx.h" will not be included in the github repository.
-  #include "_dach.h"
+  #include "privat.h"
   #ifndef TOPIC
     #define TOPIC "zuHause"
   #endif
@@ -71,6 +72,6 @@
   #define MAX_TRIES 10          // Max. tries to connect a sensor
   const unsigned long wlanTimeout = 60;     // timeout in seconds
   const unsigned long mqttTimeout = 60;     // timeout in seconds
-  const unsigned long processInterval = 30; // process interval in seconds
+  const unsigned long processInterval = 60; // process interval in seconds
   const unsigned long refreshInterval = 60; // HTML refresh in seconds
 #endif // MICHAEL_KLIMA_H
