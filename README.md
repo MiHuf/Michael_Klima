@@ -1,4 +1,4 @@
-[Zu bearbeiten mit keenwrite.bin,  File README.md, Version 2024-10-09]: #
+[Zu bearbeiten mit keenwrite.bin oder retext,  File README.md, Version 2024-11-11]: #
 # Michael_Klima
 
 Michaels Raumklima-Monitor. Inspiriert durch den Artikel
@@ -12,6 +12,8 @@ Mai 2022: Absolute (aber ungenaue) Helligkeitsmessung mit einem LDR Photowiderst
 Sept. 2023: Luftdruck-Sensor BME280 eingebaut, CO2-Sensor SCD-30 vorbereitet.
 
 Okt. 2024: Doku ergänzt.
+
+Nov. 2024: MQTT funktioniert, Doku aktualisiert
 
 ## Konfiguration und Installation
 
@@ -62,14 +64,9 @@ Das sind die Zugangsdaten zum internen WLAN des ESP8266 (ohne Passwort).
 8. ***Optional:***
   Um einen Zugriff von außen übers Internet einzurichten, muss man im Router einen DDNS-Client installieren und konfigurieren und ferner für raumklima-xxx eine Port-Weiterleitung zur <IP-Adresse des Moduls>:80 erstellen.
 
-
 ## Life Demo
 
 Klicke hier: <http://hufschmidt.ddns.krude.de:8086/> oder <http://hufschmidt.ddns.krude.de:8087/>
-
-## TODO
-
-  * Geeigneten MQTT Broker / Server auswählen und evtl. Code anpassen
 
 ## Setup März 2022:
 
@@ -81,7 +78,7 @@ Und hier die Adapter-Platine (35mm x 42mm):
 
 ![pdf Adapter PCB](D1-Mini_Adapter_V4_brd.png "Platine")
 
-## Quellen für den Arduino Code und für Broker, siehe ToDo
+## Quellen für den Arduino Code und für MQTT  Broker
 |Was     |URL|
 |--------|------------------------------------------------------------------------|
 |ESP8266:|<https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/>|
@@ -94,15 +91,15 @@ Und hier die Adapter-Platine (35mm x 42mm):
 |BME280: |<https://www.az-delivery.de/products/gy-bme280>|
 |SCD-30: |<https://www.adafruit.com/product/4867>|
 |        |<https://learn.adafruit.com/adafruit-scd30/arduino>|
-|MQTT Client:|<https://github.com/knolleary/pubsubclient>|
-|MQTT HiveMQ:| <https://github.com/hivemq/hivemq-mqtt-web-client>|
-| |<https://www.hivemq.com/blog/full-featured-mqtt-client-browser/>|
-|MQTT ioBroker:|<https://www.iobroker.net/>|
-| |<https://github.com/ioBroker/ioBroker>|
+|MQTT Client Lib|<https://github.com/knolleary/pubsubclient>|
 |MQTT Broker Mosquitto:|<http://www.steves-internet-guide.com/install-mosquitto-linux/>|
-|MQTT Broker sensatio:|<https://www.sensatio.io/>|
-|MQTT Arduino Cloud:|<https://www.cloudino.io/>|
 |InfluxDB:|<https://www.ionos.de/digitalguide/hosting/hosting-technik/was-ist-influxdb/>|
 |Grafana: |<https://grafana.com/>|
+|MQTT Client Software zum Testen|<http://mqtt-explorer.com/>|
+|MQTT Broker, Übersicht|<https://mntolia.com/10-free-public-private-mqtt-brokers-for-testing-prototyping/>|
+|MQTT Broker HiveMQ:| <https://www.hivemq.com/>|
+|MQTT Broker Cedalo / Pro Mosquitto| <https://test.mosquitto.org/>|
+|MQTT Broker flespi|<https://flespi.com/>|
+|MQTT Broker sensatio:|<https://www.sensatio.io/>|
 
-
+---
