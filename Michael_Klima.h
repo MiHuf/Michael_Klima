@@ -72,14 +72,6 @@
   #define MAX_TRIES 10          // Max. tries to connect a sensor
 
   // #define DO_BLINK           // Blink at the end of loop()
-  #define  INDIVIDUAL_TIMING
-  #ifdef INDIVIDUAL_TIMING
-    const unsigned long wlanTimeout = 60;     // timeout in seconds
-    const unsigned long mqttTimeout = 60;     // timeout in seconds
-    const unsigned long processInterval = 60; // process interval in seconds
-    const unsigned long refreshInterval = 60; // HTML refresh in seconds
-  #endif                       // INDIVIDUAL_TIMING
-
   #ifndef INDIVIDUAL_TIMING
     const unsigned long wlanTimeout = 60;     // timeout in seconds
     const unsigned long mqttTimeout = 60;     // timeout in seconds
