@@ -1,13 +1,13 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2024-11-09
+   Last modification: 2024-11-11
    Program size:      Sketch 313168 Bytes (29%), Global Vars 35120 Bytes (43%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
-const String version = "2024-11-09";
+const String version = "2024-11-11";
 /* Michaels Raumklima-Monitor. Inspiriert durch den Artikel "IKEA Vindiktning
    hacken", siehe Make 5/2021, Seite 14 ff und hier:
    https://techtest.org/anleitung-wlan-feinstaub-und-temperatur-sensor-ikea-vindriktning-hack/
@@ -793,8 +793,8 @@ void loop() {  // main code, repeatedly
     getSensorData();
     printSensorData();
     publishSensorData();
+    #ifdef DO_BLINK
+      blink(3);
+    #endif
   }  // if (currentMillis ...
-#ifdef DO_BLINK
-  blink();
-#endif
 }  // loop()

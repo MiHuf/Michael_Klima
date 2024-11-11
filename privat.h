@@ -79,6 +79,7 @@ sensor_type sensor[] = {
 
   #define HAS_INTERNET        // comment out if not
   #define MY_NTP_SERVER "at.pool.ntp.org"
+
   // LDR Parameters for Type = GL 5539:
   #define RPD 10.0e3      // LDR Pull-Down Resistor
   #define R10 75.0e3      // LDR R(10 Lux)
@@ -86,11 +87,11 @@ sensor_type sensor[] = {
 
   #define  INDIVIDUAL_TIMING
   #ifdef INDIVIDUAL_TIMING
+  // #define DO_BLINK                         // Blink at the end of loop()
     const unsigned long wlanTimeout = 60;     // timeout in seconds
     const unsigned long mqttTimeout = 60;     // timeout in seconds
     const unsigned long processInterval = 60; // process interval in seconds
     const unsigned long refreshInterval = 60; // HTML refresh in seconds
   #endif                  // INDIVIDUAL_TIMING
-
 
 #endif // PRIVAT_H

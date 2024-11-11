@@ -58,7 +58,6 @@
     #define TOPIC "zuHause"
   #endif
   #define MSG_BUFFER_SIZE (255)
-  // #define DO_BLINK           // Comment out to suppress LED blinking
   // Default LDR Parameters for Type = GL 5539
   #ifndef RPD
     #define RPD 10.0e3          // LDR Pull-Down Resistor
@@ -71,8 +70,8 @@
   #endif
   #define MAX_TRIES 10          // Max. tries to connect a sensor
 
-  // #define DO_BLINK           // Blink at the end of loop()
   #ifndef INDIVIDUAL_TIMING
+  // #define DO_BLINK                         // Blink at the end of loop()
     const unsigned long wlanTimeout = 60;     // timeout in seconds
     const unsigned long mqttTimeout = 60;     // timeout in seconds
     const unsigned long processInterval = 60; // process interval in seconds
