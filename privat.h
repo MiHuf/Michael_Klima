@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             privat.h
    Created:           2022-04-05
-   Last modification: 2024-11-09
+   Last modification: 2024-11-11
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -82,6 +82,15 @@ sensor_type sensor[] = {
   // LDR Parameters for Type = GL 5539:
   #define RPD 10.0e3      // LDR Pull-Down Resistor
   #define R10 75.0e3      // LDR R(10 Lux)
-  #define GAMMA 0.8       // LDR Gamma-Value / Sensitivity 
-  
+  #define GAMMA 0.8       // LDR Gamma-Value / Sensitivity
+
+  #define  INDIVIDUAL_TIMING
+  #ifdef INDIVIDUAL_TIMING
+    const unsigned long wlanTimeout = 60;     // timeout in seconds
+    const unsigned long mqttTimeout = 60;     // timeout in seconds
+    const unsigned long processInterval = 60; // process interval in seconds
+    const unsigned long refreshInterval = 60; // HTML refresh in seconds
+  #endif                  // INDIVIDUAL_TIMING
+
+
 #endif // PRIVAT_H

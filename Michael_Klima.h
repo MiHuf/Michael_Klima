@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             Michael_Klima.h
    Created:           2021-12-21
-   Last modification: 2024-11-08
+   Last modification: 2024-11-11
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -70,8 +70,20 @@
     #define GAMMA 0.8           // LDR Gamma-Value / Sensitivity 
   #endif
   #define MAX_TRIES 10          // Max. tries to connect a sensor
-  const unsigned long wlanTimeout = 60;     // timeout in seconds
-  const unsigned long mqttTimeout = 60;     // timeout in seconds
-  const unsigned long processInterval = 60; // process interval in seconds
-  const unsigned long refreshInterval = 60; // HTML refresh in seconds
+
+  // #define DO_BLINK           // Blink at the end of loop()
+  #define  INDIVIDUAL_TIMING
+  #ifdef INDIVIDUAL_TIMING
+    const unsigned long wlanTimeout = 60;     // timeout in seconds
+    const unsigned long mqttTimeout = 60;     // timeout in seconds
+    const unsigned long processInterval = 60; // process interval in seconds
+    const unsigned long refreshInterval = 60; // HTML refresh in seconds
+  #endif                       // INDIVIDUAL_TIMING
+
+  #ifndef INDIVIDUAL_TIMING
+    const unsigned long wlanTimeout = 60;     // timeout in seconds
+    const unsigned long mqttTimeout = 60;     // timeout in seconds
+    const unsigned long processInterval = 60; // process interval in seconds
+    const unsigned long refreshInterval = 60; // HTML refresh in seconds
+  #endif                       // INDIVIDUAL_TIMING
 #endif // MICHAEL_KLIMA_H
