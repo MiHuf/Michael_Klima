@@ -1,14 +1,17 @@
-# .gitignore, Status of 2024-10-30
+# .gitignore, Status of 2024-11-12
 
 # private files
 _*.h
 
 # Preliminary, not yet working
 libraries/*
-D1-Mini*
+D1-Mini*.brd
+D1-Mini*.sch
+D1-Mini*.odt
+LDR-Photomet*
+LDR-Widerstand.*
 MQTT-Links*
 Platine*
-
 
 # Arduino libraries
 libraries/*
