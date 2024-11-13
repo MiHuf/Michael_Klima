@@ -1,20 +1,27 @@
-# .gitignore, Status of 2024-11-12
+# .gitignore, Status of 2024-11-13
 
 # private files
 _*.h
 
-# Preliminary, not yet working
+# Preliminary, not yet working & Arduino libraries
 libraries/*
+
+# Documentation Tools
 D1-Mini*.brd
 D1-Mini*.sch
 D1-Mini*.odt
-LDR-Photomet*
+D1-Mini_Adapter.pdf
+D1-Mini_Adapter_pcb_Eurocircuits.png
+D1-Mini_Adapter_sch.png
+LDR-Photomet*
 LDR-Widerstand.*
+ADC.png
+LDR.png
 MQTT-Links*
 Platine*
 
-# Arduino libraries
-libraries/*
+# Documentation
+latex/*
 
 # Object files
 *.o
@@ -49,9 +56,6 @@ __pycache__
 
 # Documentation
 latex/*
-D1-Mini_Adapter.odt
-LDR.png
-ADC.png
 
 # kile
 *.kilepr
