@@ -1,13 +1,13 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2024-11-11
-   Program size:      Sketch 313168 Bytes (29%), Global Vars 35120 Bytes (43%)
+   Last modification: 2024-12-03
+   Program size:      Sketch 414024 Bytes (39%), Global Vars 35492 Bytes (44%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
-const String version = "2024-11-11";
+const String version = "2024-12-03";
 /* Michaels Raumklima-Monitor. Inspiriert durch den Artikel "IKEA Vindiktning
    hacken", siehe Make 5/2021, Seite 14 ff und hier:
    https://techtest.org/anleitung-wlan-feinstaub-und-temperatur-sensor-ikea-vindriktning-hack/
@@ -33,7 +33,7 @@ const String version = "2024-11-11";
 // https://github.com/knolleary/pubsubclient
 // https://www.hivemq.com/article/mqtt-on-arduino-nodemcu-esp8266-hivemq-cloud/
 #include <PubSubClient.h>
-// #include <CertStoreBearSSL.h>  // only needed for WiFiClientSecure
+#include <CertStoreBearSSL.h>      // needed for HiveMQ with ssl/tsl (Port 8883)
 #include <functional>
 // ***** For BME280 and SCD-30
 // https://www.az-delivery.de/products/gy-bme280 (BME280)
@@ -136,7 +136,8 @@ double sens = GAMMA;  // LDR Gamma-Value / Sensitivity
 // ***** Objects
 SoftwareSerial sensorSerial(PIN_UART_RX, PIN_UART_TX);
 ESP8266WebServer webServer(80);
-WiFiClient espClient;
+// WiFiClient espClient;
+BearSSL::WiFiClientSecure espClient;
 PubSubClient client(espClient);
 // WiFiClientSecure espClient;
 // BearSSL::CertStore certStore;
