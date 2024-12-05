@@ -713,11 +713,12 @@ void connectWiFi() {
   WiFi.hostname(hostname_s.c_str());
   Serial.printf("Hostname on Router = %s\n", hostname_s.c_str());             
   WiFi.mode(WIFI_AP_STA);  // this is the default
-
   WiFi.begin(extSsid, extPassword);
   // How to use TLS:
   // https://arduino.stackexchange.com/questions/72684/how-to-connect-to-mqtt-broker-with-tls
-  espClient.setInsecure();                        // no cert verification for TLS
+  if (MQTT_PORT == 8883) {
+    espClient.setInsecure();                        // no cert verification for TLS
+  }
   // check wi-fi staus until connected
   while (WiFi.status() != WL_CONNECTED && millis() < until) {
     delay(1000);
