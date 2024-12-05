@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             privat.h
    Created:           2022-04-05
-   Last modification: 2024-11-11
+   Last modification: 2024-12-05
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -71,7 +71,7 @@ sensor_type sensor[] = {
   // Assume using HIVEMQ
     #ifdef IS_HIVEMQ
     #define MQTT_BROKER "broker.hivemq.com"
-    #define MQTT_PORT 1883
+    #define MQTT_PORT 8883
     #define MQTT_WEB "https://console.hivemq.cloud/"
     #define MQTT_USER "aaa"
     #define MQTT_PASS "bbb"

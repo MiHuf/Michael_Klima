@@ -1,13 +1,13 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2024-12-03
-   Program size:      Sketch 414024 Bytes (39%), Global Vars 35492 Bytes (44%)
+   Last modification: 2024-12-05
+   Program size:      Sketch 414072 Bytes (39%), Global Vars 35492 Bytes (44%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
-const String version = "2024-12-03";
+const String version = "2024-12-05";
 /* Michaels Raumklima-Monitor. Inspiriert durch den Artikel "IKEA Vindiktning
    hacken", siehe Make 5/2021, Seite 14 ff und hier:
    https://techtest.org/anleitung-wlan-feinstaub-und-temperatur-sensor-ikea-vindriktning-hack/
@@ -31,9 +31,8 @@ const String version = "2024-12-03";
 #include <time.h>
 #include <TZ.h>
 // https://github.com/knolleary/pubsubclient
-// https://www.hivemq.com/article/mqtt-on-arduino-nodemcu-esp8266-hivemq-cloud/
 #include <PubSubClient.h>
-#include <CertStoreBearSSL.h>      // needed for HiveMQ with ssl/tsl (Port 8883)
+#include <CertStoreBearSSL.h>      // needed for HiveMQ with TLS (Port 8883)
 #include <functional>
 // ***** For BME280 and SCD-30
 // https://www.az-delivery.de/products/gy-bme280 (BME280)
@@ -47,7 +46,8 @@ const String version = "2024-12-03";
 #include "Michael_Klima.h"
 
 // ***** Pin definitions
-#ifdef LED_BUILTIN  // true for D1 Mini, =D4
+#define D1_MINI
+#ifdef D1_MINI  // true for D1 Mini, =D4
   #define AN LOW
   #define AUS HIGH
 #else                    // not a D1 Mini
@@ -83,8 +83,7 @@ const char* extSsid = WIFI_SSID;
 const char* extPassword = WIFI_PASS;
 const char* mySsid = APSSID;
 const char* myPassword = APPSK;
-const String mqtt_broker_s = String(MQTT_BROKER);
-const char* mqtt_broker = mqtt_broker_s.c_str();
+const char* mqtt_broker = MQTT_BROKER;
 #ifdef MQTT_USER
   const char* mqtt_user = MQTT_USER;
   const char* mqtt_password = MQTT_PASS;
@@ -107,6 +106,7 @@ const uint8_t msg_buffer_size = MSG_BUFFER_SIZE;
 String localIP_s, macAddress_s, hostname_s, externalIP_s, mqttWeb_s = MQTT_WEB;
 bool wlanOK = false;
 bool mqttConnectOK = false;
+String mqtt_broker_s = String(MQTT_BROKER) + ":" + String(MQTT_PORT);
 int mqttState = -1;
 bool timeOK = false;
 uint8_t connect_tries = 0;
@@ -588,7 +588,7 @@ String buildHtml() {
     page += ", Timeout after " + String(wlanTimeout) + " s</p> \r\n";
   }
   #ifdef MQTT_BROKER
-    page += "<p>MQTT Broker = <a href=\"http://" + mqtt_broker_s + "\"  target=\"_blank\">" + mqtt_broker_s + "</a><br>\r\nMQTT User = " + String(mqtt_user) + "<br>MQTT Client id = " + mqtt_client_id_s + "<br>\r\n";
+    page += "<p>MQTT Broker:Port = <a href=\"http://" + mqtt_broker_s + "\"  target=\"_blank\">" + mqtt_broker_s + "</a><br>\r\nMQTT User = " + String(mqtt_user) + "<br>MQTT Client id = " + mqtt_client_id_s + "<br>\r\n";
     page += "MQTT Topic = " +  topic + "/#<br>\r\n";
     page += "MQTT Monitor = <a href=\"" + mqttWeb_s + "\" target=\"_blank\">" + mqttWeb_s + "</a><br>\r\n";
     // page += " or <a href=\"https://console.hivemq.cloud/clusters/free/" + String(mqtt_broker) + "/web-client\" target=\"_blank\">HiveMQ Web-Client</a><br>\r\n";
@@ -625,7 +625,7 @@ void reconnectMQTT(uint8_t maxTries) {
     mqttConnectOK = client.connect(mqtt_client_id, mqtt_user, mqtt_password); // none of the above works
     mqttState = client.state();
     if (mqttConnectOK) {
-      Serial.println("MQTT Broker = " + String(mqtt_broker));
+      Serial.println("MQTT Broker:Port = " + mqtt_broker_s);
       Serial.println("MQTT User = " + String(mqtt_user));
       Serial.println("MQTT Client id = " + mqtt_client_id_s);
       // Once connected, publish an announcement...
@@ -713,7 +713,11 @@ void connectWiFi() {
   WiFi.hostname(hostname_s.c_str());
   Serial.printf("Hostname on Router = %s\n", hostname_s.c_str());             
   WiFi.mode(WIFI_AP_STA);  // this is the default
+
   WiFi.begin(extSsid, extPassword);
+  // How to use TLS:
+  // https://arduino.stackexchange.com/questions/72684/how-to-connect-to-mqtt-broker-with-tls
+  espClient.setInsecure();                        // no cert verification for TLS
   // check wi-fi staus until connected
   while (WiFi.status() != WL_CONNECTED && millis() < until) {
     delay(1000);
