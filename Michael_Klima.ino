@@ -1,13 +1,13 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2024-12-05
+   Last modification: 2024-12-08
    Program size:      Sketch 414072 Bytes (39%), Global Vars 35492 Bytes (44%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
-const String version = "2024-12-05";
+const String version = "2024-12-08";
 /* Michaels Raumklima-Monitor. Inspiriert durch den Artikel "IKEA Vindiktning
    hacken", siehe Make 5/2021, Seite 14 ff und hier:
    https://techtest.org/anleitung-wlan-feinstaub-und-temperatur-sensor-ikea-vindriktning-hack/
@@ -136,11 +136,13 @@ double sens = GAMMA;  // LDR Gamma-Value / Sensitivity
 // ***** Objects
 SoftwareSerial sensorSerial(PIN_UART_RX, PIN_UART_TX);
 ESP8266WebServer webServer(80);
-// WiFiClient espClient;
-BearSSL::WiFiClientSecure espClient;
-PubSubClient client(espClient);
-// WiFiClientSecure espClient;
+#ifdef MQTT_TLS
+  BearSSL::WiFiClientSecure espClient;
 // BearSSL::CertStore certStore;
+#else
+  WiFiClient espClient;
+#endif
+PubSubClient client(espClient);
 OneWire oneWire(ONE_WIRE_BUS);
 DHT dht(ONE_WIRE_BUS, DHTTYPE, 6);
 DallasTemperature ds(&oneWire);
@@ -716,9 +718,9 @@ void connectWiFi() {
   WiFi.begin(extSsid, extPassword);
   // How to use TLS:
   // https://arduino.stackexchange.com/questions/72684/how-to-connect-to-mqtt-broker-with-tls
-  if (MQTT_PORT == 8883) {
+  #ifdef MQTT_TLS
     espClient.setInsecure();                        // no cert verification for TLS
-  }
+  #endif
   // check wi-fi staus until connected
   while (WiFi.status() != WL_CONNECTED && millis() < until) {
     delay(1000);
