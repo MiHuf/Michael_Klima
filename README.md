@@ -1,4 +1,4 @@
-[Zu bearbeiten mit keenwrite.bin oder retext,  File README.md, Version 2024-11-11]: #
+[Zu bearbeiten mit keenwrite.bin oder retext,  File README.md, Version 2024-12-09]: #
 # Michael_Klima
 
 Michaels Raumklima-Monitor. Inspiriert durch den Artikel
@@ -15,6 +15,8 @@ Okt. 2024: Doku ergänzt.
 
 Nov. 2024: MQTT funktioniert, Doku aktualisiert
 
+Dez. 2024: MQTT jetzt sowohl mit Port 1883 als auch mit Port 8883 (TLS)
+
 ## Konfiguration und Installation
 
   1. Den Projekt-Ordner "Michael_Klima" von github.com/MiHuf/ klonen.
@@ -26,20 +28,24 @@ Vorher müssen noch einige Dateien angepasst werden:
 
       #include "privat.h"   
 Die Datei "privat.h" enthält persönliche Zugangsdaten. Am besten nimmt man die als Gerüst und kopiert sie in eine neue Datei, z.B. "_mein_privat.h". Alle Dateien mit einem Unterstrich am Anfang des Namens werden von git nicht im öffentlichen Repository gespeichert.  
-Anschließend muss die Zeile 51 entsprechend angepasst werden:   
-#include "_mein_privat.h"  
-
+Anschließend muss die Zeile 56 entsprechend angepasst werden:  
+  #include "_mein_privat.h"  
 
   4. ***Datei "_mein_privat.h":*** 
   
-      4.1. In den Zeilen 23 bis 49 sind die aktuell vorhandenden Sensoren definiert, die Zeilen können gelöscht oder umgeordnet werden. 
+      4.1. In den Zeilen 23 bis 52 sind die aktuell vorhandenden Sensoren definiert, die Zeilen können gelöscht oder umgeordnet werden. 
  
       4.2. In die Sektion "\***** My Settings" kommen dann die privaten Zugangsdaten:  
    #define WIFI_SSID "xxx"  
    #define WIFI_PASS "yyy"  
 Das sind die Zugangsdaten zum lokalen WLAN des Routers und ggf. zum Internet.
 
-      4.3 Der Wemos D1 Mini ESP8266 in dem Modul spannt eigenes WLAN auf, das wird konfiguriert in den Zeilen  
+     4.3. Falls erforderlich, Daten für den MQTT Broker konfigurieren: TOPIC, MQTT_BROKER, MQTT_PORT,  MQTT_USER, MQTT_PASS, ...  
+     Achtung: Falls "MQTT_PORT 8883" für TLS gesetzt wird, muss zusätzlich eine Zeile  
+   #define MQTT_TLS  
+eingefügt werden. Für "MQTT_PORT 1883" muss diese Zeile auskommentert werden.  
+
+      4.4 Der Wemos D1 Mini ESP8266 in dem Modul spannt eigenes WLAN auf, das wird konfiguriert in den Zeilen  
    #define APSSID "zzz"  
    #define OPEN_WIFI  
 Das sind die Zugangsdaten zum internen WLAN des ESP8266 (ohne Passwort).
@@ -50,11 +56,11 @@ Das sind die Zugangsdaten zum internen WLAN des ESP8266 (ohne Passwort).
 
 6. ***Für den nächsten Schritt gibt es 2 Möglichkeiten:***
 
-    6.1 Mit einem anderen PC / Touchpad / Handy das WLAN Netzwerk scannen und mit dem in Abschnitt 2.3 definierten WLAN (z.B. "zzz") verbinden.
+    6.1 Mit einem anderen PC / Touchpad / Handy das WLAN Netzwerk scannen und mit der in Abschnitt 4.2 definierten APSSID (z.B. "zzz") verbinden.
 
       Dann mit einem Browser (Firefox, Chrome) die Seite `http://192.168.4.1` öffnen. Dann sollte sich eine Seite mit wichtigen Informationen über das Netzwerk öffnen. Merke dir aus der Zeile "External WLAN SSID" den Wert von "IP address" und aus der folgenden Zeile den Wert von "Hostname on Router".
 
-      Falls in der Zeile "External WLAN SSID" keine IP-Adresse angezeigt wird, hat die Verbindung zum WLAN des Routers nicht geklappt. Überprüfe die Zugangsdaten und wiederhole ab Abschnitt 2.2.
+      Falls in der Zeile "External WLAN SSID" keine IP-Adresse angezeigt wird, hat die Verbindung zum WLAN des Routers nicht geklappt. Überprüfe die Zugangsdaten und wiederhole ab Abschnitt 4.2.
 
     6.2 Gehe auf die Administrations-Seite des Routers, lass dir im Abschnitt "WLAN > Funknetz" die verbundenen Geräte anzeigen. Der ESP8266 sollte unter dem Namen Raumklima-XXX sichtbar sein, wobei XXX die letzten 6 Hex-Ziffern der MAC Addresse ist. Merke dir die zughörige IP-Adresse.
 
