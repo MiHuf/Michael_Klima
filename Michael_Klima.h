@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             Michael_Klima.h
    Created:           2021-12-21
-   Last modification: 2024-11-11
+   Last modification: 2025-03-29
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -16,6 +16,9 @@
   String getIkeaData();
   String getDS1820_0();
   String getDS1820_1();
+  String getDS1820_2();
+  String getDS1820_3();
+  String getDS1820_4();
   String getDHTTemperature();
   String getDHTHumidity();
   String myBME280Temperature();
@@ -57,6 +60,7 @@
   #ifndef TOPIC
     #define TOPIC "zuHause"
   #endif
+  #define MAX_DS_COUNT 5
   #define MSG_BUFFER_SIZE (255)
   // Default LDR Parameters for Type = GL 5539
   #ifndef RPD

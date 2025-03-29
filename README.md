@@ -1,4 +1,4 @@
-[Zu bearbeiten mit keenwrite.bin oder retext,  File README.md, Version 2024-12-09]: #
+[Zu bearbeiten mit keenwrite.bin oder retext,  File README.md, Version 2025-03-29]: #
 # Michael_Klima
 
 Michaels Raumklima-Monitor. Inspiriert durch den Artikel
@@ -16,6 +16,8 @@ Okt. 2024: Doku ergänzt.
 Nov. 2024: MQTT funktioniert, Doku aktualisiert
 
 Dez. 2024: MQTT jetzt sowohl mit Port 1883 als auch mit Port 8883 (TLS)
+
+Mrz. 2025: Erweitert auf beliebig viele (zur Zeit 5) DS18x20 Sensoren
 
 ## Konfiguration und Installation
 

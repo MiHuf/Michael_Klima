@@ -1,13 +1,13 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2024-12-08
-   Program size:      Sketch 414072 Bytes (39%), Global Vars 35492 Bytes (44%)
+   Last modification: 2025-03-29
+   Program size:      Sketch 414392 Bytes (39%), Global Vars 35776 Bytes (44%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
-const String version = "2024-12-08";
+const String version = "2025-03-29";
 /* Michaels Raumklima-Monitor. Inspiriert durch den Artikel "IKEA Vindiktning
    hacken", siehe Make 5/2021, Seite 14 ff und hier:
    https://techtest.org/anleitung-wlan-feinstaub-und-temperatur-sensor-ikea-vindriktning-hack/
@@ -118,10 +118,12 @@ tm tm;       // time information in a structure
   String title = "Michaels Raumklima Monitor";
 #endif
 int sensorCount = sizeof(sensor) / sizeof(sensor_type);
-uint8_t deviceCount = 0;  // Anzahl der OneWire - Clients
-uint8_t dallasCount = 0;  // Anzahl der DS18x10 - Sensoren
+uint8_t deviceCount = 0;             // Anzahl der OneWire - Clients
+uint8_t dallasCount = 0;             // Anzahl der DS18x10 - Sensoren
 // DallasTemperature.h, line 63: typedef uint8_t DeviceAddress[8];
-DeviceAddress tempAddr, ds_0, ds_1;  // DS 18x20 Sensoren
+// DeviceAddress tempAddr, ds_0, ds_1;  // DS 18x20 Sensoren
+DeviceAddress tempAddr;              // DS 18x20 Sensor
+DeviceAddress ds_Addr[MAX_DS_COUNT]; // alle  DS 18x20 Sensoren
 uint8_t serialRxBuf[80];
 uint8_t rxBufIdx = 0;
 unsigned long runID = 0;
@@ -244,20 +246,16 @@ void setupSensors() {
     Serial.println("ON (2 wire)");
   else Serial.println("OFF (3 wire)");
   //  ds.setResolution(9);            // global resulution, default 9
-  if (ds.getAddress(ds_0, 0)) {
-    type = ds_0[0] == DS18B20MODEL ? "DS18B20" : "DS18S20 / DS1820";
-    Serial.println("Found Device " + type + " #0, ROM-Address = "
-                   + deviceAddressToString(ds_0));
-    dallasCount += 1;
-    // ds.setResolution(ds_0, 11);     // resolutuion for this sensor
-  }  // ds.getAddress(...)
-  if (ds.getAddress(ds_1, 1)) {
-    type = ds_0[0] == DS18B20MODEL ? "DS18B20" : "DS18S20 / DS1820";
-    Serial.println("Found Device " + type + " #1, ROM-Address = "
-                   + deviceAddressToString(ds_1));
-    dallasCount += 1;
-    // ds.setResolution(ds_1, 11);     // resolutuion for this sensor
-  }  // ds.getAddress(...)
+    for (int i = 0; i < MAX_DS_COUNT; i++) {
+      if (ds.getAddress(ds_Addr[i], i)) {
+      type = ds_Addr[i][0] == DS18B20MODEL ? "DS18B20" : "DS18S20 / DS1820";
+      Serial.println("Found Device " + type + " #0, ROM-Address = "
+                    + deviceAddressToString(ds_Addr[i]));
+      dallasCount += 1;
+      // ds.setResolution(ds_Addr[i], 11);     // resolutuion for this sensor
+    } // end for - scan DS18x20 sensors
+  }  // 
+
   Serial.printf("Found %d DS18x00 Sensor(s) \n", dallasCount);
   // Try to initialize Communication to BME280
   retry = true;
@@ -363,14 +361,35 @@ String getDHTHumidity() {
 
 String getDS1820_0() {
   if (dallasCount > 0) {
-    return readDS1820Temperature(ds_0);
+    return readDS1820Temperature(ds_Addr[0]);
   } else {
     return "disconnected";
   }
 }
 String getDS1820_1() {
   if (dallasCount > 1) {
-    return readDS1820Temperature(ds_1);
+    return readDS1820Temperature(ds_Addr[1]);
+  } else {
+    return "disconnected";
+  }
+}
+String getDS1820_2() {
+  if (dallasCount > 2) {
+    return readDS1820Temperature(ds_Addr[2]);
+  } else {
+    return "disconnected";
+  }
+}
+String getDS1820_3() {
+  if (dallasCount > 3) {
+    return readDS1820Temperature(ds_Addr[3]);
+  } else {
+    return "disconnected";
+  }
+}
+String getDS1820_4() {
+  if (dallasCount > 4) {
+    return readDS1820Temperature(ds_Addr[4]);
   } else {
     return "disconnected";
   }

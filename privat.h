@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             privat.h
    Created:           2022-04-05
-   Last modification: 2024-12-08
+   Last modification: 2025-03-29
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -28,9 +28,15 @@ sensor_type sensor[] = {
   { "Temperatur [DHT11]", "0.0", "°C", 0, 0,
     "ZuHause/Wohnzimmer/Temperatur", false, getDHTTemperature },
   { "Temperatur [DS18x20 #0]", "0.0", "°C", 0, 0,
-    "ZuHause/Wohnzimmer/Temperatur_ext", false, getDS1820_0 },
+    "ZuHause/Wohnzimmer/Temperatur_int", true, getDS1820_0 },
   { "Temperatur [DS18x20 #1]", "0.0", "°C", 0, 0,
-    "ZuHause/Wohnzimmer/Temperatur_int", false, getDS1820_1 },
+    "ZuHause/Wohnzimmer/Temperatur_ext", false, getDS1820_1 },
+  { "Temperatur [DS18x20 #2]", "0.0", "°C", 0, 0,
+    "ZuHause/Wohnzimmer/Temperatur_ext", false, getDS1820_2 },
+  { "Temperatur [DS18x20 #3]", "0.0", "°C", 0, 0,
+    "ZuHause/Wohnzimmer/Temperatur_ext", false, getDS1820_3 },
+  { "Temperatur [DS18x20 #4]", "0.0", "°C", 0, 0,
+    "ZuHause/Wohnzimmer/Temperatur_ext", false, getDS1820_4 },
   { "Temperatur [BME280]", "0.0", "°C", 0, 0,
     "ZuHause/Wohnzimmer/Temperatur", false, myBME280Temperature },
   { "Luftfeuchte [BME280]", "0.0", "%", 0, 0,
