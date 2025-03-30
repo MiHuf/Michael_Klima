@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             privat.h
    Created:           2022-04-05
-   Last modification: 2025-03-29
+   Last modification: 2025-03-30
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -26,17 +26,27 @@ sensor_type sensor[] = {
   { "Luftfeuchte [DHT11]", "0.0", "%", 0, 0,
     "ZuHause/Wohnzimmer/Luftfeuchte", false, getDHTHumidity },
   { "Temperatur [DHT11]", "0.0", "°C", 0, 0,
-    "ZuHause/Wohnzimmer/Temperatur", false, getDHTTemperature },
-  { "Temperatur [DS18x20 #0]", "0.0", "°C", 0, 0,
-    "ZuHause/Wohnzimmer/Temperatur_int", true, getDS1820_0 },
-  { "Temperatur [DS18x20 #1]", "0.0", "°C", 0, 0,
-    "ZuHause/Wohnzimmer/Temperatur_ext", false, getDS1820_1 },
-  { "Temperatur [DS18x20 #2]", "0.0", "°C", 0, 0,
-    "ZuHause/Wohnzimmer/Temperatur_ext", false, getDS1820_2 },
-  { "Temperatur [DS18x20 #3]", "0.0", "°C", 0, 0,
-    "ZuHause/Wohnzimmer/Temperatur_ext", false, getDS1820_3 },
-  { "Temperatur [DS18x20 #4]", "0.0", "°C", 0, 0,
-    "ZuHause/Wohnzimmer/Temperatur_ext", false, getDS1820_4 },
+    "ZuHause/Wohnzimmer/Temperatur_DHT", false, getDHTTemperature },
+  { "Temperatur [DS18x20 DS#0]", "0.0", "°C", 0, 0,
+    "ZuHause/Wohnzimmer/Temperatur_0", true,  getDS1820_0 },
+  { "Temperatur [DS18x20 DS#1]", "0.0", "°C", 0, 0,
+    "ZuHause/Wohnzimmer/Temperatur_1", false, getDS1820_1 },
+  { "Temperatur [DS18x20 DS#2]", "0.0", "°C", 0, 0,
+    "ZuHause/Wohnzimmer/Temperatur_2", false, getDS1820_2 },
+  { "Temperatur [DS18x20 DS#3]", "0.0", "°C", 0, 0,
+    "ZuHause/Wohnzimmer/Temperatur_3", false, getDS1820_3 },
+  { "Temperatur [DS18x20 DS#4]", "0.0", "°C", 0, 0,
+    "ZuHause/Wohnzimmer/Temperatur_4", false, getDS1820_4 },
+  { "Temperatur [DS18x20 DS#5]", "0.0", "°C", 0, 0,
+    "ZuHause/Wohnzimmer/Temperatur_5", false, getDS1820_5 },
+  { "Temperatur [DS18x20 DS#6]", "0.0", "°C", 0, 0,
+    "ZuHause/Wohnzimmer/Temperatur_6", false, getDS1820_6 },
+  { "Temperatur [DS18x20 DS#7]", "0.0", "°C", 0, 0,
+    "ZuHause/Wohnzimmer/Temperatur_7", false, getDS1820_7 },
+  { "Temperatur [DS18x20 DS#8]", "0.0", "°C", 0, 0,
+    "ZuHause/Wohnzimmer/Temperatur_8", false, getDS1820_8 },
+  { "Temperatur [DS18x20 DS#9]", "0.0", "°C", 0, 0,
+    "ZuHause/Wohnzimmer/Temperatur_9", false, getDS1820_9 },
   { "Temperatur [BME280]", "0.0", "°C", 0, 0,
     "ZuHause/Wohnzimmer/Temperatur", false, myBME280Temperature },
   { "Luftfeuchte [BME280]", "0.0", "%", 0, 0,

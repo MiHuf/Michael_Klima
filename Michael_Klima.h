@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             Michael_Klima.h
    Created:           2021-12-21
-   Last modification: 2025-03-29
+   Last modification: 2025-03-30
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -19,6 +19,11 @@
   String getDS1820_2();
   String getDS1820_3();
   String getDS1820_4();
+  String getDS1820_5();
+  String getDS1820_6();
+  String getDS1820_7();
+  String getDS1820_8();
+  String getDS1820_9();
   String getDHTTemperature();
   String getDHTHumidity();
   String myBME280Temperature();
@@ -56,11 +61,11 @@
   // include only one of
   // "privat.h" (zzz), "_test1.h" (1), "_institut.h" (2), "_test3.h" (3), "_andreas.h" (4), "_test5.h" (5), "_wohnzimmer.h" (6), "_dach.h" (7), ...
   // (x) is the number of the controller, files "_xxx.h" will not be included in the github repository.
-  #include "privat.h"
+  #include "_dach.h"
   #ifndef TOPIC
     #define TOPIC "zuHause"
   #endif
-  #define MAX_DS_COUNT 5
+  #define MAX_DS_COUNT 10       // Max. Number of DS18x20 Sensors 
   #define MSG_BUFFER_SIZE (255)
   // Default LDR Parameters for Type = GL 5539
   #ifndef RPD

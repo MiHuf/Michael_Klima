@@ -1,13 +1,13 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2025-03-29
+   Last modification: 2025-03-30
    Program size:      Sketch 414392 Bytes (39%), Global Vars 35776 Bytes (44%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
-const String version = "2025-03-29";
+const String version = "2025-03-30";
 /* Michaels Raumklima-Monitor. Inspiriert durch den Artikel "IKEA Vindiktning
    hacken", siehe Make 5/2021, Seite 14 ff und hier:
    https://techtest.org/anleitung-wlan-feinstaub-und-temperatur-sensor-ikea-vindriktning-hack/
@@ -121,8 +121,6 @@ int sensorCount = sizeof(sensor) / sizeof(sensor_type);
 uint8_t deviceCount = 0;             // Anzahl der OneWire - Clients
 uint8_t dallasCount = 0;             // Anzahl der DS18x10 - Sensoren
 // DallasTemperature.h, line 63: typedef uint8_t DeviceAddress[8];
-// DeviceAddress tempAddr, ds_0, ds_1;  // DS 18x20 Sensoren
-DeviceAddress tempAddr;              // DS 18x20 Sensor
 DeviceAddress ds_Addr[MAX_DS_COUNT]; // alle  DS 18x20 Sensoren
 uint8_t serialRxBuf[80];
 uint8_t rxBufIdx = 0;
@@ -245,18 +243,18 @@ void setupSensors() {
   if (ds.isParasitePowerMode())
     Serial.println("ON (2 wire)");
   else Serial.println("OFF (3 wire)");
-  //  ds.setResolution(9);            // global resulution, default 9
-    for (int i = 0; i < MAX_DS_COUNT; i++) {
+  //  ds.setResolution(9);        // global resulution, default 9 Bit
+    for (int i = 0; i < MAX_DS_COUNT; i++) {  // scan DS18x20 sensors
       if (ds.getAddress(ds_Addr[i], i)) {
       type = ds_Addr[i][0] == DS18B20MODEL ? "DS18B20" : "DS18S20 / DS1820";
-      Serial.println("Found Device " + type + " #0, ROM-Address = "
+      Serial.println("Found Device #" + String(i) + " " + type + ", ROM-Address = "
                     + deviceAddressToString(ds_Addr[i]));
       dallasCount += 1;
       // ds.setResolution(ds_Addr[i], 11);     // resolutuion for this sensor
     } // end for - scan DS18x20 sensors
   }  // 
-
   Serial.printf("Found %d DS18x00 Sensor(s) \n", dallasCount);
+
   // Try to initialize Communication to BME280
   retry = true;
   connect_tries = 0;
@@ -270,15 +268,6 @@ void setupSensors() {
       delay(200);
     }
   }  // End while
-  /*
-  if (connect_tries >= MAX_TRIES) {
-    Serial.println("Could not find a valid BME280 sensor after " + String(connect_tries) + " tries.");
-    Serial.println("check wiring, address, sensor ID!");
-    Serial.print("SensorID was: 0x");
-    Serial.println(bme.sensorID(), 16);
-    Serial.println("ID of 0xFF probably means a bad address");
-  }
-  */
   // End Communication to BME280
   // Try to initialize Communication to SCD30
   retry = true;
@@ -394,6 +383,41 @@ String getDS1820_4() {
     return "disconnected";
   }
 }
+String getDS1820_5() {
+  if (dallasCount > 5) {
+    return readDS1820Temperature(ds_Addr[5]);
+  } else {
+    return "disconnected";
+  }
+}
+String getDS1820_6() {
+  if (dallasCount > 6) {
+    return readDS1820Temperature(ds_Addr[6]);
+  } else {
+    return "disconnected";
+  }
+}
+String getDS1820_7() {
+  if (dallasCount > 7) {
+    return readDS1820Temperature(ds_Addr[7]);
+  } else {
+    return "disconnected";
+  }
+}
+String getDS1820_8() {
+  if (dallasCount > 8) {
+    return readDS1820Temperature(ds_Addr[8]);
+  } else {
+    return "disconnected";
+  }
+}
+String getDS1820_9() {
+  if (dallasCount > 9) {
+    return readDS1820Temperature(ds_Addr[9]);
+  } else {
+    return "disconnected";
+  }
+}
 String readDS1820Temperature(DeviceAddress addr) {
   bool addrOK;
   bool ok = false;
@@ -488,7 +512,6 @@ String readSwitchNum(uint8_t pin) {
   }
   return out;
 }  // readSwitch
-
 
 String getADC0() {
   return String(analogRead(ADC0));
@@ -772,7 +795,7 @@ void setup() {  // setup code, to run once
     ;  // wait for Debug Serial
   delay(1000);
   pinMode(LED_BUILTIN, OUTPUT);
-  Serial.println();
+  Serial.println("\n");
   Serial.println(title);
   Serial.println("Version " + version);
   setupSensors();
