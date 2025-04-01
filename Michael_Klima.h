@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             Michael_Klima.h
    Created:           2021-12-21
-   Last modification: 2025-03-30
+   Last modification: 2025-04-01
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -14,16 +14,7 @@
   String getDummy();
   String getRandom();
   String getIkeaData();
-  String getDS1820_0();
-  String getDS1820_1();
-  String getDS1820_2();
-  String getDS1820_3();
-  String getDS1820_4();
-  String getDS1820_5();
-  String getDS1820_6();
-  String getDS1820_7();
-  String getDS1820_8();
-  String getDS1820_9();
+  String getDS1820();
   String getDHTTemperature();
   String getDHTHumidity();
   String myBME280Temperature();
@@ -32,14 +23,8 @@
   String mySCD30Temperature();
   String mySCD30Humidity();
   String mySCD30CO2();
-  String getSwitch_0();
-  String getSwitch_1();
-  String getSwitch_2();
-  String getSwitch_3();
-  String getSwitchNum_0();
-  String getSwitchNum_1();
-  String getSwitchNum_2();
-  String getSwitchNum_3();
+  String getSwitch();
+  String getSwitchNum();
   String getADC0();
   String getLDR();
   String getLDRNumLog();
@@ -54,6 +39,7 @@
     const char * topic;
     bool active;
     std::function<String(void)> sensor_read;
+    uint8_t n;                     // Parameter for sensor_read
   } sensor_type;
 
   // ***** Lines below may need modification

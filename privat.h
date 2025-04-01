@@ -1,7 +1,7 @@
 /*****************************************************************************
    @file:             privat.h
    Created:           2022-04-05
-   Last modification: 2025-03-30
+   Last modification: 2025-04-01
    This is part of Michael_Klima.ino
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
@@ -20,52 +20,52 @@
   // ***** My Sensor definition
 #define DHTTYPE DHT11       // define the type of sensor (DHT11 or DHT22)
 sensor_type sensor[] = {
-  {"Random-Test [Zahl]", "0", "(20 ... 50)", 0, 0, "test/Zahl", true, getRandom},
+  {"Random-Test [Zahl]", "0", "(20 ... 50)", 0, 0, "test/Zahl", true, getRandom, 0},
   { "Feinstaub [Vindriktning]", "0", "µg/m³", 0, 0,
-    "ZuHause/Wohnzimmer/Feinstaub", true, getIkeaData },
+    "ZuHause/Wohnzimmer/Feinstaub", true, getIkeaData, 0},
   { "Luftfeuchte [DHT11]", "0.0", "%", 0, 0,
-    "ZuHause/Wohnzimmer/Luftfeuchte", false, getDHTHumidity },
+    "ZuHause/Wohnzimmer/Luftfeuchte", false, getDHTHumidity, 0},
   { "Temperatur [DHT11]", "0.0", "°C", 0, 0,
-    "ZuHause/Wohnzimmer/Temperatur_DHT", false, getDHTTemperature },
+    "ZuHause/Wohnzimmer/Temperatur_DHT", false, getDHTTemperature, 0},
   { "Temperatur [DS18x20 DS#0]", "0.0", "°C", 0, 0,
-    "ZuHause/Wohnzimmer/Temperatur_0", true,  getDS1820_0 },
+    "ZuHause/Wohnzimmer/Temperatur_0", true,  getDS1820, 0},
   { "Temperatur [DS18x20 DS#1]", "0.0", "°C", 0, 0,
-    "ZuHause/Wohnzimmer/Temperatur_1", false, getDS1820_1 },
+    "ZuHause/Wohnzimmer/Temperatur_1", false, getDS1820, 1},
   { "Temperatur [DS18x20 DS#2]", "0.0", "°C", 0, 0,
-    "ZuHause/Wohnzimmer/Temperatur_2", false, getDS1820_2 },
+    "ZuHause/Wohnzimmer/Temperatur_2", false, getDS1820, 2},
   { "Temperatur [DS18x20 DS#3]", "0.0", "°C", 0, 0,
-    "ZuHause/Wohnzimmer/Temperatur_3", false, getDS1820_3 },
+    "ZuHause/Wohnzimmer/Temperatur_3", false, getDS1820, 3},
   { "Temperatur [DS18x20 DS#4]", "0.0", "°C", 0, 0,
-    "ZuHause/Wohnzimmer/Temperatur_4", false, getDS1820_4 },
+    "ZuHause/Wohnzimmer/Temperatur_4", false, getDS1820, 4},
   { "Temperatur [DS18x20 DS#5]", "0.0", "°C", 0, 0,
-    "ZuHause/Wohnzimmer/Temperatur_5", false, getDS1820_5 },
+    "ZuHause/Wohnzimmer/Temperatur_5", false, getDS1820, 5},
   { "Temperatur [DS18x20 DS#6]", "0.0", "°C", 0, 0,
-    "ZuHause/Wohnzimmer/Temperatur_6", false, getDS1820_6 },
+    "ZuHause/Wohnzimmer/Temperatur_6", false, getDS1820, 6},
   { "Temperatur [DS18x20 DS#7]", "0.0", "°C", 0, 0,
-    "ZuHause/Wohnzimmer/Temperatur_7", false, getDS1820_7 },
+    "ZuHause/Wohnzimmer/Temperatur_7", false, getDS1820, 7},
   { "Temperatur [DS18x20 DS#8]", "0.0", "°C", 0, 0,
-    "ZuHause/Wohnzimmer/Temperatur_8", false, getDS1820_8 },
+    "ZuHause/Wohnzimmer/Temperatur_8", false, getDS1820, 8},
   { "Temperatur [DS18x20 DS#9]", "0.0", "°C", 0, 0,
-    "ZuHause/Wohnzimmer/Temperatur_9", false, getDS1820_9 },
+    "ZuHause/Wohnzimmer/Temperatur_9", false, getDS1820, 9},
   { "Temperatur [BME280]", "0.0", "°C", 0, 0,
-    "ZuHause/Wohnzimmer/Temperatur", false, myBME280Temperature },
+    "ZuHause/Wohnzimmer/Temperatur", false, myBME280Temperature, 0},
   { "Luftfeuchte [BME280]", "0.0", "%", 0, 0,
-    "ZuHause/Wohnzimmer/Luftfeuchte", false, myBME280Humidity },
+    "ZuHause/Wohnzimmer/Luftfeuchte", false, myBME280Humidity, 0},
   { "Luftdruck [BME280]", "0.0", "hPa", 0, 0,
-    "ZuHause/Wohnzimmer/Luftdruck", false, myBME280Pressure },
+    "ZuHause/Wohnzimmer/Luftdruck", false, myBME280Pressure, 0},
   { "Temperatur [SCD30]", "0.0", "°C", 0, 0,
-    "ZuHause/Wohnzimmer/Temperatur", false, mySCD30Temperature },
+    "ZuHause/Wohnzimmer/Temperatur", false, mySCD30Temperature, 0},
   { "Luftfeuchte [SCD30]", "0.0", "%", 0, 0,
-    "ZuHause/Wohnzimmer/Luftfeuchte", false, mySCD30Humidity },
+    "ZuHause/Wohnzimmer/Luftfeuchte", false, mySCD30Humidity, 0},
   { "CO₂ - Gehalt [SCD30]", "0.0", "ppm", 0, 0,
     "ZuHause/Wohnzimmer/CO2", false, mySCD30CO2 },
-  { "Helligkeit [LDR GL5539]", "0", "Lux", 0, 0, "", true, getLDR },
+  { "Helligkeit [LDR GL5539]", "0", "Lux", 0, 0, "", true, getLDR, 0},
   { "Log10 Helligkeit in Lux [LDR GL5539]", "0", "", 0, 0,
-     "Log10Helligkeit", false, getLDRNumLog},
-  { "Schalter SW0", "open (High)", "", 0, 0, "", true, getSwitch_0 },
-  { "Schalter SW1", "open (High)", "", 0, 0, "", false, getSwitch_1 },
-  { "Schalter SW2", "open (High)", "", 0, 0, "", false, getSwitch_2 },
-  { "Schalter SW3", "open (High)", "", 0, 0, "", false, getSwitch_3 }
+     "Log10Helligkeit", false, getLDRNumLog, 0},
+  { "Schalter SW0", "open (High)", "", 0, 0, "", true,  getSwitch, 0},
+  { "Schalter SW1", "open (High)", "", 0, 0, "", false, getSwitch, 1},
+  { "Schalter SW2", "open (High)", "", 0, 0, "", false, getSwitch, 2},
+  { "Schalter SW3", "open (High)", "", 0, 0, "", false, getSwitch, 3}
 };  
   // ***** My Settings
   // #define MY_TITLE "Raumklima Monitor"  // uncomment for own title

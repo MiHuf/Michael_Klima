@@ -1,13 +1,13 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2025-03-30
-   Program size:      Sketch 414392 Bytes (39%), Global Vars 35776 Bytes (44%)
+   Last modification: 2025-04-01
+   Program size:      Sketch 414696 Bytes (39%), Global Vars 36688 Bytes (45%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
-const String version = "2025-03-30";
+const String version = "2025-04-01";
 /* Michaels Raumklima-Monitor. Inspiriert durch den Artikel "IKEA Vindiktning
    hacken", siehe Make 5/2021, Seite 14 ff und hier:
    https://techtest.org/anleitung-wlan-feinstaub-und-temperatur-sensor-ikea-vindriktning-hack/
@@ -122,6 +122,7 @@ uint8_t deviceCount = 0;             // Anzahl der OneWire - Clients
 uint8_t dallasCount = 0;             // Anzahl der DS18x10 - Sensoren
 // DallasTemperature.h, line 63: typedef uint8_t DeviceAddress[8];
 DeviceAddress ds_Addr[MAX_DS_COUNT]; // alle  DS 18x20 Sensoren
+uint8_t global_n = 0;
 uint8_t serialRxBuf[80];
 uint8_t rxBufIdx = 0;
 unsigned long runID = 0;
@@ -131,7 +132,7 @@ String startTime = "";
 double rpd = RPD;     // LDR Pull-Down Resistor
 double r10 = R10;     // LDR R(10 Lux)
 double sens = GAMMA;  // LDR Gamma-Value / Sensitivity
-
+uint8_t switches[] = {SW0, SW1, SW2, SW3};
 
 // ***** Objects
 SoftwareSerial sensorSerial(PIN_UART_RX, PIN_UART_TX);
@@ -348,72 +349,9 @@ String getDHTHumidity() {
   return String(dht.readHumidity(), 1);
 }
 
-String getDS1820_0() {
-  if (dallasCount > 0) {
-    return readDS1820Temperature(ds_Addr[0]);
-  } else {
-    return "disconnected";
-  }
-}
-String getDS1820_1() {
-  if (dallasCount > 1) {
-    return readDS1820Temperature(ds_Addr[1]);
-  } else {
-    return "disconnected";
-  }
-}
-String getDS1820_2() {
-  if (dallasCount > 2) {
-    return readDS1820Temperature(ds_Addr[2]);
-  } else {
-    return "disconnected";
-  }
-}
-String getDS1820_3() {
-  if (dallasCount > 3) {
-    return readDS1820Temperature(ds_Addr[3]);
-  } else {
-    return "disconnected";
-  }
-}
-String getDS1820_4() {
-  if (dallasCount > 4) {
-    return readDS1820Temperature(ds_Addr[4]);
-  } else {
-    return "disconnected";
-  }
-}
-String getDS1820_5() {
-  if (dallasCount > 5) {
-    return readDS1820Temperature(ds_Addr[5]);
-  } else {
-    return "disconnected";
-  }
-}
-String getDS1820_6() {
-  if (dallasCount > 6) {
-    return readDS1820Temperature(ds_Addr[6]);
-  } else {
-    return "disconnected";
-  }
-}
-String getDS1820_7() {
-  if (dallasCount > 7) {
-    return readDS1820Temperature(ds_Addr[7]);
-  } else {
-    return "disconnected";
-  }
-}
-String getDS1820_8() {
-  if (dallasCount > 8) {
-    return readDS1820Temperature(ds_Addr[8]);
-  } else {
-    return "disconnected";
-  }
-}
-String getDS1820_9() {
-  if (dallasCount > 9) {
-    return readDS1820Temperature(ds_Addr[9]);
+String getDS1820() {
+  if (dallasCount > global_n) {
+    return readDS1820Temperature(ds_Addr[global_n]);
   } else {
     return "disconnected";
   }
@@ -470,17 +408,8 @@ String mySCD30CO2() {
   return String(scd30.CO2, 3);
 }  // mySCD30CO2
 
-String getSwitch_0() {
-  return readSwitch(SW0);
-}
-String getSwitch_1() {
-  return readSwitch(SW1);
-}
-String getSwitch_2() {
-  return readSwitch(SW2);
-}
-String getSwitch_3() {
-  return readSwitch(SW3);
+String getSwitch() {
+  return readSwitch(switches[global_n]);
 }
 String readSwitch(uint8_t pin) {
   String out;
@@ -491,17 +420,8 @@ String readSwitch(uint8_t pin) {
   }
   return out;
 }  // readSwitch
-String getSwitchNum_0() {
-  return readSwitchNum(SW0);
-}
-String getSwitchNum_1() {
-  return readSwitchNum(SW1);
-}
-String getSwitchNum_2() {
-  return readSwitchNum(SW2);
-}
-String getSwitchNum_3() {
-  return readSwitchNum(SW3);
+String getSwitchNum() {
+  return readSwitchNum(switches[global_n]);
 }
 String readSwitchNum(uint8_t pin) {
   String out;
@@ -546,6 +466,7 @@ void getSensorData() {
   String value = "";
   runID += 1;
   for (uint8_t i = 0; i < sensorCount; i++) {
+    global_n = sensor[i].n;    // Parameter for sensor_read
     value = sensor[i].sensor_read();
     //    if (sensor[i].active) {
     sensor[i].value = value;
