@@ -1,13 +1,13 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2025-04-01
-   Program size:      Sketch 414696 Bytes (39%), Global Vars 36688 Bytes (45%)
+   Last modification: 2025-05-19
+   Program size:      Sketch 415080 Bytes (39%), Global Vars 36560 Bytes (45%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
-const String version = "2025-04-01";
+const String version = "2025-05-19";
 /* Michaels Raumklima-Monitor. Inspiriert durch den Artikel "IKEA Vindiktning
    hacken", siehe Make 5/2021, Seite 14 ff und hier:
    https://techtest.org/anleitung-wlan-feinstaub-und-temperatur-sensor-ikea-vindriktning-hack/
@@ -224,12 +224,13 @@ String runInfo() {
 
 // ***** Setup Sensors
 
-void setupSensors() {
-  bool retry;
-  String type;
+void Setup_Ikea (){
   // Software Serial für IKEA Sensor
   Serial.printf("Software UART (Ikea) on Pin %d\n", PIN_UART_RX);
   sensorSerial.begin(9600);
+} // end Setup_Ikea
+
+void Setup_oneWire() {
   pinMode(ONE_WIRE_BUS, INPUT);
   oneWire.begin(ONE_WIRE_BUS);
   if (oneWire.reset()) {
@@ -238,6 +239,11 @@ void setupSensors() {
     Serial.printf("No devices found on Pin %d\n", ONE_WIRE_BUS);
   }
   oneWire.begin(ONE_WIRE_BUS);
+} // end Setup_oneWire()
+
+void Setup_ds() {
+  bool retry = true;
+  String type;
   dht.begin();
   ds.begin();
   Serial.print("Parasite power is: ");
@@ -255,10 +261,12 @@ void setupSensors() {
     } // end for - scan DS18x20 sensors
   }  // 
   Serial.printf("Found %d DS18x00 Sensor(s) \n", dallasCount);
+} // end Setup_ds();
 
+void Setup_BME280() {
   // Try to initialize Communication to BME280
-  retry = true;
-  connect_tries = 0;
+  bool retry = true;
+  uint8_t connect_tries = 0;
   while (retry) {
     connect_tries += 1;
     retry = connect_tries < MAX_TRIES;
@@ -270,9 +278,12 @@ void setupSensors() {
     }
   }  // End while
   // End Communication to BME280
+} // end Setup_BME280()
+
+void Setup_SCD30() {
   // Try to initialize Communication to SCD30
-  retry = true;
-  connect_tries = 0;
+  bool retry = true;
+  uint8_t connect_tries = 0;
   while (retry) {
     connect_tries += 1;
     retry = connect_tries < MAX_TRIES;
@@ -287,6 +298,9 @@ void setupSensors() {
     // Serial.println("Could not find a valid SCD30 sensor after " + String(connect_tries) + " tries.");
   }
   // End Communication to SCD30
+} // end Setup_SCD30() 
+
+void Setup_ext() {
   // Setting extension switches and LDR
   pinMode(SW0, OUTPUT);
   pinMode(SW1, OUTPUT);
@@ -307,7 +321,16 @@ void setupSensors() {
   Serial.printf("ADC 0 on Pin %d\n", ADC0);
   Serial.printf("LDR-Params: Rpd = %f, R10 = %f, gamma = %f\n",
                 rpd, r10, sens);
-}  // setupSensors()
+} // end Setup_ext()
+
+void setupSensors() {
+  Setup_Ikea();
+  Setup_oneWire();
+  Setup_ds();
+  Setup_BME280();
+  Setup_SCD30();
+  Setup_ext();
+}
 
 
 // ***** Get Sensor Data Functions
