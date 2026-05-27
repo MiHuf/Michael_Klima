@@ -1,13 +1,16 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2025-05-19
-   Program size:      Sketch 415080 Bytes (39%), Global Vars 36560 Bytes (45%)
+   Last modification: 2026-05-26
+   Program size:      Global Vars: 36012 / 80192 bytes (44%),
+     (_test5)         Instruction RAM: 63003 / 65536 bytes (96%)
+                      Code in Flash: 314208 / 1048576 bytes (29%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
-const String version = "2025-05-19";
+const String version = "2026-05-26";
+const String ide = "arduino IDE 2.3.8";
 /* Michaels Raumklima-Monitor. Inspiriert durch den Artikel "IKEA Vindiktning
    hacken", siehe Make 5/2021, Seite 14 ff und hier:
    https://techtest.org/anleitung-wlan-feinstaub-und-temperatur-sensor-ikea-vindriktning-hack/
@@ -27,7 +30,6 @@ const String version = "2025-05-19";
 #include <SoftwareSerial.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
-#include <DHT.h>
 #include <time.h>
 #include <TZ.h>
 // https://github.com/knolleary/pubsubclient
@@ -37,7 +39,9 @@ const String version = "2025-05-19";
 // ***** For BME280 and SCD-30
 // https://www.az-delivery.de/products/gy-bme280 (BME280)
 #include <Wire.h>
-#include <Adafruit_Sensor.h>
+// #include <Adafruit_Sensor.h>
+// #include <DHT-sensor-library>
+#include <DHT.h>
 #include <Adafruit_BME280.h>
 // https://www.adafruit.com/product/4867  (SCD-30)
 // https://learn.adafruit.com/adafruit-scd30/arduino
@@ -252,6 +256,7 @@ void Setup_ds() {
   else Serial.println("OFF (3 wire)");
   //  ds.setResolution(9);        // global resulution, default 9 Bit
     for (int i = 0; i < MAX_DS_COUNT; i++) {  // scan DS18x20 sensors
+      // delay(1000);
       if (ds.getAddress(ds_Addr[i], i)) {
       type = ds_Addr[i][0] == DS18B20MODEL ? "DS18B20" : "DS18S20 / DS1820";
       Serial.println("Found Device #" + String(i) + " " + type + ", ROM-Address = "
@@ -491,13 +496,13 @@ void getSensorData() {
   for (uint8_t i = 0; i < sensorCount; i++) {
     global_n = sensor[i].n;    // Parameter for sensor_read
     value = sensor[i].sensor_read();
-    //    if (sensor[i].active) {
-    sensor[i].value = value;
-    if (value != "disconnected" && value != "nan" && value != "???" && value != "inf") {
-      sensor[i].measurement += 1;
-      sensor[i].runID = runID;
-    }  // if value
-       //    }  // if active
+    // if (sensor[i].active) {
+      sensor[i].value = value;
+      if (value != "disconnected" && value != "nan" && value != "???" && value != "inf") {
+        sensor[i].measurement += 1;
+        sensor[i].runID = runID;
+      }  // if value
+    // }  // if active
   }    // for
 }  // getSensorData()
 
@@ -565,7 +570,7 @@ String buildHtml() {
   page += "<body>\r\n";
   page += "<div id=\"webpage\">\r\n";
   page += "<h1>" + title + "</h1> \r\n";
-  page += "<h2> Version: " + version + "</h2> \r\n";
+  page += "<h2> Version: " + version + ", IDE = " + ide + "</h2> \r\n";
   page += "<p>Siehe <a href=\"https://github.com/MiHuf/Michael_Klima\" target=\"_blank\">github.com/MiHuf/Michael_Klima</a></p>\r\n";
   page += "<p>Internal WLAN SSID = " + String(mySsid) + ", IP address = " + localIP_s + ", MAC address = " + macAddress_s + "</p> \r\n";
   page += "<p>Router's WLAN SSID = " + String(extSsid);
@@ -740,7 +745,7 @@ void setup() {  // setup code, to run once
   delay(1000);
   pinMode(LED_BUILTIN, OUTPUT);
   Serial.println("\n");
-  Serial.println(title);
+  Serial.println(title + ", IDE = " + ide);
   Serial.println("Version " + version);
   setupSensors();
   Serial.printf("Defined %d sensors in the Software\n", sensorCount);
