@@ -1,15 +1,15 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2026-05-26
-   Program size:      Global Vars: 36012 / 80192 bytes (44%),
+   Last modification: 2026-06-01
+   Program size:      Global Vars: 36604 / 80192 bytes (45%),
      (_test5)         Instruction RAM: 63003 / 65536 bytes (96%)
-                      Code in Flash: 314208 / 1048576 bytes (29%)
+                      Code in Flash: 415384 / 1048576 bytes (39%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
-const String version = "2026-05-26";
+const String version = "2026-06-01";
 const String ide = "arduino IDE 2.3.8";
 /* Michaels Raumklima-Monitor. Inspiriert durch den Artikel "IKEA Vindiktning
    hacken", siehe Make 5/2021, Seite 14 ff und hier:
@@ -60,20 +60,19 @@ const String ide = "arduino IDE 2.3.8";
   #define AUS LOW
 #endif
 // Original-Version aus Make 05/21:
-// constexpr static const uint8_t PIN_UART_RX = D2; // =GPIO4 am Wemos D1 Mini
 // Version fuer mein Adapter-Board:
-constexpr static const uint8_t PIN_UART_RX = D5;   // =GPIO14 am Wemos D1 Mini
-constexpr static const uint8_t PIN_UART_TX = D7;   // =GPIO13 UNUNSED
-constexpr static const uint8_t ONE_WIRE_BUS = D6;  // =GPIO12 am Wemos D1 Mini
-// default I2C Pins defined in Aruino.h:
-// constexpr static const uint8_t SCL = D1;         // Default I2C Pins
-// constexpr static const uint8_t SDA = D2;         // Default I2C Pins
-constexpr static const uint8_t SW0 = D7;  // =GPIO13 / D7
+constexpr static const uint8_t PIN_UART_RX = D5;   // =GPIO14, used by IKEA SoftwareSerial
+constexpr static const uint8_t PIN_UART_TX = D7;   // =GPIO13, used by IKEA SoftwareSerial
+constexpr static const uint8_t SW0 = D7;           // =GPIO13
+constexpr static const uint8_t SW1 = D5;           // =GPIO14
 // ***** Warning! Boot fails if D3 or D4 are pulled LOW !!!
-constexpr static const uint8_t SW1 = D3;   // =GPIO0, *** Warning !
-constexpr static const uint8_t SW2 = D3;   // =GPIO0, *** Warning !
-constexpr static const uint8_t SW3 = D4;   // =GPIO2 =LED_BUILTIN ***
-constexpr static const uint8_t ADC0 = A0;  // = Analog input, Pin 17
+constexpr static const uint8_t SW2 = D3;           // =GPIO0, *** Warning ***
+constexpr static const uint8_t SW3 = D4;           // =GPIO2  *** Warning, LED_BUILTIN ***
+constexpr static const uint8_t ONE_WIRE_BUS = D6;  // =GPIO12 am Wemos D1 Mini
+// default I2C Pins already defined in Aruino.h:
+// constexpr static const uint8_t SCL = D1;        // =GPIO5, default I2C Pins
+// constexpr static const uint8_t SDA = D2;        // =GPIO4, default I2C Pins
+constexpr static const uint8_t ADC0 = A0;          // = Analog input, Pin 17
 
 // ***** Global Settings
 #define MY_TZ "CET-1CEST,M3.5.0/02,M10.5.0/03"
