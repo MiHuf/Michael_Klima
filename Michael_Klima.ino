@@ -1,16 +1,16 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2026-06-01
+   Last modification: 2026-06-02
    Program size:      Global Vars: 36604 / 80192 bytes (45%),
-     (_test5)         Instruction RAM: 63003 / 65536 bytes (96%)
+     (privat.h)       Instruction RAM: 63003 / 65536 bytes (96%)
                       Code in Flash: 415384 / 1048576 bytes (39%)
    Author and (C):    Michael Hufschmidt <michael@hufschmidt-web.de>
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
 const String version = "2026-06-01";
-const String ide = "arduino IDE 2.3.8";
+const String ide = "arduino IDE 2.3.9";
 /* Michaels Raumklima-Monitor. Inspiriert durch den Artikel "IKEA Vindiktning
    hacken", siehe Make 5/2021, Seite 14 ff und hier:
    https://techtest.org/anleitung-wlan-feinstaub-und-temperatur-sensor-ikea-vindriktning-hack/
