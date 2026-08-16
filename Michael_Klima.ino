@@ -1,7 +1,7 @@
 /*****************************************************************************
    File:              Michael_Klima.ino, Version 1.0
    Created:           2021-12-17
-   Last modification: 2026-06-13
+   Last modification: 2026-08-16
    Program size:      Global Vars: 36604 / 80192 bytes (45%),
     (using privat.h)  Instruction RAM: 63003 / 65536 bytes (96%)
                       Code in Flash: 415384 / 1048576 bytes (39%)
@@ -9,7 +9,7 @@
    Projekt Source:    https://github.com/MiHuf/Michael_Klima
    License:           https://creativecommons.org/licenses/by-nc-sa/3.0/de/
  * ***************************************************************************/
-const String version = "2026-06-13";
+const String version = "2026-08-16";
 const String ide = "arduino IDE 2.3.10";
 /* Michaels Raumklima-Monitor. Inspiriert durch den Artikel "IKEA Vindiktning
    hacken", siehe Make 5/2021, Seite 14 ff und hier:
@@ -25,21 +25,21 @@ const String ide = "arduino IDE 2.3.10";
  * ***************************************************************************/
 
 // ***** Includes
+#include <functional>
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
-#include <SoftwareSerial.h>
-#include <OneWire.h>
-#include <DallasTemperature.h>
 #include <time.h>
 #include <TZ.h>
+#include <SoftwareSerial.h>
 // https://github.com/knolleary/pubsubclient
 #include <PubSubClient.h>
 #include <CertStoreBearSSL.h>      // needed for HiveMQ with TLS (Port 8883)
-#include <functional>
+#include <DallasTemperature.h>
 // ***** For BME280 and SCD-30
 // https://www.az-delivery.de/products/gy-bme280 (BME280)
-#include <Wire.h>
-// #include <Adafruit_Sensor.h>
+// #include <OneWire.h>
+// #include <Wire.h>
+#include <Adafruit_Sensor.h>
 // #include <DHT-sensor-library>
 #include <DHT.h>
 #include <Adafruit_BME280.h>
@@ -112,6 +112,7 @@ bool mqttConnectOK = false;
 String mqtt_broker_s = String(MQTT_BROKER) + ":" + String(MQTT_PORT);
 int mqttState = -1;
 bool timeOK = false;
+bool mySCD_global = false;
 uint8_t connect_tries = 0;
 time_t now;  // this is the epoch
 tm tm;       // time information in a structure
@@ -151,7 +152,7 @@ OneWire oneWire(ONE_WIRE_BUS);
 DHT dht(ONE_WIRE_BUS, DHTTYPE, 6);
 DallasTemperature ds(&oneWire);
 Adafruit_BME280 bme;   // I2C Communication
-Adafruit_SCD30 scd30;  //
+Adafruit_SCD30 scd30;  // I2C Communication
 
 
 // ***** General Functions
@@ -271,14 +272,20 @@ void Setup_BME280() {
   // Try to initialize Communication to BME280
   bool retry = true;
   uint8_t connect_tries = 0;
+  unsigned status;
+  delay(200);
   while (retry) {
     connect_tries += 1;
     retry = connect_tries < MAX_TRIES;
-    if (bme.begin(0x76)) {
+    status = bme.begin();
+    if (status) {
       retry = false;
       Serial.println("Communication to BME280 established after " + String(connect_tries) + " tries.");
+      Serial.print("SensorID was: 0x"); Serial.println(bme.sensorID(),16);
     } else {
-      delay(200);
+      Serial.println("Communication to BME280 failed #"+ String(connect_tries));
+      Serial.print("SensorID was: 0x"); Serial.println(bme.sensorID(),16);
+      delay(100);
     }
   }  // End while
   // End Communication to BME280
@@ -294,12 +301,20 @@ void Setup_SCD30() {
     if (scd30.begin()) {
       retry = false;
       Serial.println("Communication to SCD30 established after " + String(connect_tries) + " tries.");
+      if (!scd30.setMeasurementInterval(15)){
+        Serial.println("Failed to set measurement interval");
+        while(1){ delay(10);}
+        }      
+      Serial.print("Measurement Interval: "); 
+      Serial.print(scd30.getMeasurementInterval()); 
+      Serial.println(" seconds");
     } else {
+      Serial.println("Communication to SCD30 failed #"+ String(connect_tries));
       delay(200);
     }
   }  // End while
   if (connect_tries >= MAX_TRIES) {
-    // Serial.println("Could not find a valid SCD30 sensor after " + String(connect_tries) + " tries.");
+    Serial.println("Could not find a valid SCD30 sensor after " + String(connect_tries) + " tries.");
   }
   // End Communication to SCD30
 } // end Setup_SCD30() 
@@ -329,10 +344,10 @@ void Setup_ext() {
 
 void setupSensors() {
   Setup_Ikea();
-  Setup_oneWire();
-  Setup_ds();
   Setup_BME280();
   Setup_SCD30();
+  Setup_oneWire();
+  Setup_ds();
   Setup_ext();
 }
 
@@ -425,14 +440,46 @@ String myBME280Pressure() {
   return String(bme.readPressure() / 100.0F, 1);
 }  // getBME280Pressure
 
+bool mySCD_DataOK() {
+  bool retry = true;
+  bool ready, dataOK;
+  uint8_t tries = 0;
+  delay(200);
+  while (retry) {
+    tries += 1;
+    retry = tries < 5;
+    ready = scd30.dataReady();
+    delay(50);
+    dataOK = scd30.read();
+    if (dataOK) {
+      retry = false;
+    } else {
+      Serial.println("Error reading sensor data");
+    } // if (dataOK)
+  }  // while (retry)
+   delay(200);
+  return dataOK;
+} // mySCD_DataOK()
 String mySCD30Temperature() {
-  return String(scd30.temperature, 1);
+  String value = "no data";
+  if (mySCD_global) {
+    value = String(scd30.temperature, 1);
+  }
+  return value;
 }  // mySCD30Temperature
 String mySCD30Humidity() {
-  return String(scd30.relative_humidity, 0);
+  String value = "no data";
+  if (mySCD_global) {
+    value = String(scd30.relative_humidity, 0);
+  }
+  return value;
 }  // mySCD30Humidity
 String mySCD30CO2() {
-  return String(scd30.CO2, 3);
+  String value = "no data";
+  if (mySCD_global) {
+    value = String(scd30.CO2, 3);
+  }
+  return value;
 }  // mySCD30CO2
 
 String getSwitch() {
@@ -492,16 +539,18 @@ String getLDRNumLog() {
 void getSensorData() {
   String value = "";
   runID += 1;
+  mySCD_global = mySCD_DataOK();
   for (uint8_t i = 0; i < sensorCount; i++) {
     global_n = sensor[i].n;    // Parameter for sensor_read
-    value = sensor[i].sensor_read();
-    // if (sensor[i].active) {
+    if (sensor[i].active) {
+      // delay(200);           // Bringt nix
+      value = sensor[i].sensor_read();
       sensor[i].value = value;
       if (value != "disconnected" && value != "nan" && value != "???" && value != "inf") {
         sensor[i].measurement += 1;
         sensor[i].runID = runID;
       }  // if value
-    // }  // if active
+    }  // if active
   }    // for
 }  // getSensorData()
 
