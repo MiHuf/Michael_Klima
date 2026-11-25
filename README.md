@@ -1,4 +1,4 @@
-[Zu bearbeiten mit keenwrite.bin oder retext,  File README.md, Version 2025-03-30]: #
+[Zu bearbeiten mit keenwrite.bin oder retext,  File README.md, Version 2026-11-25]: #
 # Michael_Klima
 
 Michaels Raumklima-Monitor. Inspiriert durch den Artikel
@@ -105,7 +105,6 @@ Und hier die Adapter-Platine (35mm x 42mm):
 |Grafana: |<https://grafana.com/>|
 |MQTT Client Software zum Testen|<http://mqtt-explorer.com/>|
 |MQTT Broker, Übersicht|<https://mntolia.com/10-free-public-private-mqtt-brokers-for-testing-prototyping/>|
-|MQTT Broker HiveMQ:| <https://www.hivemq.com/>|
 |MQTT Broker Cedalo / Pro Mosquitto| <https://test.mosquitto.org/>|
 |MQTT Broker flespi|<https://flespi.com/>|
 |MQTT Broker sensatio:|<https://www.sensatio.io/>|
